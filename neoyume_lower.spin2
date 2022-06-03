@@ -29,6 +29,8 @@ STATIC_LOCKS = decod VINT_LOCK
 
 CON ' Stuff that we should be getting from config.spin2 but proptool is poo poo
 
+#include "config.spin2"
+{
 AUDIO_LEFT  = 24+6
 AUDIO_RIGHT = AUDIO_LEFT + 1
 
@@ -38,6 +40,7 @@ PSRAM_BASE = 40
 
 PSRAM_WAIT  = 10
 PSRAM_DELAY = 4
+'}
 
 DAT ' startup code & zero page
               org
