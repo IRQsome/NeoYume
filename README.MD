@@ -32,7 +32,20 @@ Note: all filenames and paths are case-insensitive. The FAT driver without LFN a
 
 - Create a `NEOYUME` directory on the root of the card
 - Place your `neo-epo.bin` (or `neo-po.bin` if `USE_JP_BIOS` is set in config) into `/NEOYUME/NEOGEO/` (i.e. `/NEOYUME/NEOGEO/NEO-EPO.BIN`)
-- Unzip your MAME-style game ROMs into the `NEOYUME` directory, such that the paths look like this: `/NEOYUME/MSLUG/201-C1.BIN`.
+- Unzip your MAME-style game ROMs into the `NEOYUME` directory, such that the paths look like this: `/NEOYUME/MSLUG/201-C1.BIN`. **All files must have a .bin extension, rename them if they have .c1,.v1,etc kinda extensions!**
+
+#### Notes on acquiring ROMs legally
+
+As an alternative to illicit acquisition of game ROMs, you may also:
+ - Purchase any SNK NeoGeo game rerelease on gog.com
+ - Download the MacOS X version, which is a ZIP file
+ - Unzip it
+ - Find the ROMset inside (for Metal Slug, it is at `MetalSlug.app/Contents/Resources/mslug.zip`)
+ - Proceed as usual (don't foget to change file extensions to .bin).
+
+Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere (don't feel bad, for they did for some reason (read: they probably just got a BIOS romset from a shady site themselves) include unibios, which is against its terms of use (then again, unibios itself exists in violation of copyright)).
+
+tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download it. Be gay do crime.
 
 ### Compiling
 

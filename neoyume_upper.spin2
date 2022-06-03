@@ -199,10 +199,12 @@ repeat
     LOADCMD_FIRST..LOADCMD_LAST,(LOADCMD_FIRST+WITH_OFFSET)..(LOADCMD_LAST+WITH_OFFSET):
       c.strcpy(fn1,common)
       c.strncat(fn1,gameptr,PATH_MAX-1) ' first file name
+      c.strncat(fn1,@".BIN",PATH_MAX-1)
       gameptr += strsize(gameptr)+1
       if cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET
         c.strcpy(fn2,common)
         c.strncat(fn2,gameptr,PATH_MAX-1) ' second file name
+        c.strncat(fn2,@".BIN",PATH_MAX-1)
         gameptr += strsize(gameptr)+1
       else
         byte[fn2] := 0

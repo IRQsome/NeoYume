@@ -34,109 +34,109 @@ gamedb_base
 
 game_ironclad byte "ironclad",0,"Ironclad",0,"220-",0,GAME_OK ' Note: proto prefix needs to be removed to fit 8.3 naming
 byte SET_CHAR
-byte LOAD_CROM,"C1.C1",0,"C2.C2",0,word $80_0
-byte LOAD_CROM,"C3.C3",0,"C4.C4",0,word $80_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.P1",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.V1",0,word $40_0
+byte LOAD_RAW,"V1",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"S1.S1",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.M1",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_twinspri byte "twinspri",0,"Twinkle Star Sprites",0,"224-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $40_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_samsho byte "samsho",0,"Samurai Shodown",0,"045-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
-byte LOAD_CROM,"C51.BIN",0,"C61.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C51",0,"C61",0,word $20_0
 byte SET_PROG
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"PG2.BIN",0,word $10_0
+byte LOAD_BSWAP,"PG2",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_samsho2 byte "samsho2",0,"Samurai Shodown 2",0,"063-",0,GAME_OK
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
-byte LOAD_CROM,"C5.BIN",0,"C6.BIN",0,word $40_0
-byte LOAD_CROM,"C7.BIN",0,"C8.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
-byte LOAD_RAW,"V3.BIN",0,word $20_0
-byte LOAD_RAW,"V4.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte LOAD_RAW,"V4",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_mslug byte "mslug",0,"Metal Slug",0,"201-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $80_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $40_0
-byte LOAD_RAW,"V2.BIN",0,word $40_0
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: TOO BIG
 game_mslug2 byte "mslug2",0,"Metal Slug 2",0,"241-",0,GAME_ISSUE
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $100_0
-'byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $100_0
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+'byte LOAD_CROM,"C3",0,"C4",0,word $100_0
 byte SET_PROG
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_2M
-byte LOAD_BSWAP,"P2.BIN",0,word $20_0
+byte LOAD_BSWAP,"P2",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $40_0
-byte LOAD_RAW,"V2.BIN",0,word $40_0
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -144,225 +144,225 @@ byte 0
 '' NOTE: Busted graphics
 game_neodrift byte "neodrift",0,"Neo Drift Out",0,"213-",0,GAME_ISSUE
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Super borken
 game_cyberlip byte "cyberlip",0,"Cyber-Lip",0,"010-",0,GAME_BROKEN
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $10_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $10_0
-byte LOAD_CROM,"C5.BIN",0,"C6.BIN",0,word $10_0
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte LOAD_CROM,"C5",0,"C6",0,word $10_0
 byte SET_PROG
 byte SET_PORT ' huh...
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
 byte LOAD_FILLER,255,word $08_0
 byte SET_ADPCM_A
-byte LOAD_RAW,"V11.BIN",0,word $08_0
-byte LOAD_RAW,"V12.BIN",0,word $08_0
-byte LOAD_RAW,"V13.BIN",0,word $08_0
-byte LOAD_RAW,"V14.BIN",0,word $08_0
+byte LOAD_RAW,"V11",0,word $08_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte LOAD_RAW,"V13",0,word $08_0
+byte LOAD_RAW,"V14",0,word $08_0
 byte SET_ADPCM_B
-byte LOAD_RAW,"V21.BIN",0,word $08_0
+byte LOAD_RAW,"V21",0,word $08_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $01_0
-byte LOAD_RAW,"M1.BIN",0,word $01_0
+byte LOAD_RAW,"M1",0,word $01_0
+byte LOAD_RAW,"M1",0,word $01_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Broken
 game_viewpoin byte "viewpoin",0,"Viewpoint",0,"051-",0,GAME_BROKEN
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_zedblade byte "zedblade",0,"Zed Blade",0,"076-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
-byte LOAD_RAW,"V3.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_sengoku byte "sengoku",0,"Sengoku",0,"017-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $20_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
-byte LOAD_BSWAP,"P2.BIN",0,word $02_0
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $02_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $10_0
-byte LOAD_RAW,"V2.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Hangs
 game_sengoku2 byte "sengoku2",0,"Sengoku 2",0,"040-",0,GAME_BROKEN
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $20_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $10_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
 byte LOAD_FILLER,255,word $10_0
-byte LOAD_CROM+WITH_OFFSET,"C1.BIN",0,"C2.BIN",0,word $20_0,word $10_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_doubledr byte "doubledr",0,"Double Dragon",0,"082-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
-byte LOAD_CROM,"C5.BIN",0,"C6.BIN",0,word $40_0
-byte LOAD_CROM,"C7.BIN",0,"C8.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $20_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_fatfury1 byte "fatfury1",0,"Fatal Fury",0,"033-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $20_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
-byte LOAD_BSWAP,"P2.BIN",0,word $02_0
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $02_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $10_0
-byte LOAD_RAW,"V2.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_crsword byte "crsword",0,"Crossed Swords",0,"037-",0,GAME_OK
 byte SET_CHAR
 byte SET_TILEMASK,14
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $20_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Broken sound
 game_sonicwi2 byte "sonicwi2",0,"Sonic Wings 2",0,"075-",0,GAME_ISSUE
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Broken sound
 game_sonicwi3 byte "sonicwi3",0,"Sonic Wings 3",0,"097-",0,GAME_ISSUE
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $40_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_mutnat byte "mutnat",0,"Mutation Nation",0,"014-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $20_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $10_0
-byte LOAD_RAW,"V2.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -370,66 +370,66 @@ byte 0
 '' NOTE: Broken
 game_wakuwak7 byte "wakuwak7",0,"Waku Waku 7",0,"225-",0,GAME_BROKEN
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $80_0
-'byte LOAD_CROM,"C5.BIN",0,"C6.BIN",0,word $80_0
-'byte LOAD_CROM,"C7.BIN",0,"C8.BIN",0,word $80_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+'byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+'byte LOAD_CROM,"C7",0,"C8",0,word $80_0
 byte SET_PROG
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_2M
-byte LOAD_BSWAP,"P2.BIN",0,word $20_0
+byte LOAD_BSWAP,"P2",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $40_0
-byte LOAD_RAW,"V2.BIN",0,word $40_0
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: wierd holey memory map, doesn't fit
 game_kof95 byte "kof95",0,"King of Fighters '95",0,"084-",0,GAME_ISSUE
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $80_0
-byte LOAD_CROM,"C5.BIN",0,"C6.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
 ' Note: Weird CROM memory map hole.
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte LOAD_FILLER,255,word $20_0 - $02_0*3
-byte LOAD_CROM,"C7.BIN",0,"C8.BIN",0,word $20_0
+byte LOAD_CROM,"C7",0,"C8",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $40_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
 ' No space left for these
 'byte LOAD_FILLER,255,word $10_00
-'byte LOAD_RAW,"V3.BIN",0,word $10_0
+'byte LOAD_RAW,"V3",0,word $10_0
 byte 0
 
 
 game_wh2 byte "wh2",0,"World Heroes 2",0,"057-",0,GAME_OK
 byte SET_CHAR
 byte SET_TILEMASK,16
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
-byte LOAD_CROM,"C5.BIN",0,"C6.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
-byte LOAD_RAW,"V2.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -439,18 +439,18 @@ byte 0
 '' NOTE: Black screen. Cool NeoGeo jingle though.
 game_karnovr byte "karnovr",0,"Karnov's Revenge",0,"066-",0,GAME_BROKEN
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $40_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $40_0
-byte LOAD_CROM,"C5.BIN",0,"C6.BIN",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -459,73 +459,73 @@ byte 0
 game_kotmh byte "kotmh",0,"King of the Monsters",0,"016-",0,GAME_OK
 byte SET_CHAR
 byte SET_TILEMASK,14
-byte LOAD_CROM,"C1.C1",0,"C2.C2",0,word $20_0
-byte LOAD_CROM,"C3.C3",0,"C4.C4",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"HP1.P1",0,word $08_0
-byte LOAD_BSWAP,"P2.P2",0,word $02_0
+byte LOAD_BSWAP,"HP1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $02_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.V1",0,word $10_0
-byte LOAD_RAW,"V2.V2",0,word $10_0
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.S1",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.M1",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Broken sound
 game_magdrop2 byte "magdrop2",0,"Magical Drop 2",0,"221-",0,GAME_ISSUE
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $08_0
+byte LOAD_BSWAP,"P1",0,word $08_0
 byte LOAD_FILLER,255,word $08_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $20_0
+byte LOAD_RAW,"V1",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Broken sound
 game_wjammers byte "wjammers",0,"Windjammers",0,"065-",0,GAME_ISSUE
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $20_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $10_0
-byte LOAD_RAW,"V2.BIN",0,word $10_0
-byte LOAD_RAW,"V3.BIN",0,word $10_0
-byte LOAD_RAW,"V4.BIN",0,word $10_0
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte LOAD_RAW,"V4",0,word $10_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_pbobbl2n byte "pbobbl2n",0,"Puzzle Bobble 2",0,"248-",0,GAME_OK
 byte SET_CHAR
-byte LOAD_CROM,"C1.BIN",0,"C2.BIN",0,word $80_0
-byte LOAD_CROM,"C3.BIN",0,"C4.BIN",0,word $20_0
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte SET_PROG
 byte SET_PORT
-byte LOAD_BSWAP,"P1.BIN",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"V1.BIN",0,word $40_0
-byte LOAD_RAW,"V2.BIN",0,word $40_0
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"S1.BIN",0,word $02_0
+byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1.BIN",0,word $02_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -534,25 +534,25 @@ byte 0
 {
 game_kizuna byte "kizuna",0,"Kizuna Encounter",0,"",0,GAME_BROKEN
 byte SET_CHAR
-byte LOAD_CROM,"059-C1.BIN",0,"059-C2.BIN",0,word $40_0
+byte LOAD_CROM,"059-C1",0,"059-C2",0,word $40_0
 byte SET_PROG+WITH_OFFSET,word $10_0
 byte SET_PORT
-byte LOAD_BSWAP,"216-P1.BIN",0,word $20_0
+byte LOAD_BSWAP,"216-P1",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"216-S1.BIN",0,word $02_0
+byte LOAD_SROM,"216-S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"216-M1.BIN",0,word $02_0
+byte LOAD_RAW,"216-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte LOAD_FILLER,255,word $1A_0
-byte LOAD_CROM,"216-C3.BIN",0,"216-C4.BIN",0,word $80_0
-byte LOAD_CROM,"059-C5.BIN",0,"059-C6.BIN",0,word $40_0
+byte LOAD_CROM,"216-C3",0,"216-C4",0,word $80_0
+byte LOAD_CROM,"059-C5",0,"059-C6",0,word $40_0
 byte LOAD_FILLER,255,word $40_0
-byte LOAD_CROM,"059-C7.BIN",0,"059-C8.BIN",0,word $40_0
+byte LOAD_CROM,"059-C7",0,"059-C8",0,word $40_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"059-V1.BIN",0,word $20_0
-byte LOAD_RAW,"216-V2.BIN",0,word $20_0
-byte LOAD_RAW,"059-V3.BIN",0,word $20_0
-byte LOAD_RAW,"216-V4.BIN",0,word $20_0
+byte LOAD_RAW,"059-V1",0,word $20_0
+byte LOAD_RAW,"216-V2",0,word $20_0
+byte LOAD_RAW,"059-V3",0,word $20_0
+byte LOAD_RAW,"216-V4",0,word $20_0
 byte 0
 }
 
