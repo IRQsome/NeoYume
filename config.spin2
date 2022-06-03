@@ -1,0 +1,54 @@
+OBJ vconst = "NeoVGA.spin2"
+CON
+
+'' This can be defined to skip game selection
+'#define DIRECT_BOOT game_mslug
+
+'' Wether to use japanese AES BIOS (neo-po.bin) or export AES BIOS (neo-epo.bin)
+'' This affects text language and regional censorship.
+'' (choose between red blood and being able to read the text, lol)
+USE_JP_BIOS = false
+
+' For PSRAM (either type)
+PSRAM_CLK = 56
+PSRAM_SELECT = 57
+PSRAM_BASE = 40
+
+PSRAM_WAIT  = 10
+PSRAM_DELAY = 4
+
+
+{
+VIDEO_MODE = vconst.MODE_VGA2X
+VIDEO_SUBMODE = vconst.SUBMODE_NTSC
+
+VGA_BASEPIN = 32
+VGA_VSYNC   = VGA_BASEPIN + 4
+
+
+'}
+'{
+VIDEO_MODE = vconst.MODE_SVID_AND_COMP
+VIDEO_SUBMODE = vconst.SUBMODE_NTSC
+
+VGA_BASEPIN = 24
+VGA_VSYNC   = 0
+'}
+{
+VIDEO_MODE = vconst.MODE_HDMI
+VIDEO_SUBMODE = 0
+
+VGA_BASEPIN = 8
+VGA_VSYNC   = 0
+'}
+
+AUDIO_LEFT  = 24+6
+AUDIO_RIGHT = AUDIO_LEFT + 1
+
+'' USB Keyboard/gamepad.
+USB0_BASEPIN = 16             ' USB port0/port1 pin block
+NEXT_BASEPIN = 4              ' Add to BASEPIN for next USB port pin
+ENABLE_PIN   = 1              ' USB object enables port voltage protection
+DM_PIN       = 2              ' Add to BASEPIN
+
+

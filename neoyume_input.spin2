@@ -1,0 +1,31 @@
+CON ' Header
+''
+''   ###    ### #########   ######       #####    ### ####   ### ###          ### #########
+''    ###    #   ##     #  ##    ##        ##     #    ##     #   ###        ###   ##     #
+''    # ##   #   ##  #    ##      ##    #   ##   #     ##     #   # ##      # ##   ##  #
+''    #  ##  #   #####   ###      ###  ###   ## #      ##     #   #  ##    #  ##   #####
+''    #   ## #   ##  #    ##      ##    #     ##       ##     #   #   ##  #   ##   ##  #
+''    #    ###   ##      # ##    ##           ##        ##   #    #    ###    ##   ##      #
+''   ###    ### #########   ######           ####        ####    ###    #    #### #########
+''
+''                              ＭＡＸ　２５６　ＭＥＧＡ
+''                            ＰＲＯＰ－ＧＥＡＲ　ＳＰＥＣ
+''
+#include "config.spin2"
+
+OBJ
+usb : "1CogKbM_neoyume.spin2"
+
+PUB main()
+usb.start(USB0_BASEPIN, USB0_BASEPIN + ENABLE_PIN, USB0_BASEPIN + DM_PIN, 0, $60,%11,%1100,%11<<16,%1100<<16)
+usb.setEmuPadMapping( 0,usb.KEY_UP)             ' Up
+usb.setEmuPadMapping( 1,usb.KEY_DOWN)           ' Down
+usb.setEmuPadMapping( 2,usb.KEY_LEFT)           ' Left
+usb.setEmuPadMapping( 3,usb.KEY_RIGHT)          ' Right
+usb.setEmuPadMapping( 4,usb.KEY_Z)              ' A
+usb.setEmuPadMapping( 5,usb.KEY_X)              ' B
+usb.setEmuPadMapping( 6,usb.KEY_C)              ' C
+usb.setEmuPadMapping( 7,usb.KEY_V)              ' D
+usb.setEmuPadMapping( 8,usb.KEY_ENTER)          ' Start
+usb.setEmuPadMapping( 9,usb.KEY_BKSPACE)        ' Select
+cogstop(cogid)

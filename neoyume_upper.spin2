@@ -1,0 +1,586 @@
+CON ' Header
+''
+''   ###    ### #########   ######       #####    ### ####   ### ###          ### #########
+''    ###    #   ##     #  ##    ##        ##     #    ##     #   ###        ###   ##     #
+''    # ##   #   ##  #    ##      ##    #   ##   #     ##     #   # ##      # ##   ##  #
+''    #  ##  #   #####   ###      ###  ###   ## #      ##     #   #  ##    #  ##   #####
+''    #   ## #   ##  #    ##      ##    #     ##       ##     #   #   ##  #   ##   ##  #
+''    #    ###   ##      # ##    ##           ##        ##   #    #    ###    ##   ##      #
+''   ###    ### #########   ######           ####        ####    ###    #    #### #########
+''
+''                              ＭＡＸ　２５６　ＭＥＧＡ
+''                            ＰＲＯＰ－ＧＥＡＲ　ＳＰＥＣ
+''
+#include "config.spin2"
+
+' PSRAM16 is the only viable setup,
+' but this is kept to keep more of the code portable with MegaYume
+#define USE_PSRAM16
+
+MKRAM_BASE = $1_0000
+
+HEAPSIZE = 1024*8
+
+VINT_LOCK = 9
+STATIC_LOCKS = decod VINT_LOCK
+
+PATH_MAX = 256
+
+SEEK_SET  = 0
+SEEK_CUR  = 1
+SEEK_END  = 2
+
+CON
+
+BG_NORMAL = $010101_00
+BG_SELECTION = $0101A0_00
+
+FG_NORMAL = $FDFDFD_00
+FG_ISSUE  = $B0C040_00
+FG_BROKEN = $C04040_00
+FG_GREY   = $606060_00
+
+VAR
+
+long exmem_mailbox[8*3]
+
+byte lspc_cog,blt_cog,exmem_cog
+
+OBJ
+
+video : "NeoVGA"
+c : "libc.a"
+a : "fsadapter.c"
+exmem : "psram16drv.spin2"
+
+PUB main() | tmp,tmp2
+
+org
+              ' allocate all the locks like some sort of maniac    
+              mov pa,#0
+              rep @.lockmadness,#16
+              locknew pb wc
+        if_nc bith pa,pb
+.lockmadness
+              ' deallocate all the ones we don't want
+              andn pa,##STATIC_LOCKS
+              mov pb,#0
+              rep @.lockmadness2,#16
+              shr pa,#1 wc
+        if_c  lockret pb
+              add pb,#1
+.lockmadness2
+end
+
+' setup video driver
+video.start($F8,0,long[$20],VIDEO_MODE,VGA_BASEPIN,VGA_VSYNC,VIDEO_SUBMODE) '
+
+lspc_cog := coginit(COGEXEC_NEW,long[$34],0)
+blt_cog := coginit(COGEXEC_NEW,long[$38],0)
+coginit(COGEXEC_NEW,long[$44],0)
+
+'longmove(long[$24],@menu_palette,16)
+gen_gradient_palette(long[$24]+0*16*4,BG_NORMAL,FG_NORMAL)
+gen_gradient_palette(long[$24]+1*16*4,BG_NORMAL,FG_ISSUE)
+gen_gradient_palette(long[$24]+2*16*4,BG_NORMAL,FG_BROKEN)
+gen_gradient_palette(long[$24]+3*16*4,BG_NORMAL,FG_GREY)
+gen_gradient_palette(long[$24]+4*16*4,BG_SELECTION,FG_NORMAL)
+gen_gradient_palette(long[$24]+5*16*4,BG_SELECTION,FG_ISSUE)
+gen_gradient_palette(long[$24]+6*16*4,BG_SELECTION,FG_BROKEN)
+gen_gradient_palette(long[$24]+7*16*4,BG_SELECTION,FG_GREY)
+
+wordfill(long[$28]+$E000," ",32*40)
+putgfx(256,5,1,30,4)
+
+_mount(@"/sd",c._vfs_open_sdcard())
+exmem_start()
+
+putstring(@"MAX 256 MEGA",14,6,0)
+putstring(@"PROP-GEAR SPEC",13,7,0)
+putstring(@"Beta 02",2,6,0)
+
+{
+repeat
+  repeat tmp2 from 0 to 9
+    putstring(word[$60].[tmp2] ? @"X" : @"_",20+tmp2,8,0)
+'}
+
+
+#ifdef DIRECT_BOOT
+load_game(@DIRECT_BOOT)
+#else
+tmp := do_gamechoose()
+load_game(gamelist[tmp]+@gamedb_base)
+#endif
+
+putstring(@"Load ok?",2,10,0)
+'repeat
+
+putstring(@"ABCD",0,0,0)
+putstring(@"ABCD",0,27,0)
+putstring(@"ABCD",40-4,0,0)
+putstring(@"ABCD",40-4,27,0)
+
+' test
+exmem_stop()
+coginit(HUBEXEC_NEW,long[$1C],0)
+coginit(HUBEXEC_NEW,long[$3C],0)
+coginit(HUBEXEC_NEW,long[$30],0)
+coginit(COGEXEC+cogid(),long[$40],0)
+
+
+PRI putstring(str,x,y,attr) | chr
+repeat while chr:=byte[str++]
+  if x <+ 40 and y <+ 28
+    word[long[$28]+$E004][y+x<<5] := chr + attr
+  x++
+
+PRI putgfx(base,x,y,width,height) | ptr
+repeat width
+  ptr := @word[long[$28]+$E004][y+x<<5]
+  repeat height
+    word[ptr] := base++
+    ptr+=2
+  x++
+
+PRI settiles(x1,x2,y1,y2,tile) | i
+if x2 >= x1 and y2 >= y1
+  repeat i from x1 to x2
+    wordfill(long[$28]+$E004+(i<<5+y1)<<1,tile,y2-y1+1)
+
+
+PRI count_romsize(gameptr) : size | cmd
+gameptr += strsize(gameptr)+1 ' advance to display name
+gameptr += strsize(gameptr)+1 ' advance to ROM prefix
+gameptr += strsize(gameptr)+1+1 ' advance to script
+repeat 
+  case cmd := byte[gameptr++]
+    0: quit
+    LOADCMD_FIRST..LOADCMD_LAST,(LOADCMD_FIRST+WITH_OFFSET)..(LOADCMD_LAST+WITH_OFFSET):
+      gameptr += strsize(gameptr)+1
+      if cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET
+        gameptr += strsize(gameptr)+1
+      size += word[gameptr]*4096
+      gameptr += 2
+      if cmd >= LOADCMD_FIRST+WITH_OFFSET
+        gameptr += 2
+    LOAD_BIOS:
+      ' Doesn't really count
+    LOAD_FILLER:
+      gameptr += 3
+    (SETCMD_FIRST+WITH_OFFSET)..(SETCMD_LAST+WITH_OFFSET):
+      gameptr += 2
+    SET_TILEMASK:
+      gameptr++
+    other: ' Do nothing
+
+
+PRI load_game(gameptr) | common,cmd,fn1,fn2,len,exptr,tmp
+
+common := __builtin_alloca(PATH_MAX)
+fn1 := __builtin_alloca(PATH_MAX)
+fn2 := __builtin_alloca(PATH_MAX)
+
+exptr := 0
+
+c.strcpy(common,@"/sd/NEOYUME/")
+c.strncat(common,gameptr,PATH_MAX-1) ' catenate romset name
+c.strncat(common,@"/",PATH_MAX-1)
+gameptr += strsize(gameptr)+1 ' advance to display name
+gameptr += strsize(gameptr)+1 ' advance to ROM prefix
+c.strncat(common,gameptr,PATH_MAX-1) ' catenate prefix
+gameptr += strsize(gameptr)+1+1 ' advance to script
+long[$88] := 0 ' default to no bankswitch
+long[$A4] := 31 ' default to no tile masking
+' Interpret load script
+repeat 
+  case cmd := byte[gameptr++]
+    0: quit
+    LOADCMD_FIRST..LOADCMD_LAST,(LOADCMD_FIRST+WITH_OFFSET)..(LOADCMD_LAST+WITH_OFFSET):
+      c.strcpy(fn1,common)
+      c.strncat(fn1,gameptr,PATH_MAX-1) ' first file name
+      gameptr += strsize(gameptr)+1
+      if cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET
+        c.strcpy(fn2,common)
+        c.strncat(fn2,gameptr,PATH_MAX-1) ' second file name
+        gameptr += strsize(gameptr)+1
+      else
+        byte[fn2] := 0
+      len := word[gameptr]*4096
+      gameptr += 2
+      if cmd >= LOADCMD_FIRST+WITH_OFFSET
+        cmd -= WITH_OFFSET
+        tmp := word[gameptr]*4096
+        gameptr += 2
+      else
+        tmp := 0
+      load_romdata(exptr,len,tmp,cmd,fn1,fn2)
+      exptr += len
+    LOAD_BIOS:
+      c.strcpy(fn1,@"/sd/NEOYUME/NEOGEO/")
+      if USE_JP_BIOS
+        c.strncat(fn1,@"NEO-PO.BIN",PATH_MAX-1)
+      else
+        c.strncat(fn1,@"NEO-EPO.BIN",PATH_MAX-1)
+      load_romdata(exptr,$2_0000,0,LOAD_BSWAP,fn1,0)
+      exptr += $2_0000
+    LOAD_FILLER:
+      tmp := byte[gameptr++]
+      len := word[gameptr]*4096
+      gameptr += 2
+      exmem_fill(exptr,tmp,len,true)
+      exptr += len
+    SETCMD_FIRST..SETCMD_LAST:
+      long[$80][cmd-SETCMD_FIRST] := exptr
+    (SETCMD_FIRST+WITH_OFFSET)..(SETCMD_LAST+WITH_OFFSET):
+      long[$80][cmd-(SETCMD_FIRST+WITH_OFFSET)] := exptr + (word[gameptr] signx 15)*4096
+      gameptr += 2
+    SET_BANKSWITCH_2M:
+      long[$88] := $10_0000
+    SET_BANKSWITCH_4M:
+      long[$88] := $30_0000
+    SET_TILEMASK:
+      long[$A4] := byte[gameptr++]
+    other:
+      c.sprintf(fn1,@"bad script: %d !",cmd)
+      putstring(fn1,2,25,0)
+      repeat
+  if exptr > $200_0000
+    c.sprintf(fn1,@"exptr over: %08X !",exptr)
+    putstring(fn1,2,25,0)
+    repeat
+
+PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,i,j,k,l,tmpstr
+settiles(0,39,22,27," ")
+tmpstr := __builtin_alloca(64)
+c.sprintf(tmpstr,@"Loading %d bytes, type %d",size,type)
+putstring(tmpstr,2,22,0)
+putstring(path1,3,23,0)
+if path2
+  putstring(path2,3,24,0)
+
+
+f1 := c.fopen(path1,@"rb")
+ifnot f1
+  'c.sprintf(tmpstr,@"file1 fail: %d !",errno)
+  'putstring(tmpstr,2,25,0)
+  putstring(@"file1: ",2,25,0)
+  putstring(c.strerror(errno),2+7,25,0)
+  repeat
+if type==LOAD_CROM
+  f2 := c.fopen(path2,@"rb")
+  ifnot f2
+    'c.sprintf(tmpstr,@"file2 fail: %d !",errno)
+    'putstring(tmpstr,2,25,0)
+    putstring(@"file2: ",2,25,0)
+    putstring(c.strerror(errno),2+7,25,0)
+    repeat
+else
+  f2 := 0
+
+if offset
+  c.fseek(f1,offset,SEEK_SET)
+  if f2
+    c.fseek(f2,offset,SEEK_SET)
+
+pos := 0
+repeat while pos < size
+  case type
+    LOAD_RAW: ' Only type that can load arbitrary lengths
+      tmp := $10000 <# size-pos
+      c.fread(MKRAM_BASE,1,tmp,f1)
+      exmem_write(target+pos,MKRAM_BASE,tmp,false)
+      pos+=tmp
+    LOAD_BSWAP:
+      c.fread(MKRAM_BASE,1,$10000,f1)
+      repeat i from MKRAM_BASE to MKRAM_BASE+$FFFC step 4
+        long[i] := __movbyts(long[i],%%2301)
+      exmem_write(target+pos,MKRAM_BASE,$1_0000,false)
+      pos+=$10000
+    LOAD_CROM:
+      c.fread(MKRAM_BASE+$0000,1,$4000,f1)
+      c.fread(MKRAM_BASE+$4000,1,$4000,f2)
+      tmp := MKRAM_BASE+$8000
+      repeat i from 0 to 255
+        k := MKRAM_BASE+i*64
+        repeat 16
+          long[tmp] := __mergeb(word[$0020+k]+word[$4020+k]<<16)
+          tmp += 4
+          long[tmp] := __mergeb(word[$0000+k]+word[$4000+k]<<16)
+          tmp += 4
+          k+=2
+      exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
+      pos+=$8000
+    LOAD_SROM:
+      c.fread(MKRAM_BASE,1,$10000,f1)
+      repeat i from $ffff to $0000
+        j := i
+        repeat
+          j.[4..0] := j.[4..2] + (j.[1..0]^2)<<3
+        while i < j
+        tmp := byte[MKRAM_BASE+i]
+        byte[MKRAM_BASE+i] := byte[MKRAM_BASE+j]
+        byte[MKRAM_BASE+j] := tmp
+      exmem_write(target+pos,MKRAM_BASE,$10000,false)
+      pos+=$10000
+    other:
+      putstring(@"what???  ",2,25,0)
+      repeat
+
+if f1
+  c.fclose(f1)
+if f2
+  c.fclose(f2)
+
+CON
+  GAMECHOOSE_SIZE = 12
+  GAMECHOOSE_Y = 9
+  GAMECHOOSE_X = 3
+  GAMECHOOSE_WIDTH = 33 ' Note: game titles are NOT truncated
+
+PRI do_gamechoose() : selected | i,games_got,mingot,maxgot,got_count,max_count,dir,ent,name,tmpstr,tmp,tmp2,input,previnput,drawtop,drawlast
+tmpstr := __builtin_alloca(64)
+max_count := (@gamelist_end - @gamelist)/2
+games_got := __builtin_alloca(max_count)
+bytefill(games_got,0,max_count)
+mingot := posx
+maxgot := negx
+got_count := 0
+dir := c.opendir(@"/sd/NEOYUME/")
+ifnot dir
+  putstring(@"Directory error:",2,24,0)
+  putstring(c.strerror(errno),3,25,0)
+  repeat
+repeat
+  ent := c.readdir(dir)
+  ifnot ent
+    quit
+  name := a.get_name(ent)
+  'putstring(name,2,25,0)
+  repeat i from 0 to max_count-1
+    ifnot c.strcasecmp(name,gamelist[i]+@gamedb_base) '|| not i.[0]
+      byte[games_got][i] := 1
+      got_count++
+      mingot <#= i
+      maxgot #>= i
+      quit
+c.closedir(dir)
+tmp := 0
+repeat i from 0 to max_count-1
+  if byte[games_got][i]
+    byte[games_got][i] := ++tmp
+
+ifnot got_count
+  putstring(@"NO GAMES!",4,14,0)
+  repeat
+
+selected := mingot
+drawtop := mingot
+
+repeat
+  ent := drawtop
+  repeat i from GAMECHOOSE_Y to GAMECHOOSE_Y+GAMECHOOSE_SIZE-1
+    tmp := selected == ent ? 4<<12 : 0
+    if ent <= maxgot
+      name := gamelist[ent]+@gamedb_base
+      c.sprintf(tmpstr,@"%dM",(count_romsize(name)+$1ffff)+/$20000)
+      name += strsize(name)+1
+      tmp2 := name+strsize(name)+1
+      tmp2 += strsize(tmp2)+1
+      tmp2 := tmp+byte[tmp2]<<12
+      settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,i,i,"."+(3<<12)+tmp)
+      putstring(tmpstr,GAMECHOOSE_X+GAMECHOOSE_WIDTH-strsize(tmpstr),i,tmp2)
+      putstring(name,GAMECHOOSE_X,i,tmp2)
+      drawlast := ent
+      repeat until byte[games_got][++ent]
+    else
+      settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,i,i," "+tmp)
+  putstring(string(4),GAMECHOOSE_X+GAMECHOOSE_WIDTH,GAMECHOOSE_Y,drawtop == mingot ? 3<<12 : 0)
+  putstring(string(5),GAMECHOOSE_X+GAMECHOOSE_WIDTH,GAMECHOOSE_Y+GAMECHOOSE_SIZE-1,drawlast == maxgot ? 3<<12 : 0)
+  tmp := ((byte[games_got][drawtop]-1)*(GAMECHOOSE_SIZE-2)) / (got_count-GAMECHOOSE_SIZE) <# GAMECHOOSE_SIZE-3
+  'c.sprintf(tmpstr,@"test: %3d",tmp)
+  'putstring(tmpstr,GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+1,0)
+  repeat i from GAMECHOOSE_Y+1 to GAMECHOOSE_Y+GAMECHOOSE_SIZE-2
+    if i-(GAMECHOOSE_Y+1) == tmp && got_count > GAMECHOOSE_SIZE
+      putstring(string(14),GAMECHOOSE_X+GAMECHOOSE_WIDTH,i,0<<12)
+    else
+      putstring(string(58),GAMECHOOSE_X+GAMECHOOSE_WIDTH,i,3<<12)
+
+  previnput := 0
+  repeat
+    previnput := input
+    input := long[$60]
+    tmp := input & !previnput
+    if tmp.[0] && selected > mingot
+      repeat until byte[games_got][--selected]
+      if selected == drawtop and drawtop > mingot
+        repeat until byte[games_got][--drawtop]
+      quit
+    if tmp.[1] && selected < maxgot
+      repeat until byte[games_got][++selected]
+      if selected == drawlast and drawlast < maxgot
+        repeat until byte[games_got][++drawtop]
+      quit
+    if tmp.[4] or tmp.[8]
+      return
+
+
+PRI gen_gradient_palette(ptr,bg,fg) | i
+long[ptr][0]:=0
+repeat i from 0 to 14
+  long[ptr][i+1]:= __blnpix(bg,fg, i frac $e0e0e0e)
+
+
+PRI __mulpix(a,b) : r
+r := a
+asm
+  mulpix r,b
+endasm
+PRI __addpix(a,b) : r
+r := a
+asm
+  addpix r,b
+endasm
+PRI __blnpix(a,b,ratio) : r
+r := a
+asm
+  setpiv ratio
+  blnpix r,b
+endasm
+PRI __movbyts(in,pattern) : r
+r := in
+asm
+  movbyts r,pattern
+endasm
+PRI __splitb(in) : r
+r := in
+asm
+  splitb r
+endasm
+PRI __splitw(in) : r
+r := in
+asm
+  splitw r
+endasm
+PRI __mergeb(in) : r
+r := in
+asm
+  mergeb r
+endasm
+PRI __mergew(in) : r
+r := in
+asm
+  mergew r
+endasm
+
+CON
+
+#1
+LOAD_RAW,LOAD_BSWAP,LOAD_CROM,LOAD_SROM
+LOAD_BIOS
+LOAD_FILLER
+SET_PROG,SET_PORT,SET_UNUSED,SET_BIOS,SET_ADPCM_A,SET_ADPCM_B,SET_CHAR,SET_FIX,SET_Z80
+SET_BANKSWITCH_2M,SET_BANKSWITCH_4M
+SET_TILEMASK
+
+LOADCMD_FIRST = LOAD_RAW
+LOADCMD_LAST = LOAD_SROM ' Note: LOAD_BIOS doesn't count
+SETCMD_FIRST = SET_PROG
+SETCMD_LAST = SET_Z80
+
+#0,GAME_OK,GAME_ISSUE,GAME_BROKEN
+
+WITH_OFFSET = $80
+
+GREYM = $010101_00
+DAT
+menu_palette
+long 0,$01*GREYM,$13*GREYM,$25*GREYM,$37*GREYM,$49*GREYM,$5B*GREYM,$6D*GREYM,$7F*GREYM,$91*GREYM,$A3*GREYM,$B5*GREYM,$C7*GREYM,$D9*GREYM,$EB*GREYM,$FD*GREYM
+
+PRI exmem_start() | tmp,cogs,banks
+
+tmp := __builtin_alloca(8*4)
+cogs := __builtin_alloca(8*4)
+banks := __builtin_alloca(32*4)
+
+if exmem_cog
+  return
+
+long[tmp][0] := clkfreq
+long[tmp][1] := 1<<exmem.UNREGCLK_BIT
+#ifdef USE_HYPER
+long[tmp][2] := HYPER_RESET < 32 ? 1<<HYPER_RESET : 0
+long[tmp][3] := HYPER_RESET >= 32 ? 1<<HYPER_RESET : 0
+#else
+long[tmp][2] := 0
+long[tmp][3] := 0 
+#endif
+
+#ifdef USE_PSRAM16
+long[tmp][4] := PSRAM_BASE
+#elseifdef USE_PSRAM4
+long[tmp][4] := PSRAM_BASE
+#elseifdef USE_HYPER
+long[tmp][4] := HYPER_BASE
+#endif
+long[tmp][5] := banks
+long[tmp][6] := cogs
+long[tmp][7] := @exmem_mailbox[0]
+
+long[cogs][0]:=-1<<16 + %1_111<<12
+longfill(cogs+4,-1<<16,7)
+longfill(banks,negx,32)
+
+#ifdef USE_PSRAM16
+long[banks][0] := 512<<16 + (PSRAM_DELAY+1)<<13 + 1<<12 + 24
+long[banks][1] := 512<<16 + (PSRAM_DELAY+1)<<13 + 1<<12 + 24
+long[banks][16] := PSRAM_SELECT + PSRAM_CLK<<8
+long[banks][17] := PSRAM_SELECT + PSRAM_CLK<<8
+#elseifdef USE_PSRAM4
+long[banks][0] := 128<<16 + (PSRAM_DELAY+1)<<13 + 1<<12 + 24
+long[banks][16] := PSRAM_SELECT + PSRAM_CLK<<8
+#elseifdef USE_HYPER
+long[banks][0] := 128<<16 + (HYPER_DELAY+1)<<13 + 1<<12 + 24
+long[banks][16] := HYPER_SELECT + HYPER_CLK<<8 + HYPER_RWDS<<16 + 6<<25 ' Latency????
+#endif
+
+exmem_mailbox[0] := -1
+cogs := exmem.getDriverAddr()
+exmem_cog := coginit(COGEXEC_NEW,cogs,tmp)+1
+repeat while exmem_mailbox[0] ' wait for init so data structures can go dead
+
+PRI exmem_stop()
+if exmem_cog
+  exmem_sync()
+  cogstop((exmem_cog\0)-1)
+
+PRI exmem_sync()
+repeat while exmem_mailbox[0]
+
+PRI exmem_write(dst,src,length,async)
+exmem_sync()
+exmem_mailbox[2] := length
+exmem_mailbox[1] := src
+exmem_mailbox[0] := exmem.R_WRITEBURST + (dst & $fffffff)
+ifnot async
+  exmem_sync()
+
+PRI exmem_fill(dst,val,length,async)
+exmem_sync()
+exmem_mailbox[2] := length
+exmem_mailbox[1] := val
+exmem_mailbox[0] := exmem.R_WRITEBYTE + (dst & $fffffff)
+ifnot async
+  exmem_sync()
+
+PRI exmem_read(dst,src,length,async)
+exmem_sync()
+exmem_mailbox[2] := length
+exmem_mailbox[1] := dst
+exmem_mailbox[0] := exmem.R_READBURST + (src & $fffffff)
+ifnot async
+  exmem_sync()
+
+
+#include "neoyume_gamedb.spin2"
+
