@@ -1,5 +1,6 @@
 <h1 style="display: none;">NeoYume Emulator</h1>
-<pre>
+
+```
   ###    ### #########   ######       #####    ### ####   ### ###          ### ######### 
    ###    #   ##     #  ##    ##        ##     #    ##     #   ###        ###   ##     # 
    # ##   #   ##  #    ##      ##    #   ##   #     ##     #   # ##      # ##   ##  #    
@@ -10,7 +11,7 @@
 
                               ＭＡＸ　２５６　ＭＥＧＡ
                             ＰＲＯＰ－ＧＥＡＲ　ＳＰＥＣ
-</pre>
+```
 
 NeoYume is a NeoGeo AES emulator for Parallax P2 micro-controllers with appropriate external memory
 (Currently supported: 4xQPI PSRAM, as on [P2-EC32MB](https://www.parallax.com/product/p2-edge-module-with-32mb-ram/) (owie ouch, that retail price)).
