@@ -3485,8 +3485,7 @@ lspc_linelp
               and lspc_sprx,#511
               ' Vertical computation
               mov lspc_tmp3,lspc_vshrink
-              add lspc_tmp3,#1 wc ' just vshrink + 1. Always clears C
-              getbyte lspc_tmp2,lspc_spry,#0 ' lookup offset
+              add lspc_tmp3,#1 ' just vshrink + 1
 
         if_z  jmp #.sticky ' skip over this part if sticky (flag contention / don't have previous SCB3 anymore)
               testb lspc_spry,#8 wz
