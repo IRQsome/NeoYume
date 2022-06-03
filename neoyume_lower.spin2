@@ -5430,7 +5430,7 @@ zk_init
               'setse1 #$10+VINT_LOCK
 
 zk_doreset
-              drvl #39 ' DEBUG LED
+              'drvl #39 ' DEBUG LED
               debug("Z80 reset START")
               mov zk_pc,#0
               'mov zk_accu,#$FF
@@ -5666,7 +5666,7 @@ opn_init
               shr adpcm_b_base,#4
 
 
-              drvl #38 addpins 1 ' DEBUG LED
+              'drvl #38 addpins 1 ' DEBUG LED
 
               drvh     opn_leftp
               drvh     opn_rightp
@@ -6574,7 +6574,7 @@ do_output
               add       opn_arg2,opn_filter_right
 
 
-              '{ ' DEBUG LED
+              { ' DEBUG LED
               testp    opn_rightp wc
         if_c  drvh #38 'Took too long!
               '}
@@ -7189,7 +7189,7 @@ opn_statusread
 
 
 opn_portwrite
-              drvh #39 ' DEBUG LED
+              'drvh #39 ' DEBUG LED
               and zk_tmp8,#255 ' make sure we only get one byte
               testb zk_ea,#0 wc
         if_nc jmp #.address
