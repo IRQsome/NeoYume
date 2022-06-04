@@ -75,11 +75,13 @@ waitms(1) ' wait for cog to have booted for sure before invalidating stack frame
 
 CON
 
-'' VDP vertical timing (well, conjecture about it, anyways):
-'' 6 background color lines
+'' NeoGeo vertical timing (well, conjecture about it, anyways):
+'' 8 sync lines
+'' 8 blanking lines
+'' 8 background color lines
 '' 224 active lines (starts line 0 as per Vcounter)
-'' 10 background color lines
-'' 22 blank/sync lines
+'' 8 background color lines
+'' 8 blanking lines
 
 VDPR_OFFSET = 3 ' lines that rendering has to run ahead
 
@@ -787,7 +789,7 @@ PRI computeClockMode(desiredHz) : mode | vco, finput, f, p, div, m, error, bestE
             mode |= %0111 ' don't enable oscillator
 
 CON ' Clocky business
-    
+
     MVS_CLOCK = 24_000_000
     AES_CLOCK = 24_167_829
     MASTER_CLK = AES_CLOCK
@@ -833,4 +835,3 @@ CON  ' CSC constant calculation
         HDMI_HSYNC  = %1101010100_1101010100_0010101011_10
         HDMI_VSYNC  = %0101010100_0101010100_0101010100_10
         HDMI_HVSYNC = %0101010100_0101010100_1010101011_10
-
