@@ -14,9 +14,12 @@ CON ' Header
 #include "config.spin2"
 
 OBJ
+#ifdef INPUT_USE_USB
 usb : "1CogKbM_neoyume.spin2"
+#endif
 
-PUB main()
+PUB main() | i,p,data
+#ifdef INPUT_USE_USB
 usb.start(USB0_BASEPIN, USB0_BASEPIN + ENABLE_PIN, USB0_BASEPIN + DM_PIN, 0, $60,%11,%1100,%11<<16,%1100<<16)
 usb.setEmuPadMapping( 0,usb.KEY_UP)             ' Up
 usb.setEmuPadMapping( 1,usb.KEY_DOWN)           ' Down
@@ -29,3 +32,35 @@ usb.setEmuPadMapping( 7,usb.KEY_V)              ' D
 usb.setEmuPadMapping( 8,usb.KEY_ENTER)          ' Start
 usb.setEmuPadMapping( 9,usb.KEY_BKSPACE)        ' Select
 cogstop(cogid)
+#endif
+
+#ifdef INPUT_USE_PINS
+
+repeat i from 0 to 31
+  if (p:=pin_table[i]) +< 64
+    wrpin(p,PINPUT_PINMODE)
+    pinh(p)
+
+repeat
+  data := 0
+  repeat i from 0 to 31
+    if (p:=pin_table[i]) +< 64
+      data.[i] := pinr(p)
+      'pinw(p-4,data.[i])
+  long[$60] := data
+
+#endif
+
+
+DAT
+#ifdef INPUT_USE_PINS
+pin_table byte
+byte PINPUT_P1_UP,PINPUT_P1_DOWN,PINPUT_P1_LEFT,PINPUT_P1_RIGHT
+byte PINPUT_P1_A,PINPUT_P1_B,PINPUT_P1_C,PINPUT_P1_D
+byte PINPUT_P1_START,PINPUT_P1_SELECT
+byte -1[6]
+byte PINPUT_P2_UP,PINPUT_P2_DOWN,PINPUT_P2_LEFT,PINPUT_P2_RIGHT
+byte PINPUT_P2_A,PINPUT_P2_B,PINPUT_P2_C,PINPUT_P2_D
+byte PINPUT_P2_START,PINPUT_P2_SELECT
+byte -1[6]
+#endif
