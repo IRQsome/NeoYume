@@ -2016,7 +2016,7 @@ mk_hub_tst_tas
               test mk_opword,#%11_000_000 wcz
         if_c_or_z ret ' not TAS
               test mk_opword,#%00_111_000 wz
-        if_nz ret ' not register TAS (memory TAS is broken due to buggy SEGA bus logic)
+        'if_nz ret ' not register TAS (memory TAS is broken due to buggy SEGA bus logic)
               shr mk_memvalue,#24
               or mk_memvalue,#$80
               jmp mk_writef
@@ -3390,6 +3390,7 @@ DAT ' LSPC cog
               org
 lspc_entry
               'drvl #38 ' DEBUG LED
+              {
               '' Generate vertial shrink table
               mov ptra,lspc_shrinkptr
               mov lspc_vshrink,#0
@@ -3407,6 +3408,7 @@ lspc_entry
 
               incmod lspc_vshrink,#255 wc
         if_nc jmp #.outer
+              }
 
               debug(uhex_byte_array(lspc_shrinkptr,#256))
 
