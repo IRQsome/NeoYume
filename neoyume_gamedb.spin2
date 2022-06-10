@@ -5,6 +5,7 @@ wordfit @game_crsword  - @gamedb_base
 wordfit @game_cyberlip - @gamedb_base
 wordfit @game_doubledr - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
+wordfit @game_ganryu   - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
 wordfit @game_karnovr  - @gamedb_base
 'wordfit @game_kizuna   - @gamedb_base
@@ -529,6 +530,25 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+'' Note: need decrypted C/S ROMs
+game_ganryu byte "ganryu",0,"Ganryu",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"GANN_C1",0,"GANN_C2",0,word $100_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"252-P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"252-V1",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"GANN_S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"252-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+
+
 ' Holy recycled ROM on a bicycle
 ' NOTE: THEM SHITASS MEMORY HOLES AGAIN
 {
@@ -555,6 +575,7 @@ byte LOAD_RAW,"059-V3",0,word $20_0
 byte LOAD_RAW,"216-V4",0,word $20_0
 byte 0
 }
+
 
 
 

@@ -33,6 +33,7 @@ Note: all filenames and paths are case-insensitive. The FAT driver without LFN a
 - Create a `NEOYUME` directory on the root of the card
 - Place your `neo-epo.bin` (or `neo-po.bin` if `USE_JP_BIOS` is set in config) into `/NEOYUME/NEOGEO/` (i.e. `/NEOYUME/NEOGEO/NEO-EPO.BIN`)
 - Unzip your MAME-style game ROMs into the `NEOYUME` directory, such that the paths look like this: `/NEOYUME/MSLUG/201-C1.BIN`. **All files must have a .bin extension, rename them if they have .c1,.v1,etc kinda extensions!**
+- Some games (noted in the compatibility list) need pre-decrypted ROMs. (Decrypting the normal MAME sets on load is possible, but would be extremely slow)
 
 #### Notes on acquiring ROMs legally
 
@@ -66,6 +67,7 @@ These are just the games I tested, to the extent that I tested them. Don't compl
 |`cyberlip`|Cyber-Lip|Doesn't boot|
 |`doubledr`|Double Dragon|**Works**|
 |`fatfury`|Fatal Fury|**Works**|
+|`ganryu`|Ganryu|**Works** (Needs decrypted C/S)|
 |`ironclad`|Ironclad|**Works** (need to rename files to fit in 8.3 (remove "proto_" prefix))|
 |`karnovr`|Karnov's Revenge|Black screen after eyecatcher|
 |`kof95`|King of Fighters '95|Works in theory, in practice the memory map is too holey to fit|
