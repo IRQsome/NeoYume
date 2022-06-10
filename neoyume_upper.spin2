@@ -44,6 +44,8 @@ VAR
 
 long exmem_mailbox[8*3]
 
+long exmem_size
+
 byte lspc_cog,blt_cog,exmem_cog
 
 OBJ
@@ -95,7 +97,10 @@ putgfx(256,5,1,30,4)
 _mount(@"/sd",c._vfs_open_sdcard())
 exmem_start()
 
-putstring(@"MAX 256 MEGA",14,6,0)
+tmp := c.malloc(64)
+c.sprintf(tmp,@"MAX %d MEGA",exmem_size+/$20000)
+putstring(tmp,14,6,0)
+c.free(tmp)
 putstring(@"PROP-GEAR SPEC",13,7,0)
 putstring(@"Beta 02",2,6,0)
 
@@ -247,7 +252,7 @@ repeat
       c.sprintf(fn1,@"bad script: %d !",cmd)
       putstring(fn1,2,25,0)
       repeat
-  if exptr > $200_0000
+  if exptr > exmem_size
     c.sprintf(fn1,@"exptr over: %08X !",exptr)
     putstring(fn1,2,25,0)
     repeat
@@ -538,12 +543,15 @@ long[banks][0] := 512<<16 + (PSRAM_DELAY+1)<<13 + 1<<12 + 24
 long[banks][1] := 512<<16 + (PSRAM_DELAY+1)<<13 + 1<<12 + 24
 long[banks][16] := PSRAM_SELECT + PSRAM_CLK<<8
 long[banks][17] := PSRAM_SELECT + PSRAM_CLK<<8
+exmem_size := 32*1024*1024
 #elseifdef USE_PSRAM4
 long[banks][0] := 128<<16 + (PSRAM_DELAY+1)<<13 + 1<<12 + 24
 long[banks][16] := PSRAM_SELECT + PSRAM_CLK<<8
+exmem_size := 8*1024*1024
 #elseifdef USE_HYPER
 long[banks][0] := 128<<16 + (HYPER_DELAY+1)<<13 + 1<<12 + 24
 long[banks][16] := HYPER_SELECT + HYPER_CLK<<8 + HYPER_RWDS<<16 + 6<<25 ' Latency????
+exmem_size := 8*1024*1024
 #endif
 
 exmem_mailbox[0] := -1
