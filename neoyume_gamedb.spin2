@@ -13,6 +13,7 @@ wordfit @game_kof95    - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
 wordfit @game_mslug    - @gamedb_base
 wordfit @game_mslug2   - @gamedb_base
+wordfit @game_mslugx   - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
@@ -134,6 +135,43 @@ byte LOAD_BSWAP,"P2",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"V1",0,word $40_0
 byte LOAD_RAW,"V2",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' NOTE: TOO BIG
+game_mslugx byte "mslugx",0,"Metal Slug X",0,"250-",0,GAME_ISSUE
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+'byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+'byte LOAD_CROM,"C5",0,"C6",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+'' Copy protection patches
+'{
+byte PATCH_PATTERN,long -$10_0000,long $8_0000-3
+    byte 2,6, $02,$43,$00,$01,$66,$00 ' Find pattern (ANDI.W #1,D3; BNE.W xxxx)
+    byte 4,4, $4E,$71,$4E,$71         ' Replace pattern (replace BNE.W with NOPs)
+'}
+'{
+byte PATCH_PATTERN,long -$10_0000,long $8_0000-3
+    byte 2,6, $43,$F9,$00,$2F,$FF,$E0 ' Find pattern (LEA $2FFFE0,A1)
+    byte 2,4, $00,$E0,$00,$00         ' Replace pattern (use $E00000)
+'}
+'{
+byte PATCH_SINGLE,long $3BDC - $10_0000,6, $4E,$71,$4E,$71,$4E,$71
+byte PATCH_SINGLE,long $3C0C - $10_0000,6, $4E,$71,$4E,$71,$4E,$71
+byte PATCH_SINGLE,long $3C36 - $10_0000,4, $4E,$71,$4E,$71
+'}
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $20_0
 byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80

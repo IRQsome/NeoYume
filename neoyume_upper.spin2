@@ -177,6 +177,11 @@ repeat
       gameptr += 2
     SET_TILEMASK:
       gameptr++
+    PATCH_SINGLE:
+      gameptr+=4
+      gameptr+=1+byte[gameptr]
+    PATCH_PATTERN:
+      gameptr := apply_pattern_patch(gameptr,0,false)
     other: ' Do nothing
 
 
@@ -248,6 +253,14 @@ repeat
       long[$88] := $30_0000
     SET_TILEMASK:
       long[$A4] := byte[gameptr++]
+    PATCH_SINGLE:
+      tmp := exptr + long[gameptr]
+      gameptr+=4
+      len := byte[gameptr++]
+      exmem_write(tmp,gameptr,len,true)
+      gameptr+=len
+    PATCH_PATTERN:
+      gameptr := apply_pattern_patch(gameptr,exptr,true)
     other:
       c.sprintf(fn1,@"bad script: %d !",cmd)
       putstring(fn1,2,25,0)
@@ -256,6 +269,41 @@ repeat
     c.sprintf(fn1,@"exptr over: %08X !",exptr)
     putstring(fn1,2,25,0)
     repeat
+
+PRI apply_pattern_patch(gameptr,exptr,actually) : newptr | tmp,pattern,plen,replace,rlen,roff,sinc,chklen,tmpstr
+exptr += long[gameptr] - $8000
+gameptr += 4
+chklen := long[gameptr]
+gameptr += 4
+sinc := byte[gameptr++]
+plen := byte[gameptr++]
+pattern := gameptr
+gameptr+=plen
+roff := byte[gameptr++]
+rlen := byte[gameptr++]
+replace := gameptr
+gameptr+=rlen
+
+if actually
+  tmpstr := __builtin_alloca(64)
+  settiles(0,39,22,27," ")
+  putstring(@"Applying patch pattern...",2,22,0)
+  tmp := MKRAM_BASE + $8000
+  repeat
+    if tmp >= MKRAM_BASE + $8000
+      tmp -= $8000
+      exmem_read(MKRAM_BASE,exptr+=$8000,$8000+plen,false)
+    ifnot c.memcmp(tmp,pattern,plen)
+      c.memcpy(tmp+roff,replace,rlen)
+      exmem_write(exptr+tmp+roff-MKRAM_BASE,replace,rlen,true)
+      c.sprintf(tmpstr,@"Match: %08X ",exptr+tmp+roff-MKRAM_BASE)
+      putstring(tmpstr,3,23,0)
+      'waitms(10000)
+      'repeat
+    tmp += sinc
+  while --chklen
+
+return gameptr
 
 PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,i,j,k,l,tmpstr
 settiles(0,39,22,27," ")
@@ -489,6 +537,7 @@ LOAD_FILLER
 SET_PROG,SET_PORT,SET_UNUSED,SET_BIOS,SET_ADPCM_A,SET_ADPCM_B,SET_CHAR,SET_FIX,SET_Z80
 SET_BANKSWITCH_2M,SET_BANKSWITCH_4M
 SET_TILEMASK
+PATCH_SINGLE,PATCH_PATTERN
 
 LOADCMD_FIRST = LOAD_RAW
 LOADCMD_LAST = LOAD_SROM ' Note: LOAD_BIOS doesn't count

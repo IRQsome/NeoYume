@@ -75,6 +75,7 @@ These are just the games I tested, to the extent that I tested them. Don't compl
 |`magdrop2`|Magical Drop 2|Broken sound|
 |`mslug`|Metal Slug|**Works**|
 |`mslug2`|Metal Slug 2|**Would work** (needs bigger PSRAM to load all graphics)|
+|`mslugx`|Metal Slug X|**Would work** (needs bigger PSRAM to load all graphics)|
 |`mutnat`|Mutation Nation|**Works**|
 |`neodrift`|Neo Drift Out|Glitching graphics, sound seems to die after one game|
 |`pbobbl2n`|Puzzle Bobble 2|**Works**|
