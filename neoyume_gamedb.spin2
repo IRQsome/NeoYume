@@ -5,17 +5,21 @@ wordfit @game_crsword  - @gamedb_base
 wordfit @game_cyberlip - @gamedb_base
 wordfit @game_doubledr - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
+wordfit @game_fatfursp - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
 wordfit @game_karnovr  - @gamedb_base
 'wordfit @game_kizuna   - @gamedb_base
+wordfit @game_kof94    - @gamedb_base
 wordfit @game_kof95    - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
 wordfit @game_mslug    - @gamedb_base
 wordfit @game_mslug2   - @gamedb_base
 wordfit @game_mslugx   - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
+wordfit @game_magdrop3 - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
+wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
@@ -24,6 +28,7 @@ wordfit @game_sengoku  - @gamedb_base
 wordfit @game_sengoku2 - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
+wordfit @game_spinmast - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
 wordfit @game_viewpoin - @gamedb_base
 wordfit @game_wakuwak7 - @gamedb_base
@@ -217,8 +222,7 @@ byte LOAD_RAW,"V21",0,word $08_0
 byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
-byte LOAD_RAW,"M1",0,word $01_0
-byte LOAD_RAW,"M1",0,word $01_0
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -333,6 +337,28 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_fatfursp byte "fatfursp",0,"Fatal Fury Special",0,"058-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P2",0,word $08_0
+byte LOAD_FILLER,0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
 game_crsword byte "crsword",0,"Crossed Swords",0,"037-",0,GAME_OK
 byte SET_CHAR
 byte SET_TILEMASK,14
@@ -426,6 +452,27 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_kof94 byte "kof94",0,"King of Fighters '94",0,"055-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 '' NOTE: wierd holey memory map, doesn't fit
 game_kof95 byte "kof95",0,"King of Fighters '95",0,"084-",0,GAME_ISSUE
@@ -531,6 +578,24 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_magdrop3 byte "magdrop3",0,"Magical Drop 3",0,"233-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte SET_PROG
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
 '' NOTE: Broken sound
 game_wjammers byte "wjammers",0,"Windjammers",0,"065-",0,GAME_ISSUE
 byte SET_CHAR
@@ -614,7 +679,43 @@ byte LOAD_RAW,"216-V4",0,word $20_0
 byte 0
 }
 
+'' Note: Black screen
+game_spinmast byte "spinmast",0,"Spinmaster",0,"062-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte LOAD_CROM,"C5",0,"C6",0,word $20_0
+byte LOAD_CROM,"C7",0,"C8",0,word $20_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P2",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
+
+game_neobombe byte "neobombe",0,"Neo Bomberman",0,"093-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 
