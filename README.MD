@@ -57,7 +57,7 @@ tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download 
 
 ## Game Compatibility
 
-Note that due to RAM size, late-era games over 255 megabit _can't work_, though they can be tested with missing graphics (see mslug2).
+Note that due to RAM size, late-era games over 255 megabit _can't work_ on P2-EC32MB, though they can be tested with missing graphics (see mslug2).
 
 These are just the games I tested, to the extent that I tested them. Don't complain if the victory screen crashes and burns your house down.
 
@@ -154,4 +154,10 @@ Keymap:
 |Start|Start|
 |Mode (MD only)|Select|
 
+## About
+
+NeoYume was programmed almost entirely by me, Ada Gottensträter.
+The AY/SSG core is adapted from work by Johannes Ahlebrand.
+The USB driver was written by Garry Jordan, with additional work by Marco Maccaferri,
+The loader memory driver (psram16drv.spin2) was written by Roger Loh.
 
