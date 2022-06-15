@@ -1,6 +1,9 @@
 DAT
 
 gamelist word
+wordfit @game_aodk     - @gamedb_base
+wordfit @game_aof      - @gamedb_base
+wordfit @game_ctomaday - @gamedb_base
 wordfit @game_crsword  - @gamedb_base
 wordfit @game_cyberlip - @gamedb_base
 wordfit @game_doubledr - @gamedb_base
@@ -8,6 +11,7 @@ wordfit @game_fatfury1 - @gamedb_base
 wordfit @game_fatfursp - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
+wordfit @game_kabukikl - @gamedb_base
 wordfit @game_karnovr  - @gamedb_base
 'wordfit @game_kizuna   - @gamedb_base
 wordfit @game_kof94    - @gamedb_base
@@ -28,6 +32,7 @@ wordfit @game_sengoku  - @gamedb_base
 wordfit @game_sengoku2 - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
+wordfit @game_strhoop  - @gamedb_base
 wordfit @game_spinmast - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
 wordfit @game_viewpoin - @gamedb_base
@@ -717,6 +722,97 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_ctomaday byte "ctomaday",0,"Captain Tomaday",0,"249-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_kabukikl byte "kabukikl",0,"Kabuki Klash",0,"092-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte LOAD_RAW,"V4",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_aodk byte "aodk",0,"Aggressors of Dark Kombat",0,"074-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_aof byte "aof",0,"Art of Fighting",0,"044-",0,GAME_OK
+byte SET_TILEMASK,15
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
+byte LOAD_CROM+WITH_OFFSET,"C3",0,"C4",0,word $20_0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_FILLER,255,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V4",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_strhoop byte "strhoop",0,"Street Hoop",0,"079-",0,GAME_ISSUE
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 

@@ -63,6 +63,9 @@ These are just the games I tested, to the extent that I tested them. Don't compl
 
 |ROMset name|Title|Compatibility|
 |-|-|-|
+|`aodk`|Aggressors of Dark Kombat|**Works**|
+|`aof`|Art of Fighting|**Works**|
+|`ctomaday`|Captain Tomaday|**Works**|
 |`crswords`|Crossed Swords|**Works**|
 |`cyberlip`|Cyber-Lip|Doesn't boot|
 |`doubledr`|Double Dragon|**Works**|
@@ -70,6 +73,7 @@ These are just the games I tested, to the extent that I tested them. Don't compl
 |`fatfursp`|Fatal Fury Special|**Works**|
 |`ganryu`|Ganryu|**Works** (Needs decrypted C/S)|
 |`ironclad`|Ironclad|**Works** (need to rename files to fit in 8.3 (remove "proto_" prefix))|
+|`kabukikl`|Far East of Eden - Kabuki Klash|**Works**|
 |`karnovr`|Karnov's Revenge|Black screen after eyecatcher|
 |`kof94`|King of Fighters '94|**Works**|
 |`kof95`|King of Fighters '95|Works in theory, in practice the memory map is too holey to fit|
@@ -89,6 +93,7 @@ These are just the games I tested, to the extent that I tested them. Don't compl
 |`sengoku2`|Sengoku 2|Hangs quickly|
 |`sonicwi2`|Sonic Wings 2|Broken sound|
 |`sonicwi3`|Sonic Wings 3|Broken sound|
+|`strhoop`|Street Hoop|Broken sound|
 |`spinmast`|Spinmaster|Black screen after eyecatcher|
 |`twinspri`|Twinkle Star Sprites|**Works**|
 |`viewpoint`|Viewpoint|Hangs immediately|
