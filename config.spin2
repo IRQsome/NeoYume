@@ -9,6 +9,11 @@ CON
 '' (choose between red blood and being able to read the text, lol)
 USE_JP_BIOS = false
 
+' Enable one of these to select the exmem type to use
+' Note: currently only USE_PSRAM16 actually works
+#define USE_PSRAM16
+'#define USE_PSRAM4
+
 ' For PSRAM (either type)
 PSRAM_CLK = 56
 PSRAM_SELECT = 57
@@ -88,3 +93,12 @@ PINPUT_P2_START  = -1
 PINPUT_P2_SELECT = -1
 
 
+
+'' Ignore stuff below
+
+#ifdef USE_PSRAM4
+#define USE_PSRAM_EITHER
+#endif
+#ifdef USE_PSRAM16
+#define USE_PSRAM_EITHER
+#endif

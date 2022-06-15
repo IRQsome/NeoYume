@@ -2907,7 +2907,8 @@ mk_check_core_integrity
               jmp #.chklp   '}
 
 
-DAT ' Memory arbiter
+DAT ' Memory arbiter (16 bit PSRAM)
+#ifdef USE_PSRAM16
               org 0
 ma_entry
               cogid pa
@@ -3144,6 +3145,8 @@ ma_lutcode
               long $FFFF
 
               fit 1024
+
+#endif
 
 DAT ' I/O glue
               orgh

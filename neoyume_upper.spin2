@@ -13,10 +13,6 @@ CON ' Header
 ''
 #include "config.spin2"
 
-' PSRAM16 is the only viable setup,
-' but this is kept to keep more of the code portable with MegaYume
-#define USE_PSRAM16
-
 MKRAM_BASE = $1_0000
 
 HEAPSIZE = 1024*8
@@ -53,7 +49,14 @@ OBJ
 video : "NeoVGA"
 c : "libc.a"
 a : "fsadapter.c"
+
+
+#ifdef USE_PSRAM4
+exmem : "psram4drv.spin2"
+#endif
+#ifdef USE_PSRAM16
 exmem : "psram16drv.spin2"
+#endif
 
 PUB main() | tmp,tmp2
 
