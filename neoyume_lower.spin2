@@ -3455,7 +3455,7 @@ lspc_linelp
         if_11 getbyte lspc_autotimer,lspc_lspcmode,#1
         if_11 incmod lspc_autoframe,#7
 
-              cmp lspc_chkline,##-24 wz
+              cmp lspc_chkline,#224 wz
         if_z  locktry #VINT_LOCK wc
         if_z  lockrel #VINT_LOCK
         'if_11 drvnot #38
