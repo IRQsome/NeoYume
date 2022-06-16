@@ -51,7 +51,7 @@ tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download 
 ### Compiling
 
 - Configure video, audio and USB pins in `config.spin2`
-- Make sure you have flexspin 5.9.12 or higher installed (not released at the time of writing, use git build for now)
+- Make sure you have flexspin 5.9.12 or higher installed
 - Run `build.sh`
 - Load the resulting `neoyume_lower.binary`
 
