@@ -2907,8 +2907,28 @@ mk_check_core_integrity
               jmp #.chklp   '}
 
 
-DAT ' Memory arbiter (16 bit PSRAM)
+CON ' Memory arbiter constants
+
 #ifdef USE_PSRAM16
+MA_CHAR_ASHIFT = 1
+MA_CHAR_CYCLES = 4
+MA_PCM_ASHIFT = 2
+MA_PCM_CYCLES = 8
+MA_PROGCYSHL = 2
+MA_PAGESIZE = 0 addbits 9
+#endif
+
+#ifdef USE_PSRAM4
+MA_CHAR_ASHIFT = 3
+MA_CHAR_CYCLES = 16
+MA_PCM_ASHIFT = 4
+MA_PCM_CYCLES = 32
+MA_PROGCYSHL = 4
+MA_PAGESIZE = 0 addbits 7
+#endif
+
+DAT ' Memory arbiter (PSRAM)
+#ifdef USE_PSRAM_EITHER
               org 0
 ma_entry
               cogid pa
@@ -2974,7 +2994,7 @@ ma_lineloop
               rdlong ma_mtmp1,ptrb[2] wc
         if_c  jmp #ma_lineloop ' got sentinel
 
-              shl     ma_mtmp1,#1 ' sprite lines are 2 longs
+              shl     ma_mtmp1,#MA_CHAR_ASHIFT ' sprite lines are 2 longs
               add     ma_mtmp1,ma_char_base
               setbyte ma_mtmp1,#$EB,#3
               splitb  ma_mtmp1
@@ -2985,7 +3005,7 @@ ma_lineloop
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
               xinit ma_psram_addr_cmd,ma_mtmp1
-              wypin #(8+PSRAM_WAIT+4)*2,#PSRAM_CLK
+              wypin #(8+PSRAM_WAIT+MA_CHAR_CYCLES)*2,#PSRAM_CLK
               setq ma_nco_fast
               xcont #PSRAM_WAIT*2+PSRAM_DELAY,#0
               wrfast ma_bit31,ptrb
@@ -3007,7 +3027,7 @@ ma_do_adpcm
 
               'drvh #38
 
-              shl     ma_mtmp1,#2 ' ADPCM cache lines are 4 longs
+              shl     ma_mtmp1,#MA_PCM_ASHIFT ' ADPCM cache lines are 4 longs
               setbyte ma_mtmp1,#$EB,#3
               splitb  ma_mtmp1
               rev     ma_mtmp1
@@ -3017,7 +3037,7 @@ ma_do_adpcm
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
               xinit ma_psram_addr_cmd,ma_mtmp1
-              wypin #(8+PSRAM_WAIT+8)*2,#PSRAM_CLK
+              wypin #(8+PSRAM_WAIT+MA_PCM_CYCLES)*2,#PSRAM_CLK
               setq ma_nco_fast
               xcont #PSRAM_WAIT*2+PSRAM_DELAY,#0
               waitxmt
@@ -3025,7 +3045,7 @@ ma_do_adpcm
               mov ma_mtmp3,ma_adpcm_pollptr
               sub ma_mtmp3,#@adpcm_pollbox
               shl ma_mtmp3,#3 ' 4*8 -> 32 bytes per channel
-              testb ma_mtmp1,#30 wc ' odd blocks go in odd buffers (bit 0 of original poll value)
+              testb ma_mtmp1,#(MA_PCM_ASHIFT^28) wc ' odd blocks go in odd buffers (bit 0 of original poll value)
         if_c  add ma_mtmp3,#16
               add ma_mtmp3,ma_adpcm_bufferbase
               wrfast ma_bit31,ma_mtmp3
@@ -3042,12 +3062,11 @@ ma_68krequest
               rdlong ma_prog_addr,#_progrq_addr
               'debug("Got request ",uhex_long(ma_prog_addr,ma_prog_length,ma_prog_target))
 
-
               wrfast ma_bit31,ma_prog_target
               mov ma_itmp2,ma_prog_addr
               add ma_itmp2,ma_prog_length
               mov ma_itmp1,ma_prog_addr
-              bith ma_itmp1,#0 addbits 9
+              bith ma_itmp1,#MA_PAGESIZE
               add ma_itmp1,#1 ' ma_itmp1 has start of next page
               cmpsub ma_itmp2,ma_itmp1 wcz ' IF C, ma_itmp2 now has longs that cross over boundary
         if_c  sub ma_prog_length,ma_itmp2
@@ -3062,8 +3081,11 @@ ma_68krequest
 
 ma_psram_read68k
               mov ma_itmp0,#(8+PSRAM_WAIT)*2
-              shl ma_prog_length,#2
+              shl ma_prog_length,#MA_PROGCYSHL
               add ma_itmp0,ma_prog_length
+#ifdef USE_PSRAM4
+              shl ma_prog_addr,#2
+#endif
               setbyte ma_prog_addr,#$EB,#3
               ' Reverse nibble order
               splitb  ma_prog_addr
@@ -3093,11 +3115,21 @@ ma_bit31      'alias
 ma_nco_fast   long $8000_0000
 ma_nco_slow   long $4000_0000
 
+#ifdef USE_PSRAM16
 ma_psram_pinfield long PSRAM_BASE addpins 15
 ma_psram_addr_cmd long (PSRAM_BASE<<17)|X_PINS_ON | X_IMM_8X4_LUT + 8
 ma_psram_read68k_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD
-ma_psram_readspr_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD + 4
-ma_psram_readpcm_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD + 8
+ma_psram_readspr_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD + MA_CHAR_CYCLES
+ma_psram_readpcm_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD + MA_PCM_CYCLES
+#endif
+
+#ifdef USE_PSRAM4
+ma_psram_pinfield long PSRAM_BASE addpins 3
+ma_psram_addr_cmd long (PSRAM_BASE<<17)|X_PINS_ON | X_IMM_8X4_4DAC1 + 8
+ma_psram_read68k_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_4P_4DAC1_WFBYTE
+ma_psram_readspr_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_4P_4DAC1_WFBYTE + MA_CHAR_CYCLES
+ma_psram_readpcm_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_4P_4DAC1_WFBYTE + MA_PCM_CYCLES
+#endif
 
 ma_adpcm_pollptr long @adpcm_pollbox
 ma_adpcm_bufferbase long @adpcm_buffers
@@ -3127,6 +3159,7 @@ ma_mk_cogatn_val res 1
               fit 496
               org 512
 ma_lutcode
+#ifdef USE_PSRAM16
               long $0000
               long $1111
               long $2222
@@ -3143,6 +3176,7 @@ ma_lutcode
               long $DDDD
               long $EEEE
               long $FFFF
+#endif
 
               fit 1024
 
