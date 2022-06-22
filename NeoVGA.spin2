@@ -43,6 +43,8 @@ case mode
     modebuf[4] := basepin addpins 1
   MODE_SVID_AND_COMP:
     modebuf[4] := basepin addpins 2
+  MODE_YPBPR:
+    modebuf[4] := (basepin+1) addpins 2
   MODE_HDMI:
     wrpin(basepin addpins 7,P_DAC_124R_3V|P_BITDAC|($FE<<8))
     modebuf[4] := basepin addpins 7
