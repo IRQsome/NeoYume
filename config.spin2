@@ -18,6 +18,8 @@ PSRAM_CLK = 4
 PSRAM_SELECT = 5
 PSRAM_BASE = 0
 PSRAM_BANKS = 3
+' \/ Uncomment if PSRAM_BANKS = 1 for speedup
+'#define USE_PSRAM_NOBANKS
 
 PSRAM_WAIT  = 10
 PSRAM_DELAY = 5

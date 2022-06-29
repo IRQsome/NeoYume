@@ -52,7 +52,8 @@ a : "fsadapter.c"
 
 
 #ifdef USE_PSRAM4
-exmem : "psram4drv.spin2"
+'exmem : "psram4drv.spin2"
+exmem : "psram4drv-dualCE.spin2"
 #endif
 #ifdef USE_PSRAM16
 exmem : "psram16drv.spin2"
@@ -102,6 +103,15 @@ exmem_start()
 
 tmp := c.malloc(64)
 c.sprintf(tmp,@"MAX %d MEGA",exmem_size+/$20000)
+{
+c.strcpy(tmp,@"Hewwo Wowld!!!")
+exmem_write($000_00_00,tmp,64,false)
+c.strcpy(tmp,@"We like the pain")
+exmem_write($080_00_00,tmp,64,false)
+
+c.strcpy(tmp,@"ooops")
+exmem_read(tmp,$080_00_00,64,false)
+}
 putstring(tmp,14,6,0)
 c.free(tmp)
 putstring(@"PROP-GEAR SPEC",13,7,0)
@@ -556,11 +566,11 @@ DAT
 menu_palette
 long 0,$01*GREYM,$13*GREYM,$25*GREYM,$37*GREYM,$49*GREYM,$5B*GREYM,$6D*GREYM,$7F*GREYM,$91*GREYM,$A3*GREYM,$B5*GREYM,$C7*GREYM,$D9*GREYM,$EB*GREYM,$FD*GREYM
 
-PRI exmem_start() | tmp,cogs,banks
+PRI exmem_start() | tmp,cogs,banks,i
 
-tmp := __builtin_alloca(8*4)
-cogs := __builtin_alloca(8*4)
-banks := __builtin_alloca(32*4)
+tmp := c.malloc(8*4+8*4+32*4)
+cogs := tmp+8*4
+banks := cogs+8*4
 
 if exmem_cog
   return
@@ -574,9 +584,6 @@ long[tmp][3] := HYPER_RESET >= 32 ? 1<<HYPER_RESET : 0
 long[tmp][1] := (PSRAM_SYNC_CLOCK?0:1)<<exmem.UNREGCLK_BIT
 long[tmp][2] := 0
 long[tmp][3] := 0 
-
-if PSRAM_BANKS > 1
-  pinh((PSRAM_SELECT+1) addpins (PSRAM_BANKS-2))
 #endif
 
 #ifdef USE_PSRAM16
@@ -601,8 +608,9 @@ long[banks][16] := PSRAM_SELECT + PSRAM_CLK<<8
 long[banks][17] := PSRAM_SELECT + PSRAM_CLK<<8
 exmem_size := 32*1024*1024 * PSRAM_BANKS
 #elseifdef USE_PSRAM4
-long[banks][0] := 128<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
-long[banks][16] := PSRAM_SELECT + PSRAM_CLK<<8
+repeat i from 0 to (PSRAM_BANKS-1)/2
+  long[banks][0+i] := 128<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 23
+  long[banks][16+i] := PSRAM_SELECT+i*2 + PSRAM_CLK<<8 + (PSRAM_SELECT+i*2+(((PSRAM_BANKS&1)&&(i>=PSRAM_BANKS/2)) ? 0 : 1))<<16
 exmem_size := 8*1024*1024 * PSRAM_BANKS
 #elseifdef USE_HYPER
 long[banks][0] := 128<<16 + (HYPER_DELAY+1)<<13 + 1<<12 + 24

@@ -2916,6 +2916,7 @@ MA_PCM_ASHIFT = 2
 MA_PCM_CYCLES = 8
 MA_PROGCYSHL = 2
 MA_PAGESIZE = 0 addbits 9
+MA_BANKSHIFT = 25
 #endif
 
 #ifdef USE_PSRAM4
@@ -2925,6 +2926,7 @@ MA_PCM_ASHIFT = 4
 MA_PCM_CYCLES = 32
 MA_PROGCYSHL = 4
 MA_PAGESIZE = 0 addbits 7
+MA_BANKSHIFT = 23
 #endif
 
 DAT ' Memory arbiter (PSRAM)
@@ -2949,8 +2951,8 @@ ma_entry
               wxpin #1, #PSRAM_CLK
               drvl #PSRAM_CLK
 
-              wrpin ##P_INVERT_OUTPUT,#PSRAM_SELECT
-              drvl #PSRAM_SELECT
+              wrpin ##P_INVERT_OUTPUT,#PSRAM_SELECT addpins (PSRAM_BANKS-1)
+              drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
 
               wrpin ##(PSRAM_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO),ma_psram_pinfield
 
@@ -2996,12 +2998,20 @@ ma_lineloop
 
               shl     ma_mtmp1,#MA_CHAR_ASHIFT ' sprite lines are 2 longs
               add     ma_mtmp1,ma_char_base
+#ifndef USE_PSRAM_NOBANKS
+              mov ma_mtmp3,ma_mtmp1
+              shr ma_mtmp3,#MA_BANKSHIFT
+              fle ma_mtmp3,#PSRAM_BANKS-1
+#endif
               setbyte ma_mtmp1,#$EB,#3
               splitb  ma_mtmp1
               rev     ma_mtmp1
               movbyts ma_mtmp1, #%%0123
               mergeb  ma_mtmp1
               rep @.irqshield,#1
+#ifndef USE_PSRAM_NOBANKS
+              altd  ma_mtmp3,#PSRAM_SELECT
+#endif
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
               xinit ma_psram_addr_cmd,ma_mtmp1
@@ -3014,7 +3024,7 @@ ma_lineloop
               setq ma_nco_slow
               xcont ma_psram_readspr_cmd,#0
               waitxfi
-              drvl #PSRAM_SELECT
+              drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
 .irqshield
               add ptrb,#4*4
               djnz ma_slotleft,#.slotlp
@@ -3028,12 +3038,20 @@ ma_do_adpcm
               'drvh #38
 
               shl     ma_mtmp1,#MA_PCM_ASHIFT ' ADPCM cache lines are 4 longs
+#ifndef USE_PSRAM_NOBANKS
+              mov ma_mtmp3,ma_mtmp1
+              shr ma_mtmp3,#MA_BANKSHIFT
+              fle ma_mtmp3,#PSRAM_BANKS-1
+#endif
               setbyte ma_mtmp1,#$EB,#3
               splitb  ma_mtmp1
               rev     ma_mtmp1
               movbyts ma_mtmp1, #%%0123
               mergeb  ma_mtmp1
               rep @.irqshield,#1
+#ifndef USE_PSRAM_NOBANKS
+              altd  ma_mtmp3,#PSRAM_SELECT
+#endif
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
               xinit ma_psram_addr_cmd,ma_mtmp1
@@ -3052,7 +3070,7 @@ ma_do_adpcm
               setq ma_nco_slow
               xcont ma_psram_readpcm_cmd,#0
               waitxfi
-              drvl #PSRAM_SELECT
+              drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
 .irqshield
         _ret_ wrlong #0,ma_adpcm_pollptr
 
@@ -3083,6 +3101,11 @@ ma_psram_read68k
               mov ma_itmp0,#(8+PSRAM_WAIT)*2
               shl ma_prog_length,#MA_PROGCYSHL
               add ma_itmp0,ma_prog_length
+#ifndef USE_PSRAM_NOBANKS
+              mov ma_itmp3,ma_prog_addr
+              shr ma_itmp3,#MA_BANKSHIFT-2
+              fle ma_itmp3,#PSRAM_BANKS-1
+#endif
 #ifdef USE_PSRAM4
               shl ma_prog_addr,#2
 #endif
@@ -3092,6 +3115,9 @@ ma_psram_read68k
               rev     ma_prog_addr
               movbyts ma_prog_addr, #%%0123
               mergeb  ma_prog_addr
+#ifndef USE_PSRAM_NOBANKS
+              altd  ma_itmp3,#PSRAM_SELECT
+#endif
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
               xinit ma_psram_addr_cmd,ma_prog_addr
@@ -3105,7 +3131,7 @@ ma_psram_read68k
               setq ma_nco_slow
               xcont ma_psram_read68k_cmd,#0
               waitxfi
-        _ret_ drvl #PSRAM_SELECT
+        _ret_ drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
 
 
 

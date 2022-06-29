@@ -137,7 +137,7 @@ byte 0
 game_mslug2 byte "mslug2",0,"Metal Slug 2",0,"241-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $100_0
-'byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
 byte SET_PROG
 byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_2M
