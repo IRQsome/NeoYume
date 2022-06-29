@@ -2945,14 +2945,14 @@ ma_entry
 
 
               fltl #PSRAM_CLK
-              wrpin ##P_TRANSITION|P_OE, #PSRAM_CLK
+              wrpin ##P_TRANSITION|P_OE|(PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #PSRAM_CLK
               wxpin #1, #PSRAM_CLK
               drvl #PSRAM_CLK
 
               wrpin ##P_INVERT_OUTPUT,#PSRAM_SELECT
               drvl #PSRAM_SELECT
 
-              wrpin ##P_SYNC_IO,ma_psram_pinfield
+              wrpin ##(PSRAM_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO),ma_psram_pinfield
 
               setxfrq ma_nco_slow
               waitx #200
