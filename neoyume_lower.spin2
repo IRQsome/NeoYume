@@ -2929,6 +2929,12 @@ MA_PAGESIZE = 0 addbits 7
 MA_BANKSHIFT = 23
 #endif
 
+#ifdef USE_PSRAM_SLOW
+MA_CLKDIV = 4
+#else
+MA_CLKDIV = 2
+#endif
+
 DAT ' Memory arbiter (PSRAM)
 #ifdef USE_PSRAM_EITHER
               org 0
@@ -2948,8 +2954,13 @@ ma_entry
 
               fltl #PSRAM_CLK
               wrpin ##P_TRANSITION|P_OE|(PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #PSRAM_CLK
+#ifdef USE_PSRAM_SLOW
+              wxpin #2, #PSRAM_CLK
+              fltl #PSRAM_CLK
+#else
               wxpin #1, #PSRAM_CLK
               drvl #PSRAM_CLK
+#endif
 
               wrpin ##P_INVERT_OUTPUT,#PSRAM_SELECT addpins (PSRAM_BANKS-1)
               drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
@@ -3014,10 +3025,13 @@ ma_lineloop
 #endif
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
+#ifdef USE_PSRAM_SLOW
+              drvl  #PSRAM_CLK
+#endif
               xinit ma_psram_addr_cmd,ma_mtmp1
               wypin #(8+PSRAM_WAIT+MA_CHAR_CYCLES)*2,#PSRAM_CLK
               setq ma_nco_fast
-              xcont #PSRAM_WAIT*2+PSRAM_DELAY,#0
+              xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
               wrfast ma_bit31,ptrb
               waitxmt
               fltl ma_psram_pinfield
@@ -3025,6 +3039,9 @@ ma_lineloop
               xcont ma_psram_readspr_cmd,#0
               waitxfi
               drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
+#ifdef USE_PSRAM_SLOW
+              fltl  #PSRAM_CLK
+#endif
 .irqshield
               add ptrb,#4*4
               djnz ma_slotleft,#.slotlp
@@ -3054,10 +3071,13 @@ ma_do_adpcm
 #endif
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
+#ifdef USE_PSRAM_SLOW
+              drvl  #PSRAM_CLK
+#endif
               xinit ma_psram_addr_cmd,ma_mtmp1
               wypin #(8+PSRAM_WAIT+MA_PCM_CYCLES)*2,#PSRAM_CLK
               setq ma_nco_fast
-              xcont #PSRAM_WAIT*2+PSRAM_DELAY,#0
+              xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
               waitxmt
               fltl ma_psram_pinfield
               mov ma_mtmp3,ma_adpcm_pollptr
@@ -3071,6 +3091,9 @@ ma_do_adpcm
               xcont ma_psram_readpcm_cmd,#0
               waitxfi
               drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
+#ifdef USE_PSRAM_SLOW
+              fltl  #PSRAM_CLK
+#endif
 .irqshield
         _ret_ wrlong #0,ma_adpcm_pollptr
 
@@ -3120,10 +3143,13 @@ ma_psram_read68k
 #endif
               drvh  #PSRAM_SELECT
               drvl  ma_psram_pinfield
+#ifdef USE_PSRAM_SLOW
+              drvl  #PSRAM_CLK
+#endif
               xinit ma_psram_addr_cmd,ma_prog_addr
               wypin ma_itmp0,#PSRAM_CLK
               setq ma_nco_fast
-              xcont #PSRAM_WAIT*2+PSRAM_DELAY,#0
+              xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
               shr ma_prog_length,#1
               setword ma_psram_read68k_cmd,ma_prog_length,#0
               waitxmt
@@ -3131,7 +3157,12 @@ ma_psram_read68k
               setq ma_nco_slow
               xcont ma_psram_read68k_cmd,#0
               waitxfi
+#ifdef USE_PSRAM_SLOW
+              drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
+        _ret_ fltl #PSRAM_CLK
+#else
         _ret_ drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
+#endif
 
 
 
@@ -3139,7 +3170,11 @@ ma_psram_read68k
 
 ma_bit31      'alias
 ma_nco_fast   long $8000_0000
+#ifdef USE_PSRAM_SLOW
+ma_nco_slow   long $2000_0000
+#else
 ma_nco_slow   long $4000_0000
+#endif
 
 #ifdef USE_PSRAM16
 ma_psram_pinfield long PSRAM_BASE addpins 15

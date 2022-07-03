@@ -14,17 +14,23 @@ USE_JP_BIOS = false
 #define USE_PSRAM4
 
 ' For PSRAM (either type)
-PSRAM_CLK = 4
-PSRAM_SELECT = 5
+PSRAM_CLK = 8
+PSRAM_SELECT = 10
 PSRAM_BASE = 0
-PSRAM_BANKS = 3
+PSRAM_BANKS = 6
 ' \/ Uncomment if PSRAM_BANKS = 1 for speedup
 '#define USE_PSRAM_NOBANKS
 
 PSRAM_WAIT  = 10
 PSRAM_DELAY = 5
+'PSRAM_WAIT  = 9
+'PSRAM_DELAY = 2
 PSRAM_SYNC_CLOCK = true
-PSRAM_SYNC_DATA = true
+PSRAM_SYNC_DATA = false
+
+' \/ Uncomment for lameness
+'#define USE_PSRAM_SLOW
+
 
 '{
 VIDEO_MODE = vconst.MODE_VGA3X
