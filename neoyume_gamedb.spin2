@@ -3,6 +3,7 @@ DAT
 gamelist word
 wordfit @game_aodk     - @gamedb_base
 wordfit @game_aof      - @gamedb_base
+wordfit @game_blazstar - @gamedb_base
 wordfit @game_ctomaday - @gamedb_base
 wordfit @game_crsword  - @gamedb_base
 wordfit @game_cyberlip - @gamedb_base
@@ -16,12 +17,17 @@ wordfit @game_karnovr  - @gamedb_base
 'wordfit @game_kizuna   - @gamedb_base
 wordfit @game_kof94    - @gamedb_base
 wordfit @game_kof95    - @gamedb_base
+wordfit @game_kof99    - @gamedb_base
+wordfit @game_kof2000  - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
+wordfit @game_lastblad - @gamedb_base
 wordfit @game_mslug    - @gamedb_base
 wordfit @game_mslug2   - @gamedb_base
 wordfit @game_mslugx   - @gamedb_base
+wordfit @game_mslug4   - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_magdrop3 - @gamedb_base
+wordfit @game_matrim   - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
@@ -156,8 +162,8 @@ byte 0
 game_mslugx byte "mslugx",0,"Metal Slug X",0,"250-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $100_0
-'byte LOAD_CROM,"C3",0,"C4",0,word $100_0
-'byte LOAD_CROM,"C5",0,"C6",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C5",0,"C6",0,word $100_0
 byte SET_PROG
 byte LOAD_BSWAP,"P1",0,word $10_0
 '' Copy protection patches
@@ -188,6 +194,27 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_mslug4 byte "mslug4",0,"Metal Slug 4",0,"",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"MS4N_C1",0,"MS4N_C2",0,word $100_0
+'byte LOAD_CROM,"MS4N_C3",0,"MS4N_C4",0,word $100_0
+'byte LOAD_CROM,"MS4N_C5",0,"MS4N_C6",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"263-PG1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"263-P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+'byte LOAD_RAW,"263-V1",0,word $80_0
+'byte LOAD_RAW,"263-V2",0,word $80_0
+byte SET_FIX
+'byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"MS4N_M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
 
 
 '' NOTE: Busted graphics
@@ -504,6 +531,58 @@ byte LOAD_RAW,"V2",0,word $20_0
 'byte LOAD_RAW,"V3",0,word $10_0
 byte 0
 
+game_kof99 byte "kof99",0,"King of Fighters '99",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"KF99N_C1",0,"KF99N_C2",0,word $100_0
+byte LOAD_CROM,"KF99N_C3",0,"KF99N_C4",0,word $100_0
+byte LOAD_CROM,"KF99N_C5",0,"KF99N_C6",0,word $100_0
+byte LOAD_CROM,"KF99N_C7",0,"KF99N_C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"152-P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"152-P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"251-V1",0,word $40_0
+byte LOAD_RAW,"251-V2",0,word $40_0
+byte LOAD_RAW,"251-V3",0,word $40_0
+byte LOAD_RAW,"251-V4",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"KF99N_S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"251-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+'' Note: Broken fix layer (uses bankswitch? WinKawaks only dumps 128k)
+game_kof2000 byte "kof2000",0,"King of Fighters 2000",0,"",0,GAME_ISSUE
+byte SET_CHAR
+byte LOAD_CROM,"KOF2K_C1",0,"KOF2K_C2",0,word $100_0
+byte LOAD_CROM,"KOF2K_C3",0,"KOF2K_C4",0,word $100_0
+byte LOAD_CROM,"KOF2K_C5",0,"KOF2K_C6",0,word $100_0
+byte LOAD_CROM,"KOF2K_C7",0,"KOF2K_C8",0,word $100_0
+'byte SET_FIX+WITH_OFFSET,word -$02_0
+byte SET_PROG
+byte LOAD_BSWAP,"257-p1n",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"257-p2n",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"257-V1",0,word $40_0
+byte LOAD_RAW,"257-V2",0,word $40_0
+byte LOAD_RAW,"257-V3",0,word $40_0
+byte LOAD_RAW,"257-V4",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"KOF2K_S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"KOF2K_M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+
+
+
+
 
 game_wh2 byte "wh2",0,"World Heroes 2",0,"057-",0,GAME_OK
 byte SET_CHAR
@@ -758,6 +837,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_aodk byte "aodk",0,"Aggressors of Dark Kombat",0,"074-",0,GAME_OK
+byte SET_TILEMASK,16
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
 byte LOAD_CROM,"C3",0,"C4",0,word $40_0
@@ -807,6 +887,75 @@ byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"V1",0,word $10_0
 byte LOAD_RAW,"V2",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_matrim byte "matrim",0,"Matrimelee",0,"",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"MATR_C1",0,"MATR_C2",0,word $100_0
+'byte LOAD_CROM,"MATR_C3",0,"MATR_C4",0,word $100_0
+'byte LOAD_CROM,"MATR_C5",0,"MATR_C6",0,word $100_0
+'byte LOAD_CROM,"MATR_C7",0,"MATR_C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"266-P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $10_0
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $28_0
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $30_0
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $18_0
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $00_0
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $38_0
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $20_0
+byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"266-V1",0,word $80_0
+'byte LOAD_RAW,"266-V2",0,word $80_0
+byte SET_FIX
+'byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"MATR_M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_lastblad byte "lastblad",0,"Last Blade",0,"234-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $40_0
+byte LOAD_RAW,"V4",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' NOTE: Broken sound
+game_blazstar byte "blazstar",0,"Blazing Star",0,"239-",0,GAME_ISSUE
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
 byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
