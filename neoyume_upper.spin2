@@ -51,12 +51,12 @@ c : "libc.a"
 a : "fsadapter.c"
 
 
-#ifdef USE_PSRAM4
-'exmem : "psram4drv.spin2"
-exmem : "psram4drv-dualCE.spin2"
-#endif
 #ifdef USE_PSRAM16
 exmem : "psram16drv.spin2"
+#elseifdef USE_PSRAM8
+exmem : "psram8drv.spin2"
+#elseifdef USE_PSRAM4
+exmem : "psram4drv-dualCE.spin2"
 #endif
 
 PUB main() | tmp,tmp2
@@ -586,9 +586,7 @@ long[tmp][2] := 0
 long[tmp][3] := 0 
 #endif
 
-#ifdef USE_PSRAM16
-long[tmp][4] := PSRAM_BASE
-#elseifdef USE_PSRAM4
+#ifdef USE_PSRAM_EITHER
 long[tmp][4] := PSRAM_BASE
 #elseifdef USE_HYPER
 long[tmp][4] := HYPER_BASE
@@ -608,6 +606,11 @@ repeat i from 0 to PSRAM_BANKS-1
   long[banks][16+i*2] := PSRAM_SELECT+i + PSRAM_CLK<<8
   long[banks][17+i*2] := PSRAM_SELECT+i + PSRAM_CLK<<8
 exmem_size := 32*1024*1024 * PSRAM_BANKS
+#elseifdef USE_PSRAM8
+repeat i from 0 to PSRAM_BANKS-1
+  long[banks][0+i] := 256<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
+  long[banks][16+i] := PSRAM_SELECT+i + PSRAM_CLK<<8
+exmem_size := 16*1024*1024 * PSRAM_BANKS
 #elseifdef USE_PSRAM4
 repeat i from 0 to (PSRAM_BANKS-1)/2
   long[banks][0+i] := 128<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 23

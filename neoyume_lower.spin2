@@ -2916,7 +2916,17 @@ MA_PCM_ASHIFT = 2
 MA_PCM_CYCLES = 8
 MA_PROGCYSHL = 2
 MA_PAGESIZE = 0 addbits 9
-MA_BANKSHIFT = 25
+MA_BANKSHIFT = 23
+#endif
+
+#ifdef USE_PSRAM8
+MA_CHAR_ASHIFT = 2
+MA_CHAR_CYCLES = 8
+MA_PCM_ASHIFT = 3
+MA_PCM_CYCLES = 16
+MA_PROGCYSHL = 3
+MA_PAGESIZE = 0 addbits 8
+MA_BANKSHIFT = 23
 #endif
 
 #ifdef USE_PSRAM4
@@ -3124,13 +3134,16 @@ ma_psram_read68k
               mov ma_itmp0,#(8+PSRAM_WAIT)*2
               shl ma_prog_length,#MA_PROGCYSHL
               add ma_itmp0,ma_prog_length
-#ifndef USE_PSRAM_NOBANKS
-              mov ma_itmp3,ma_prog_addr
-              shr ma_itmp3,#MA_BANKSHIFT-2
-              fle ma_itmp3,#PSRAM_BANKS-1
+#ifdef USE_PSRAM8
+              shl ma_prog_addr,#1
 #endif
 #ifdef USE_PSRAM4
               shl ma_prog_addr,#2
+#endif
+#ifndef USE_PSRAM_NOBANKS
+              mov ma_itmp3,ma_prog_addr
+              shr ma_itmp3,#MA_BANKSHIFT
+              fle ma_itmp3,#PSRAM_BANKS-1
 #endif
               setbyte ma_prog_addr,#$EB,#3
               ' Reverse nibble order
@@ -3182,6 +3195,14 @@ ma_psram_addr_cmd long (PSRAM_BASE<<17)|X_PINS_ON | X_IMM_8X4_LUT + 8
 ma_psram_read68k_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD
 ma_psram_readspr_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD + MA_CHAR_CYCLES
 ma_psram_readpcm_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_16P_2DAC8_WFWORD + MA_PCM_CYCLES
+#endif
+
+#ifdef USE_PSRAM8
+ma_psram_pinfield long PSRAM_BASE addpins 7
+ma_psram_addr_cmd long (PSRAM_BASE<<17)|X_PINS_ON | X_IMM_8X4_LUT + 8
+ma_psram_read68k_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_8P_1DAC8_WFBYTE
+ma_psram_readspr_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_8P_1DAC8_WFBYTE + MA_CHAR_CYCLES
+ma_psram_readpcm_cmd long (PSRAM_BASE<<17)|X_WRITE_ON| X_8P_1DAC8_WFBYTE + MA_PCM_CYCLES
 #endif
 
 #ifdef USE_PSRAM4
@@ -3237,6 +3258,23 @@ ma_lutcode
               long $DDDD
               long $EEEE
               long $FFFF
+#elseifdef USE_PSRAM8
+              long $00
+              long $11
+              long $22
+              long $33
+              long $44
+              long $55
+              long $66
+              long $77
+              long $88
+              long $99
+              long $AA
+              long $BB
+              long $CC
+              long $DD
+              long $EE
+              long $FF
 #endif
 
               fit 1024

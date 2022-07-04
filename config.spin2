@@ -11,28 +11,29 @@ USE_JP_BIOS = false
 
 ' Enable one of these to select the exmem type to use
 '#define USE_PSRAM16
-#define USE_PSRAM4
+#define USE_PSRAM8
+'#define USE_PSRAM4
 
 ' For PSRAM (either type)
-PSRAM_CLK = 8
+PSRAM_CLK = 8 addpins 1
 PSRAM_SELECT = 10
 PSRAM_BASE = 0
 PSRAM_BANKS = 6
 ' \/ Uncomment if PSRAM_BANKS = 1 for speedup
 '#define USE_PSRAM_NOBANKS
 
-PSRAM_WAIT  = 10
-PSRAM_DELAY = 5
-'PSRAM_WAIT  = 9
-'PSRAM_DELAY = 2
+'PSRAM_WAIT  = 10
+'PSRAM_DELAY = 5
+PSRAM_WAIT  = 9
+PSRAM_DELAY = 2
 PSRAM_SYNC_CLOCK = true
 PSRAM_SYNC_DATA = false
 
 ' \/ Uncomment for lameness
-'#define USE_PSRAM_SLOW
+#define USE_PSRAM_SLOW
 
 
-'{
+{
 VIDEO_MODE = vconst.MODE_VGA3X
 VIDEO_SUBMODE = 0
 
@@ -41,7 +42,7 @@ VGA_VSYNC   = VGA_BASEPIN + 4
 
 
 '}
-{
+'{
 VIDEO_MODE = vconst.MODE_SVID_AND_COMP
 VIDEO_SUBMODE = vconst.SUBMODE_NTSC
 
@@ -113,6 +114,9 @@ PINPUT_P2_SELECT = -1
 '' Ignore stuff below
 
 #ifdef USE_PSRAM4
+#define USE_PSRAM_EITHER
+#endif
+#ifdef USE_PSRAM8
 #define USE_PSRAM_EITHER
 #endif
 #ifdef USE_PSRAM16
