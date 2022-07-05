@@ -44,6 +44,8 @@ long exmem_size
 
 byte lspc_cog,blt_cog,exmem_cog
 
+byte jpbios
+
 OBJ
 
 video : "NeoVGA"
@@ -60,6 +62,8 @@ exmem : "psram4drv-dualCE.spin2"
 #endif
 
 PUB main() | tmp,tmp2
+
+jpbios := USE_JP_BIOS
 
 org
               ' allocate all the locks like some sort of maniac    
@@ -167,7 +171,7 @@ if x2 >= x1 and y2 >= y1
     wordfill(long[$28]+$E004+(i<<5+y1)<<1,tile,y2-y1+1)
 
 
-PRI count_romsize(gameptr) : size | cmd
+PRI count_romsize(gameptr,count_all) : size | cmd
 gameptr += strsize(gameptr)+1 ' advance to display name
 gameptr += strsize(gameptr)+1 ' advance to ROM prefix
 gameptr += strsize(gameptr)+1+1 ' advance to script
@@ -183,9 +187,13 @@ repeat
       if cmd >= LOADCMD_FIRST+WITH_OFFSET
         gameptr += 2
     LOAD_BIOS:
-      ' Doesn't really count
+      if count_all
+        size += $20000
     LOAD_FILLER:
-      gameptr += 3
+      gameptr += 1
+      if count_all
+        size += word[gameptr]*4096
+      gameptr += 2
     (SETCMD_FIRST+WITH_OFFSET)..(SETCMD_LAST+WITH_OFFSET):
       gameptr += 2
     SET_TILEMASK:
@@ -243,7 +251,7 @@ repeat
       exptr += len
     LOAD_BIOS:
       c.strcpy(fn1,@"/sd/NEOYUME/NEOGEO/")
-      if USE_JP_BIOS
+      if jpbios
         c.strncat(fn1,@"NEO-PO.BIN",PATH_MAX-1)
       else
         c.strncat(fn1,@"NEO-EPO.BIN",PATH_MAX-1)
@@ -414,7 +422,7 @@ CON
   GAMECHOOSE_X = 3
   GAMECHOOSE_WIDTH = 33 ' Note: game titles are NOT truncated
 
-PRI do_gamechoose() : selected | i,games_got,mingot,maxgot,got_count,max_count,dir,ent,name,tmpstr,tmp,tmp2,input,previnput,drawtop,drawlast
+PRI do_gamechoose() : selected | i,games_got,mingot,maxgot,got_count,max_count,dir,ent,name,lptr,tmpstr,tmp,tmp2,input,previnput,drawtop,drawlast
 tmpstr := __builtin_alloca(64)
 max_count := (@gamelist_end - @gamelist)/2
 games_got := __builtin_alloca(max_count)
@@ -458,12 +466,12 @@ repeat
   repeat i from GAMECHOOSE_Y to GAMECHOOSE_Y+GAMECHOOSE_SIZE-1
     tmp := selected == ent ? 4<<12 : 0
     if ent <= maxgot
-      name := gamelist[ent]+@gamedb_base
-      c.sprintf(tmpstr,@"%dM",(count_romsize(name)+$1ffff)+/$20000)
-      name += strsize(name)+1
+      lptr := gamelist[ent]+@gamedb_base
+      c.sprintf(tmpstr,@"%dM",(count_romsize(lptr,false)+$1ffff)+/$20000)
+      name := lptr+strsize(lptr)+1
       tmp2 := name+strsize(name)+1
       tmp2 += strsize(tmp2)+1
-      tmp2 := tmp+byte[tmp2]<<12
+      tmp2 := tmp+(count_romsize(lptr,true) > exmem_size ? 3 : byte[tmp2])<<12
       settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,i,i,"."+(3<<12)+tmp)
       putstring(tmpstr,GAMECHOOSE_X+GAMECHOOSE_WIDTH-strsize(tmpstr),i,tmp2)
       putstring(name,GAMECHOOSE_X,i,tmp2)
@@ -481,6 +489,8 @@ repeat
       putstring(string(14),GAMECHOOSE_X+GAMECHOOSE_WIDTH,i,0<<12)
     else
       putstring(string(58),GAMECHOOSE_X+GAMECHOOSE_WIDTH,i,3<<12)
+  settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2," ")
+  putstring(jpbios?@"Using japanese BIOS":@"Using international BIOS",GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,0<<12)
 
   previnput := 0
   repeat
@@ -496,6 +506,9 @@ repeat
       repeat until byte[games_got][++selected]
       if selected == drawlast and drawlast < maxgot
         repeat until byte[games_got][++drawtop]
+      quit
+    if tmp.[5]
+      not jpbios
       quit
     if tmp.[4] or tmp.[8]
       return
