@@ -170,6 +170,8 @@ if x2 >= x1 and y2 >= y1
   repeat i from x1 to x2
     wordfill(long[$28]+$E004+(i<<5+y1)<<1,tile,y2-y1+1)
 
+PRI is_dualfile(cmd)
+  return cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET || cmd == LOAD_SROM_CMC || cmd == LOAD_SROM_CMC+WITH_OFFSET
 
 PRI count_romsize(gameptr,count_all) : size | cmd
 gameptr += strsize(gameptr)+1 ' advance to display name
@@ -180,7 +182,7 @@ repeat
     0: quit
     LOADCMD_FIRST..LOADCMD_LAST,(LOADCMD_FIRST+WITH_OFFSET)..(LOADCMD_LAST+WITH_OFFSET):
       gameptr += strsize(gameptr)+1
-      if cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET
+      if is_dualfile(cmd)
         gameptr += strsize(gameptr)+1
       size += word[gameptr]*4096
       gameptr += 2
@@ -232,7 +234,7 @@ repeat
       c.strncat(fn1,gameptr,PATH_MAX-1) ' first file name
       c.strncat(fn1,@".BIN",PATH_MAX-1)
       gameptr += strsize(gameptr)+1
-      if cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET
+      if is_dualfile(cmd)
         c.strcpy(fn2,common)
         c.strncat(fn2,gameptr,PATH_MAX-1) ' second file name
         c.strncat(fn2,@".BIN",PATH_MAX-1)
@@ -343,7 +345,7 @@ ifnot f1
   putstring(@"file1: ",2,25,0)
   putstring(c.strerror(errno),2+7,25,0)
   repeat
-if type==LOAD_CROM
+if is_dualfile(type)
   f2 := c.fopen(path2,@"rb")
   ifnot f2
     'c.sprintf(tmpstr,@"file2 fail: %d !",errno)
@@ -385,6 +387,19 @@ repeat while pos < size
           long[tmp] := __mergeb(word[$0000+k]+word[$4000+k]<<16)
           tmp += 4
           k+=2
+      exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
+      pos+=$8000
+    LOAD_SROM_CMC:
+      c.fread(MKRAM_BASE+$0000,1,$4000,f1)
+      c.fread(MKRAM_BASE+$4000,1,$4000,f2)
+      k := MKRAM_BASE
+      l := MKRAM_BASE+$8000
+      repeat 8192
+        word[l] := __movbyts(word[k+$4000],%%2301)
+        l+=2
+        word[l] := __movbyts(word[k],%%2301)
+        l+=2
+        k+=2
       exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
       pos+=$8000
     LOAD_SROM:
@@ -565,7 +580,7 @@ endasm
 CON
 
 #1
-LOAD_RAW,LOAD_BSWAP,LOAD_CROM,LOAD_SROM,LOAD_LSWAP
+LOAD_RAW,LOAD_BSWAP,LOAD_LSWAP,LOAD_CROM,LOAD_SROM_CMC,LOAD_SROM
 LOAD_BIOS
 LOAD_FILLER
 SET_PROG,SET_PORT,SET_UNUSED,SET_BIOS,SET_ADPCM_A,SET_ADPCM_B,SET_CHAR,SET_FIX,SET_Z80
@@ -574,7 +589,7 @@ SET_TILEMASK
 PATCH_SINGLE,PATCH_PATTERN
 
 LOADCMD_FIRST = LOAD_RAW
-LOADCMD_LAST = LOAD_LSWAP ' Note: LOAD_BIOS doesn't count
+LOADCMD_LAST = LOAD_SROM ' Note: LOAD_BIOS doesn't count
 SETCMD_FIRST = SET_PROG
 SETCMD_LAST = SET_Z80
 

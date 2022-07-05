@@ -239,7 +239,6 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-' Note: Borken fix layer
 ' Note: M1 too big -> broken sound
 game_mslug3 byte "mslug3",0,"Metal Slug 3",0,"",0,GAME_ISSUE
 byte SET_CHAR
@@ -257,27 +256,26 @@ byte LOAD_RAW,"256-V2",0,word $40_0
 byte LOAD_RAW,"256-V3",0,word $40_0
 byte LOAD_RAW,"256-V4",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"MS3N_S1",0,word $02_0
+byte LOAD_SROM_CMC+WITH_OFFSET,"MS3N_C7",0,"MS3N_C8",0,word $02_0,word $07D_0
 byte SET_Z80
 byte LOAD_RAW,"256-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: broken fix layer
-game_mslug4 byte "mslug4",0,"Metal Slug 4",0,"",0,GAME_ISSUE
+game_mslug4 byte "mslug4",0,"Metal Slug 4",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"MS4N_C1",0,"MS4N_C2",0,word $100_0
 byte LOAD_CROM,"MS4N_C3",0,"MS4N_C4",0,word $100_0
 byte LOAD_CROM,"MS4N_C5",0,"MS4N_C6",0,word $100_0
 byte SET_PROG
-byte LOAD_BSWAP,"263-PG1",0,word $10_0
+byte LOAD_BSWAP,"263-PH1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_4M
-byte LOAD_BSWAP,"263-P2",0,word $40_0
+byte LOAD_BSWAP,"263-PH2",0,word $40_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_LSWAP,"263-V1",0,word $80_0
 byte LOAD_LSWAP,"263-V2",0,word $80_0
 byte SET_FIX
-byte LOAD_SROM,"MS4N_S1",0,word $02_0
+byte LOAD_SROM_CMC+WITH_OFFSET,"MS4N_C5",0,"MS4N_C6",0,word $02_0,word $07D_0
 byte SET_Z80
 byte LOAD_RAW,"MS4N_M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
@@ -417,7 +415,7 @@ byte LOAD_RAW,"261-V2",0,word $40_0
 byte LOAD_RAW,"261-V3",0,word $40_0
 byte LOAD_RAW,"261-V4",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"SEN3N_S1",0,word $02_0
+byte LOAD_SROM_CMC+WITH_OFFSET,"SEN3N_C3",0,"SEN3N_C4",0,word $02_0,word $07F_0
 byte SET_Z80
 byte LOAD_RAW,"261-M1",0,word $02_0 ' Technically 512K M1, but only first 64K is used.
 byte SET_BIOS,LOAD_BIOS
@@ -638,40 +636,35 @@ byte LOAD_RAW,"251-V2",0,word $40_0
 byte LOAD_RAW,"251-V3",0,word $40_0
 byte LOAD_RAW,"251-V4",0,word $20_0
 byte SET_FIX
-byte LOAD_SROM,"KF99N_S1",0,word $02_0
+byte LOAD_SROM_CMC+WITH_OFFSET,"KF99N_C7",0,"KF99N_C8",0,word $02_0,word $07F_0
 byte SET_Z80
 byte LOAD_RAW,"251-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 
-'' Note: Broken fix layer (uses bankswitch? WinKawaks only dumps 128k)
+'' Note: Broken fix layer (actually uses bankswitch!)
 game_kof2000 byte "kof2000",0,"King of Fighters 2000",0,"",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"KOF2K_C1",0,"KOF2K_C2",0,word $100_0
 byte LOAD_CROM,"KOF2K_C3",0,"KOF2K_C4",0,word $100_0
 byte LOAD_CROM,"KOF2K_C5",0,"KOF2K_C6",0,word $100_0
 byte LOAD_CROM,"KOF2K_C7",0,"KOF2K_C8",0,word $100_0
-'byte SET_FIX+WITH_OFFSET,word -$02_0
 byte SET_PROG
-byte LOAD_BSWAP,"257-p1n",0,word $10_0
+byte LOAD_BSWAP,"257-P1N",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_4M
-byte LOAD_BSWAP,"257-p2n",0,word $40_0
+byte LOAD_BSWAP,"257-P2N",0,word $40_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"257-V1",0,word $40_0
 byte LOAD_RAW,"257-V2",0,word $40_0
 byte LOAD_RAW,"257-V3",0,word $40_0
 byte LOAD_RAW,"257-V4",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"KOF2K_S1",0,word $02_0
+byte LOAD_SROM_CMC+WITH_OFFSET,"KOF2K_C7",0,"KOF2K_C8",0,word $02_0,word $07C_0
 byte SET_Z80
 byte LOAD_RAW,"KOF2K_M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
-
-
-
-
 
 
 
@@ -805,7 +798,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: need decrypted C/S ROMs
+'' Note: need decrypted C ROMs
 game_ganryu byte "ganryu",0,"Ganryu",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"GANN_C1",0,"GANN_C2",0,word $100_0
@@ -815,7 +808,7 @@ byte LOAD_BSWAP,"252-P1",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"252-V1",0,word $40_0
 byte SET_FIX
-byte LOAD_SROM,"GANN_S1",0,word $02_0
+byte LOAD_SROM_CMC+WITH_OFFSET,"GANN_C1",0,"GANN_C2",0,word $02_0,word $7F_0
 byte SET_Z80
 byte LOAD_RAW,"252-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
@@ -982,8 +975,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: Broken fix layer
-'' Note: Need to figure out PCM2 descramble
+'' Note: Need to figure out PCM2 descramble (MATR_VM.BIN is dumped from mame debugger)
 game_matrim byte "matrim",0,"Matrimelee",0,"",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"MATR_C1",0,"MATR_C2",0,word $100_0
@@ -1006,7 +998,7 @@ byte SET_ADPCM_A,SET_ADPCM_B
 'byte LOAD_RAW,"266-V2",0,word $80_0
 byte LOAD_RAW,"MATR_VM",0,word $100_0
 byte SET_FIX
-byte LOAD_SROM,"MATR_S1",0,word $02_0
+byte LOAD_SROM_CMC+WITH_OFFSET,"MATR_C7",0,"MATR_C8",0,word $02_0,word $7E_0
 byte SET_Z80
 byte LOAD_RAW,"MATR_M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
