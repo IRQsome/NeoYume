@@ -21,21 +21,26 @@ wordfit @game_kof99    - @gamedb_base
 wordfit @game_kof2000  - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
 wordfit @game_lastblad - @gamedb_base
-wordfit @game_mslug    - @gamedb_base
-wordfit @game_mslug2   - @gamedb_base
-wordfit @game_mslugx   - @gamedb_base
-wordfit @game_mslug4   - @gamedb_base
+wordfit @game_lastbld2 - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_magdrop3 - @gamedb_base
 wordfit @game_matrim   - @gamedb_base
+wordfit @game_mslug    - @gamedb_base
+wordfit @game_mslug2   - @gamedb_base
+wordfit @game_mslugx   - @gamedb_base
+wordfit @game_mslug3   - @gamedb_base
+wordfit @game_mslug4   - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
+wordfit @game_samsho3  - @gamedb_base
+wordfit @game_samsho4  - @gamedb_base
 wordfit @game_sengoku  - @gamedb_base
 wordfit @game_sengoku2 - @gamedb_base
+wordfit @game_sengoku3 - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
@@ -122,6 +127,45 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_samsho3 byte "samsho3",0,"Samurai Shodown 3",0,"087-",0,GAME_OK
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $20_0
+byte SET_PROG
+byte LOAD_BSWAP,"PG1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"P2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_samsho4 byte "samsho4",0,"Samurai Shodown 4",0,"222-",0,GAME_OK
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 game_mslug byte "mslug",0,"Metal Slug",0,"201-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
@@ -139,8 +183,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: TOO BIG
-game_mslug2 byte "mslug2",0,"Metal Slug 2",0,"241-",0,GAME_ISSUE
+game_mslug2 byte "mslug2",0,"Metal Slug 2",0,"241-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $100_0
 byte LOAD_CROM,"C3",0,"C4",0,word $100_0
@@ -158,8 +201,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: TOO BIG
-game_mslugx byte "mslugx",0,"Metal Slug X",0,"250-",0,GAME_ISSUE
+game_mslugx byte "mslugx",0,"Metal Slug X",0,"250-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $100_0
 byte LOAD_CROM,"C3",0,"C4",0,word $100_0
@@ -195,20 +237,45 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_mslug4 byte "mslug4",0,"Metal Slug 4",0,"",0,GAME_BROKEN
+' Note: Borken fix layer
+' Note: M1 too big -> broken sound
+game_mslug3 byte "mslug3",0,"Metal Slug 3",0,"",0,GAME_ISSUE
+byte SET_CHAR
+byte LOAD_CROM,"MS3N_C1",0,"MS3N_C2",0,word $100_0
+byte LOAD_CROM,"MS3N_C3",0,"MS3N_C4",0,word $100_0
+byte LOAD_CROM,"MS3N_C5",0,"MS3N_C6",0,word $100_0
+byte LOAD_CROM,"MS3N_C7",0,"MS3N_C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"256-PH1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"256-PH2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"256-V1",0,word $40_0
+byte LOAD_RAW,"256-V2",0,word $40_0
+byte LOAD_RAW,"256-V3",0,word $40_0
+byte LOAD_RAW,"256-V4",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"MS3N_S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"256-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Note: broken fix layer
+game_mslug4 byte "mslug4",0,"Metal Slug 4",0,"",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"MS4N_C1",0,"MS4N_C2",0,word $100_0
-'byte LOAD_CROM,"MS4N_C3",0,"MS4N_C4",0,word $100_0
-'byte LOAD_CROM,"MS4N_C5",0,"MS4N_C6",0,word $100_0
+byte LOAD_CROM,"MS4N_C3",0,"MS4N_C4",0,word $100_0
+byte LOAD_CROM,"MS4N_C5",0,"MS4N_C6",0,word $100_0
 byte SET_PROG
 byte LOAD_BSWAP,"263-PG1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_4M
 byte LOAD_BSWAP,"263-P2",0,word $40_0
 byte SET_ADPCM_A,SET_ADPCM_B
-'byte LOAD_RAW,"263-V1",0,word $80_0
-'byte LOAD_RAW,"263-V2",0,word $80_0
+byte LOAD_LSWAP,"263-V1",0,word $80_0
+byte LOAD_LSWAP,"263-V2",0,word $80_0
 byte SET_FIX
-'byte LOAD_SROM,"S1",0,word $02_0
+byte LOAD_SROM,"MS4N_S1",0,word $02_0
 byte SET_Z80
 byte LOAD_RAW,"MS4N_M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
@@ -234,8 +301,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Super borken
-game_cyberlip byte "cyberlip",0,"Cyber-Lip",0,"010-",0,GAME_BROKEN
+'' NOTE: Broken sound
+game_cyberlip byte "cyberlip",0,"Cyber-Lip",0,"010-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $10_0
 byte LOAD_CROM,"C3",0,"C4",0,word $10_0
@@ -312,8 +379,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Hangs
-game_sengoku2 byte "sengoku2",0,"Sengoku 2",0,"040-",0,GAME_BROKEN
+game_sengoku2 byte "sengoku2",0,"Sengoku 2",0,"040-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $20_0
 byte LOAD_CROM,"C3",0,"C4",0,word $10_0
@@ -331,6 +397,26 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_sengoku3 byte "sengoku3",0,"Sengoku 3",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"SEN3N_C1",0,"SEN3N_C2",0,word $100_0
+byte LOAD_CROM,"SEN3N_C3",0,"SEN3N_C4",0,word $100_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"261-PH1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"261-V1",0,word $40_0
+byte LOAD_RAW,"261-V2",0,word $40_0
+byte LOAD_RAW,"261-V3",0,word $40_0
+byte LOAD_RAW,"261-V4",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"SEN3N_S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"261-M1",0,word $02_0 ' Technically 512K M1, but only first 64K is used.
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 game_doubledr byte "doubledr",0,"Double Dragon",0,"082-",0,GAME_OK
 byte SET_CHAR
@@ -463,7 +549,6 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: TOO BIG
 '' NOTE: Broken
 game_wakuwak7 byte "wakuwak7",0,"Waku Waku 7",0,"225-",0,GAME_BROKEN
 byte SET_CHAR
@@ -604,10 +689,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 
-
-
-'' NOTE: Black screen. Cool NeoGeo jingle though.
-game_karnovr byte "karnovr",0,"Karnov's Revenge",0,"066-",0,GAME_BROKEN
+game_karnovr byte "karnovr",0,"Karnov's Revenge",0,"066-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
 byte LOAD_CROM,"C3",0,"C4",0,word $40_0
@@ -894,12 +976,14 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_matrim byte "matrim",0,"Matrimelee",0,"",0,GAME_BROKEN
+'' Note: Broken fix layer
+'' Note: Need to figure out PCM2 descramble
+game_matrim byte "matrim",0,"Matrimelee",0,"",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"MATR_C1",0,"MATR_C2",0,word $100_0
-'byte LOAD_CROM,"MATR_C3",0,"MATR_C4",0,word $100_0
-'byte LOAD_CROM,"MATR_C5",0,"MATR_C6",0,word $100_0
-'byte LOAD_CROM,"MATR_C7",0,"MATR_C8",0,word $100_0
+byte LOAD_CROM,"MATR_C3",0,"MATR_C4",0,word $100_0
+byte LOAD_CROM,"MATR_C5",0,"MATR_C6",0,word $100_0
+byte LOAD_CROM,"MATR_C7",0,"MATR_C8",0,word $100_0
 byte SET_PROG
 byte LOAD_BSWAP,"266-P1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_4M
@@ -912,10 +996,11 @@ byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $38_0
 byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $20_0
 byte LOAD_BSWAP+WITH_OFFSET,"266-P2",0,word $08_0,word $08_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"266-V1",0,word $80_0
+'byte LOAD_RAW,"266-V1",0,word $80_0
 'byte LOAD_RAW,"266-V2",0,word $80_0
+byte LOAD_RAW,"MATR_VM",0,word $100_0
 byte SET_FIX
-'byte LOAD_SROM,"S1",0,word $02_0
+byte LOAD_SROM,"MATR_S1",0,word $02_0
 byte SET_Z80
 byte LOAD_RAW,"MATR_M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
@@ -930,6 +1015,28 @@ byte SET_PROG
 byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_4M
 byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $40_0
+byte LOAD_RAW,"V4",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+game_lastbld2 byte "lastbld2",0,"Last Blade 2",0,"243-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C5",0,"C6",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"PG1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"PG2",0,word $40_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"V1",0,word $40_0
 byte LOAD_RAW,"V2",0,word $40_0
