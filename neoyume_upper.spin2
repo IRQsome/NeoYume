@@ -379,15 +379,18 @@ repeat while pos < size
       c.fread(MKRAM_BASE+$0000,1,$4000,f1)
       c.fread(MKRAM_BASE+$4000,1,$4000,f2)
       tmp := MKRAM_BASE+$8000
-        k := MKRAM_BASE
-      repeat i from 0 to 255
+      k := MKRAM_BASE
+      l := MKRAM_BASE+$4000
+      repeat 256
         repeat 16
-          long[tmp] := __mergeb(word[$0020+k]+word[$4020+k]<<16)
+          long[tmp] := __mergeb(word[$0020+k]+word[$0020+l]<<16)
           tmp += 4
-          long[tmp] := __mergeb(word[$0000+k]+word[$4000+k]<<16)
+          long[tmp] := __mergeb(word[$0000+k]+word[$0000+l]<<16)
           tmp += 4
           k+=2
+          l+=2
         k+=32
+        l+=32
       exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
       pos+=$8000
     LOAD_SROM_CMC:
