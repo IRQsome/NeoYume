@@ -127,6 +127,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+' Note: weird issue where it sometimes starts playing through all SFX
 game_samsho3 byte "samsho3",0,"Samurai Shodown 3",0,"087-",0,GAME_OK
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
@@ -146,6 +147,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+' Note: weird issue where it sometimes starts playing through all SFX
 game_samsho4 byte "samsho4",0,"Samurai Shodown 4",0,"222-",0,GAME_OK
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
@@ -325,10 +327,14 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Broken
-game_viewpoin byte "viewpoin",0,"Viewpoint",0,"051-",0,GAME_BROKEN
+'' NOTE: Slightly broken Sammy logo due to lack of timer IRQ
+game_viewpoin byte "viewpoin",0,"Viewpoint",0,"051-",0,GAME_OK
+byte SET_TILEMASK,15
 byte SET_CHAR
-byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_FILLER,255,word $20_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
+byte LOAD_FILLER,255,word $20_0
 byte SET_PROG
 byte SET_PORT
 byte LOAD_BSWAP,"P1",0,word $10_0
