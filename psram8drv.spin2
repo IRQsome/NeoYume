@@ -786,7 +786,7 @@ resumereads     long    (%1000010010001010000000 << 10) + r_resume_burst
 ' SKIPF sequences
 skiptable
                 long    %11000011000001111110  ' read modify write byte
-                long    %110011011100001110    ' read modify write word
+                long    %110011011110001110    ' read modify write word
                 long    0                      ' read modify write long
                 long    %1111110               ' single byte read
                 long    %11110001110           ' single word read
@@ -975,7 +975,6 @@ p0                          shr     b, #17                  ' | | | d e    scale
 r_locked_burst              wrfast  xfreq1, hubdata         ' | | | d e f  setup streamer hub address for bursts
                             mov     c, count                ' | | | d e f  get count of bytes left to read
                             fle     c, limit wc             ' | | | d e f  enforce the burst limit
-' TODO fix clocks
                             mov     clks, #36 wc            ' a b c | | |  36 clock transitions to read a single long
             if_c            mov     resume, continue_read   ' | | | d e f  burst read will continue
             if_nc           mov     resume, complete_rw     ' | | c d e f  burst/long read will complete
@@ -1004,7 +1003,8 @@ burst_read                  ' handle the 2k page boundary by splitting any read 
 
 readcommon
                             mov     cmdaddr, addr1          'get start address of transfer
-                            shr     cmdaddr, #1             'align to 16 bit boundary
+                            shr     cmdaddr, #1             'convert to 16 bit address
+                            andn    cmdaddr, #1             'but aligned to 32 bit boundary
                             setbyte cmdaddr, #$EB, #3       'add quad read command
 
                             splitb  cmdaddr                 'reverse nibbles in address to match bus order
@@ -1047,7 +1047,7 @@ readcommon
                             testb   addr1, #1 wc            ' |   b   |    d        test for odd word address read case
             if_c            getword pb, a, #1               ' |   b   |    d        select hi word in long
             if_nc           getword pb, a, #0               ' |   b   |    d        select lo word in long
-                            mov     d, addr1                ' a   |   c    d
+                            mov     d, addr1                ' a   |   c    |
                             and     d, #3                   ' a   |   c    |        get LSBs of address
                             altgb   d, #a                   ' a   |   c    |        index into long
                             getbyte pb                      ' a   |   c    |        and extract the byte
@@ -1065,6 +1065,7 @@ writeback                   mov     pattern2, #%110111      'setup next skip pat
                             mov     wrclks, #24             '24 clocks to write a long
                             mov     resume, complete_rw     'we'll complete the operation after this
                             jmp     #writecommon
+
 
 '..................................................................................................
 ' Burst continuation testing
@@ -1289,12 +1290,11 @@ header_done                 cmp     request, #%11110000 wc  'test for fill/burst
                  
                             add     wrclks, pb              'include this number of bytes as more clock transitions
                             add     wrclks, pb              'include this number of bytes as more clock transitions
-            if_c            skipf   #%1010                 'for fills we can skip burst stuff
+            if_c            skipf   #%110                   'for fills we can skip burst stuff
             if_c            andn    pattern2, #$C           'enable rep loop instructions for fills in write pattern
-                            bitl    pattern2, #1            ' |  |  enable streamer instruction for bursts in write pattern
-                            shr     pb, #0                  ' |  b  compute byte count for bursts
-                            setword xsenddata, pb, #0       ' |  |  setup streamer count for bursts
-                            shr     pb, #2                  ' |  b  compute how many long transfer repeats this is
+                            bitl    pattern2, #1            ' a  |  enable streamer instruction for bursts in write pattern
+                            setword xsenddata, pb, #0       ' a  |  setup streamer count for bursts
+                            shr     pb, #2                  ' a  b  compute how many long transfer repeats this is
 
 body_done                   and     d, #3                   'determine if any residual trailing bytes to send (0-3)
                             tjz     d, #trailer_done        'no trailer to send, we exit now
@@ -1332,7 +1332,8 @@ body_done                   and     d, #3                   'determine if any re
 trailer_done                rdfast  xfreq1, a               '(bursts, but harmless for fills) setup streamer source address
 
 writecommon                 mov     cmdaddr, addr1          'get start address of transfer
-                            shr     cmdaddr, #1             'align to 32 bit boundary
+                            shr     cmdaddr, #1             'convert to 16 bit address
+                            andn    cmdaddr, #1             'but on 32 bit boundary
                             setbyte cmdaddr, #$02, #3       'add quad write command
 
                             splitb  cmdaddr                 'reverse nibbles in address to match bus order
