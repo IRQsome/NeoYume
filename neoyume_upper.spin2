@@ -46,6 +46,8 @@ byte lspc_cog,blt_cog,exmem_cog
 
 byte jpbios
 
+long loadpos
+
 OBJ
 
 video : "NeoVGA"
@@ -170,6 +172,9 @@ if x2 >= x1 and y2 >= y1
   repeat i from x1 to x2
     wordfill(long[$28]+$E004+(i<<5+y1)<<1,tile,y2-y1+1)
 
+PRI settile(x,y,tile) | i
+word[long[$28]+$E004+(x<<5+y)<<1] := tile
+
 PRI is_dualfile(cmd)
   return cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET || cmd == LOAD_SROM_CMC || cmd == LOAD_SROM_CMC+WITH_OFFSET
 
@@ -208,6 +213,28 @@ repeat
     other: ' Do nothing
 
 
+PRI init_bar(size) | i,j,loadblocks,ramblocks
+loadpos := 0
+settiles(0,39,LOADBAR_Y,LOADBAR_Y+LOADBAR_SIZE-1," ")
+'settiles(4,35,LOADBAR_Y,LOADBAR_Y+LOADBAR_SIZE-1,"."+3<<12)
+loadblocks := size/+LOADBAR_BLOCK
+ramblocks := exmem_size/+LOADBAR_BLOCK
+repeat i from 0 to 11
+  if ramblocks > 0
+    settiles(4,4+(ramblocks<#32)-1,LOADBAR_Y+i,LOADBAR_Y+i,15+3<<12)
+    ramblocks -= 32
+    if loadblocks > 0
+      settiles(4,4+(loadblocks<#32)-1,LOADBAR_Y+i,LOADBAR_Y+i,15+0<<12)
+      loadblocks -= 32
+
+PRI push_bar(bytes) | oldblk,newblk,i
+oldblk := loadpos/+LOADBAR_BLOCK
+newblk := (loadpos+=bytes)/+LOADBAR_BLOCK
+if oldblk <> newblk
+  repeat 
+    settile(4+(oldblk&31),LOADBAR_Y+(oldblk>>5),14)
+  while ++oldblk < newblk
+
 PRI load_game(gameptr) | common,cmd,fn1,fn2,len,exptr,tmp
 
 common := __builtin_alloca(PATH_MAX)
@@ -215,6 +242,8 @@ fn1 := __builtin_alloca(PATH_MAX)
 fn2 := __builtin_alloca(PATH_MAX)
 
 exptr := 0
+
+init_bar(count_romsize(gameptr,true))
 
 c.strcpy(common,@"/sd/NEOYUME/")
 c.strncat(common,gameptr,PATH_MAX-1) ' catenate romset name
@@ -264,6 +293,7 @@ repeat
       len := word[gameptr]*4096
       gameptr += 2
       exmem_fill(exptr,tmp,len,true)
+      push_bar(len)
       exptr += len
     SETCMD_FIRST..SETCMD_LAST:
       long[$80][cmd-SETCMD_FIRST] := exptr
@@ -330,30 +360,30 @@ if actually
 
 return gameptr
 
-PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,i,j,k,l,tmpstr
+PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,i,j,k,l,tmpstr,pushed
 settiles(0,39,22,27," ")
 tmpstr := __builtin_alloca(64)
 c.sprintf(tmpstr,@"Loading %d bytes, type %d",size,type)
-putstring(tmpstr,2,22,0)
-putstring(path1,3,23,0)
+putstring(tmpstr,2,23,0)
+putstring(path1,3,24,0)
 if path2
-  putstring(path2,3,24,0)
+  putstring(path2,3,25,0)
 
 
 f1 := c.fopen(path1,@"rb")
 ifnot f1
   'c.sprintf(tmpstr,@"file1 fail: %d !",errno)
   'putstring(tmpstr,2,25,0)
-  putstring(@"file1: ",2,25,0)
-  putstring(c.strerror(errno),2+7,25,0)
+  putstring(@"file1: ",2,26,0)
+  putstring(c.strerror(errno),2+7,26,0)
   repeat
 if is_dualfile(type)
   f2 := c.fopen(path2,@"rb")
   ifnot f2
     'c.sprintf(tmpstr,@"file2 fail: %d !",errno)
     'putstring(tmpstr,2,25,0)
-    putstring(@"file2: ",2,25,0)
-    putstring(c.strerror(errno),2+7,25,0)
+    putstring(@"file2: ",2,26,0)
+    putstring(c.strerror(errno),2+7,26,0)
     repeat
 else
   f2 := 0
@@ -370,13 +400,13 @@ repeat while pos < size
       tmp := $10000 <# size-pos
       c.fread(MKRAM_BASE,1,tmp,f1)
       exmem_write(target+pos,MKRAM_BASE,tmp,false)
-      pos+=tmp
+      pushed:=tmp
     LOAD_BSWAP:
       c.fread(MKRAM_BASE,1,$10000,f1)
       repeat i from MKRAM_BASE to MKRAM_BASE+$FFFC step 4
         long[i] := __movbyts(long[i],%%2301)
       exmem_write(target+pos,MKRAM_BASE,$1_0000,false)
-      pos+=$10000
+      pushed:=$10000
     LOAD_CROM:
       c.fread(MKRAM_BASE+$0000,1,$4000,f1)
       c.fread(MKRAM_BASE+$4000,1,$4000,f2)
@@ -394,7 +424,7 @@ repeat while pos < size
         k+=32
         l+=32
       exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
-      pos+=$8000
+      pushed:=$8000
     LOAD_SROM_CMC:
       c.fread(MKRAM_BASE+$0000,1,$4000,f1)
       c.fread(MKRAM_BASE+$4000,1,$4000,f2)
@@ -405,7 +435,7 @@ repeat while pos < size
         l+=4
         k+=2
       exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
-      pos+=$8000
+      pushed:=$8000
     LOAD_SROM:
       c.fread(MKRAM_BASE,1,$10000,f1)
       repeat i from $ffff to $0000
@@ -417,7 +447,7 @@ repeat while pos < size
         byte[MKRAM_BASE+i] := byte[MKRAM_BASE+j]
         byte[MKRAM_BASE+j] := tmp
       exmem_write(target+pos,MKRAM_BASE,$10000,false)
-      pos+=$10000
+      pushed:=$10000
     LOAD_LSWAP:
       c.fread(MKRAM_BASE,1,$10000,f1)
       repeat i from MKRAM_BASE+$0000 to MKRAM_BASE+$10000-8 step 8
@@ -425,10 +455,12 @@ repeat while pos < size
         long[i] := long[i+4]
         long[i+4] := k
       exmem_write(target+pos,MKRAM_BASE,$10000,false)
-      pos+=$10000
+      pushed:=$10000
     other:
       putstring(@"what???  ",2,25,0)
       repeat
+  pos += pushed
+  push_bar(pushed)
 
 if f1
   c.fclose(f1)
@@ -440,6 +472,10 @@ CON
   GAMECHOOSE_Y = 9
   GAMECHOOSE_X = 3
   GAMECHOOSE_WIDTH = 33 ' Note: game titles are NOT truncated
+
+  LOADBAR_Y = 9
+  LOADBAR_SIZE = 12
+  LOADBAR_BLOCK = 256*1024
 
 PRI do_gamechoose() : selected | i,games_got,mingot,maxgot,got_count,max_count,dir,ent,name,lptr,tmpstr,tmp,tmp2,input,previnput,drawtop,drawlast
 tmpstr := __builtin_alloca(64)
