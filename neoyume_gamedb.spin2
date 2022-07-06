@@ -14,12 +14,17 @@ wordfit @game_ganryu   - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
 wordfit @game_kabukikl - @gamedb_base
 wordfit @game_karnovr  - @gamedb_base
-'wordfit @game_kizuna   - @gamedb_base
 wordfit @game_kof94    - @gamedb_base
 wordfit @game_kof95    - @gamedb_base
+wordfit @game_kof96    - @gamedb_base
+wordfit @game_kof97    - @gamedb_base
+wordfit @game_kof98    - @gamedb_base
 wordfit @game_kof99    - @gamedb_base
 wordfit @game_kof2000  - @gamedb_base
+wordfit @game_kof2001  - @gamedb_base
+wordfit @game_kof2002  - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
+wordfit @game_kizuna   - @gamedb_base
 wordfit @game_lastblad - @gamedb_base
 wordfit @game_lastbld2 - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
@@ -38,9 +43,13 @@ wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
 wordfit @game_samsho3  - @gamedb_base
 wordfit @game_samsho4  - @gamedb_base
+wordfit @game_samsho5  - @gamedb_base
+wordfit @game_samsh5sp - @gamedb_base
 wordfit @game_sengoku  - @gamedb_base
 wordfit @game_sengoku2 - @gamedb_base
 wordfit @game_sengoku3 - @gamedb_base
+wordfit @game_shocktro - @gamedb_base
+wordfit @game_shocktr2 - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
@@ -165,6 +174,72 @@ byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Note: NO SOUND (scrambled M1?)
+game_samsho5 byte "samsho5",0,"Samurai Shodown 5",0,"",0,GAME_ISSUE
+byte LOAD_CROM,"SS5_C1",0,"SS5_C2",0,word $100_0
+byte LOAD_CROM,"SS5_C3",0,"SS5_C4",0,word $100_0
+byte LOAD_CROM,"SS5_C5",0,"SS5_C6",0,word $100_0
+byte LOAD_CROM,"SS5_C7",0,"SS5_C8",0,word $100_0
+byte SET_PORT,SET_BANKSWITCH_8M
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $30_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $28_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $10_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P1C",0,word $10_0,word $18_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $08_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P1C",0,word $08_0,word $30_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $38_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $20_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P1C",0,word $08_0,word $28_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P1C",0,word $08_0,word $10_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $18_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P2C",0,word $08_0,word $00_0
+byte LOAD_BSWAP+WITH_OFFSET,"270-P1C",0,word $08_0,word $38_0
+byte SET_PROG
+byte LOAD_BSWAP,"270-P1C",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"270-V1",0,word $80_0
+byte LOAD_RAW,"270-V2",0,word $80_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"SS5_C7",0,"SS5_C8",0,word $02_0,word $07F_0
+byte SET_Z80
+byte LOAD_RAW,"270-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+'' Note: NO SOUND (scrambled M1?)
+game_samsh5sp byte "samsh5sp",0,"Samurai Shodown 5 Special",0,"",0,GAME_ISSUE
+byte LOAD_CROM,"SS5S_C1",0,"SS5S_C2",0,word $100_0
+byte LOAD_CROM,"SS5S_C3",0,"SS5S_C4",0,word $100_0
+byte LOAD_CROM,"SS5S_C5",0,"SS5S_C6",0,word $100_0
+byte LOAD_CROM,"SS5S_C7",0,"SS5S_C8",0,word $100_0
+byte SET_PORT,SET_BANKSWITCH_8M
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $10_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $08_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $20_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $18_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $30_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P1",0,word $08_0,word $28_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P1",0,word $08_0,word $10_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $28_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $00_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P2",0,word $08_0,word $38_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P1",0,word $08_0,word $20_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P1",0,word $08_0,word $38_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P1",0,word $08_0,word $30_0
+byte LOAD_BSWAP+WITH_OFFSET,"272-P1",0,word $08_0,word $18_0
+byte SET_PROG
+byte LOAD_BSWAP,"272-P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"272-V1",0,word $80_0
+byte LOAD_RAW,"272-V2",0,word $80_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"SS5S_C7",0,"SS5S_C8",0,word $02_0,word $07F_0
+byte SET_Z80
+byte LOAD_RAW,"272-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -595,8 +670,8 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 
-'' NOTE: wierd holey memory map, doesn't fit
-game_kof95 byte "kof95",0,"King of Fighters '95",0,"084-",0,GAME_ISSUE
+'' NOTE: wierd holey memory map, doesn't fit in 32MB when it really should
+game_kof95 byte "kof95",0,"King of Fighters '95",0,"084-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
@@ -616,8 +691,71 @@ byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"V1",0,word $40_0
 byte LOAD_RAW,"V2",0,word $20_0
 ' No space left for these
-'byte LOAD_FILLER,255,word $10_00
-'byte LOAD_RAW,"V3",0,word $10_0
+byte LOAD_FILLER,255,word $20_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte 0
+
+game_kof96 byte "kof96",0,"King of Fighters '96",0,"214-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"P2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_kof97 byte "kof97",0,"King of Fighters '97",0,"232-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Note: MG1 is 256k, but sound isn't obviously broken
+game_kof98 byte "kof98",0,"King of Fighters '98",0,"242-",0,GAME_OK
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C5",0,"C6",0,word $100_0
+byte LOAD_CROM,"C7",0,"C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"PN1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $40_0
+byte LOAD_RAW,"V4",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"MG1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_kof99 byte "kof99",0,"King of Fighters '99",0,"",0,GAME_OK
@@ -665,6 +803,62 @@ byte SET_Z80
 byte LOAD_RAW,"KOF2K_M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+
+'' Note: M1 is 256k, but sound isn't obviously broken
+game_kof2001 byte "kof2001",0,"King of Fighters 2001",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"KF2K1_C1",0,"KF2K1_C2",0,word $100_0
+byte LOAD_CROM,"KF2K1_C3",0,"KF2K1_C4",0,word $100_0
+byte LOAD_CROM,"KF2K1_C5",0,"KF2K1_C6",0,word $100_0
+byte LOAD_CROM,"KF2K1_C7",0,"KF2K1_C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"262-PG1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"262-PG2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"262-V1",0,word $40_0
+byte LOAD_RAW,"262-V2",0,word $40_0
+byte LOAD_RAW,"262-V3",0,word $40_0
+byte LOAD_RAW,"262-V4",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"KF2K1_C7",0,"KF2K1_C8",0,word $02_0,word $07F_0
+byte SET_Z80
+byte LOAD_RAW,"KF2K1_M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+'' Note: Need to figure out PCM2 descramble (KF2K2_VM.BIN is dumped from mame debugger)
+game_kof2002 byte "kof2002",0,"King of Fighters 2002",0,"",0,GAME_ISSUE
+byte LOAD_CROM,"KF2K2_C1",0,"KF2K2_C2",0,word $100_0
+byte LOAD_CROM,"KF2K2_C3",0,"KF2K2_C4",0,word $100_0
+byte LOAD_CROM,"KF2K2_C5",0,"KF2K2_C6",0,word $100_0
+byte LOAD_CROM,"KF2K2_C7",0,"KF2K2_C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"265-P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $10_0
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $28_0
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $30_0
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $18_0
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $00_0
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $38_0
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $20_0
+byte LOAD_BSWAP+WITH_OFFSET,"265-P2",0,word $08_0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+'byte LOAD_RAW,"265-V1",0,word $80_0
+'byte LOAD_RAW,"265-V2",0,word $80_0
+byte LOAD_RAW,"KF2K2_VM",0,word $100_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"KF2K2_C7",0,"KF2K2_C8",0,word $02_0,word $07F_0
+byte SET_Z80
+byte LOAD_RAW,"KF2K2_M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+
 
 
 
@@ -818,9 +1012,8 @@ byte 0
 
 
 ' Holy recycled ROM on a bicycle
-' NOTE: THEM SHITASS MEMORY HOLES AGAIN
-{
-game_kizuna byte "kizuna",0,"Kizuna Encounter",0,"",0,GAME_BROKEN
+' Note: Occasional electrofarts
+game_kizuna byte "kizuna",0,"Kizuna Encounter",0,"",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"059-C1",0,"059-C2",0,word $40_0
 byte SET_PROG+WITH_OFFSET,word $10_0
@@ -842,7 +1035,6 @@ byte LOAD_RAW,"216-V2",0,word $20_0
 byte LOAD_RAW,"059-V3",0,word $20_0
 byte LOAD_RAW,"216-V4",0,word $20_0
 byte 0
-}
 
 '' Note: Black screen
 game_spinmast byte "spinmast",0,"Spinmaster",0,"062-",0,GAME_BROKEN
@@ -1067,6 +1259,48 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_shocktro byte "shocktro",0,"Shock Troopers",0,"238-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_shocktr2 byte "shocktr2",0,"Shock Troopers 2nd Squad",0,"246-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C5",0,"C6",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
 
 
 
