@@ -360,7 +360,7 @@ if actually
 
 return gameptr
 
-PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,i,j,k,l,tmpstr,pushed
+PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,tmp2,i,j,k,l,tmpstr,pushed
 settiles(0,39,22,27," ")
 tmpstr := __builtin_alloca(64)
 c.sprintf(tmpstr,@"Loading %d bytes, type %d",size,type)
@@ -410,20 +410,45 @@ repeat while pos < size
     LOAD_CROM:
       c.fread(MKRAM_BASE+$0000,1,$4000,f1)
       c.fread(MKRAM_BASE+$4000,1,$4000,f2)
-      tmp := MKRAM_BASE+$8000
-      k := MKRAM_BASE
-      l := MKRAM_BASE+$4000
-      repeat 256
-        repeat 16
-          long[tmp] := __mergeb(word[$0020+k]+word[$0020+l]<<16)
-          tmp += 4
-          long[tmp] := __mergeb(word[$0000+k]+word[$0000+l]<<16)
-          tmp += 4
-          k+=2
-          l+=2
-        k+=32
-        l+=32
-      exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
+      exmem_sync()
+      org
+          wrfast #0,##MKRAM_BASE+$8000
+          loc ptrb,#\MKRAM_BASE
+          mov tmp,#256
+      .loop1
+          rep @.loop2,#8
+          rdlong i,ptrb[$00/4]
+          rdlong j,ptrb[$20/4]
+          bitnot ptrb,#encod $4000
+          rdlong k,ptrb[$00/4]
+          rdlong l,ptrb[$20/4]
+
+          getword tmp2,l,#0
+          rolword tmp2,j,#0
+          mergeb tmp2
+          wflong tmp2
+
+          getword tmp2,k,#0
+          rolword tmp2,i,#0
+          mergeb tmp2
+          wflong tmp2
+
+          getword tmp2,l,#1
+          rolword tmp2,j,#1
+          mergeb tmp2
+          wflong tmp2
+
+          getword tmp2,k,#1
+          rolword tmp2,i,#1
+          mergeb tmp2
+          wflong tmp2
+
+          sub ptrb,##$4000 - 4
+      .loop2
+          add ptrb,#$20
+          djnz tmp,#.loop1
+      end
+      exmem_write(target+pos,MKRAM_BASE+$8000,$8000,true)
       pushed:=$8000
     LOAD_SROM_CMC:
       c.fread(MKRAM_BASE+$0000,1,$4000,f1)
@@ -466,6 +491,7 @@ if f1
   c.fclose(f1)
 if f2
   c.fclose(f2)
+exmem_sync()
 
 CON
   GAMECHOOSE_SIZE = 12
