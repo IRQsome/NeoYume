@@ -503,7 +503,9 @@ CON
   LOADBAR_SIZE = 12
   LOADBAR_BLOCK = 256*1024
 
-PRI do_gamechoose() : selected | i,games_got,mingot,maxgot,got_count,max_count,dir,ent,name,lptr,tmpstr,tmp,tmp2,input,previnput,drawtop,drawlast
+PRI do_gamechoose() : selected | i,games_got,mingot,maxgot,got_count,max_count,dir,ent,name,lptr,tmpstr,tmp,tmp2,input,previnput,drawtop,drawlast,repeatkey,repeatnext
+previnput := 0
+repeatkey := 0
 tmpstr := __builtin_alloca(64)
 max_count := (@gamelist_end - @gamelist)/2
 games_got := __builtin_alloca(max_count)
@@ -573,22 +575,31 @@ repeat
   settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2," ")
   putstring(jpbios?@"Using japanese BIOS":@"Using international BIOS",GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,0<<12)
 
-  previnput := 0
   repeat
     previnput := input
     input := long[$60]
     tmp := input & !previnput
-    if tmp.[0] && selected > mingot
+    tmp2 := 0
+    if (getct()-repeatnext) >= 0
+      tmp2 := repeatkey
+      repeatnext := clkfreq+/10 + getct()
+    if tmp
+      repeatnext := clkfreq+/2 + getct()
+    ifnot input.[0] xor input.[1]
+      repeatkey := 0
+    elseif (tmp.[0]||tmp2==1) && selected > mingot
+      repeatkey := 1
       repeat until byte[games_got][--selected]
       if selected == drawtop and drawtop > mingot
         repeat until byte[games_got][--drawtop]
       quit
-    if tmp.[1] && selected < maxgot
+    elseif (tmp.[1]||tmp2==2) && selected < maxgot
+      repeatkey := 2
       repeat until byte[games_got][++selected]
       if selected == drawlast and drawlast < maxgot
         repeat until byte[games_got][++drawtop]
       quit
-    if tmp.[5]
+    elseif tmp.[5]
       not jpbios
       quit
     if tmp.[4] or tmp.[8]
