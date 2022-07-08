@@ -628,13 +628,12 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Broken
-game_wakuwak7 byte "wakuwak7",0,"Waku Waku 7",0,"225-",0,GAME_BROKEN
+'' NOTE: Weird graphics issues, but playable ig
+game_wakuwak7 byte "wakuwak7",0,"Waku Waku 7",0,"225-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
-'byte LOAD_CROM,"C5",0,"C6",0,word $80_0
-'byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
 byte SET_PROG
 byte LOAD_BSWAP,"P1",0,word $10_0
 byte SET_PORT,SET_BANKSWITCH_2M

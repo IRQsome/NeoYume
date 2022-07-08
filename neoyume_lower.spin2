@@ -476,10 +476,10 @@ mk_nextop_nohook
               'cmp mk_debug_tripwire,mk_virtualpc wz
         'if_nz jmp #.no_trace
       'if_nc jmp #.no_trace
-              'debug("tripwired' ",uhex_byte_array(#@zbus_status,#1),uhex_long(mk_virtualpc))
+              debug("tripwired' ",uhex_long(mk_virtualpc))
               'call #mk_check_core_integrity
               'debug("got: ",uhex_word_(mk_opword)," before ",uhex_long_(mk_virtualpc))
-              'debug("registers: ",ubin_word(mk_sr),10,13,uhex_reg_array(#mk_d0,#8),10,13,uhex_reg_array(#mk_a0,#8))
+              debug("registers: ",ubin_word(mk_sr),10,13,uhex_reg_array(#mk_d0,#8),10,13,uhex_reg_array(#mk_a0,#8))
 
               'debug("got op: ",uhex_word(mk_opword)," before ",uhex_long(mk_virtualpc),uhex_long(mk_a3))
               'waitx ##174_00
@@ -813,7 +813,7 @@ mk_bit31      long 1<<31
 
 mk_cogvar_start
 
-mk_debug_tripwire long $000122
+mk_debug_tripwire long $03c9da+2
 mk_debug_ctr  long 0
 
 mk_vram_curr  long 0
@@ -1517,18 +1517,17 @@ mk_dobranch
               {
               'cmp mk_virtualpc,##$2000 wz
         'if_e   jmp #.sussy_wussy
-              cmp mk_virtualpc,##$1FFF wcz
-        if_be jmp #.sussy_wussy
-              cmp mk_virtualpc,##$C11300 wcz
-        if_be cmpr mk_virtualpc,##$C11198 wcz
-        if_be jmp #.sussy_wussy
+              cmp mk_virtualpc,##$03b18c wcz
+        if_nz cmp mk_virtualpc,##$03b186 wcz
+        if_nz cmp mk_virtualpc,##$03b5f6 wcz
+        if_e  jmp #.sussy_wussy
               cmps mk_branchdisplace,##$FFFFFF wc
         if_ae jmp #.sussy_wussy
               cmps mk_branchdisplace,##-$FFFFFF wc
         if_ae jmp #.not_a_sussy_baka
 .sussy_wussy
-              'debug("Sussy branch from ",uhex_long_(mk_optmp0)," to ",uhex_long_(mk_virtualpc),uhex_word(mk_opword),uhex_long(mk_d0,mk_a0,mk_a5))
-              jmp #$
+              debug("Sussy branch from ",uhex_long_(mk_optmp0)," to ",uhex_long_(mk_virtualpc),uhex_word(mk_opword),uhex_long(mk_d0,mk_a0,mk_a1,mk_a2,mk_a6))
+              'jmp #$
 .not_a_sussy_baka '}
               'debug("branching ",shex(mk_branchdisplace)," to ",uhex_long(mk_virtualpc))
               testb mk_virtualpc,#0 wc
@@ -1856,8 +1855,9 @@ mk_address_error_debug
               debug("special edition spicy address error ")
               'jmp #$
 mk_address_error ' can basically only happen due to misalignment?
-              debug("something something address error ",uhex_long(mk_effaddr),uhex_long(mk_virtualpc),uhex_long(mk_optmp0),uhex_word(mk_opword),uhex_long(mk_d2,mk_a1,mk_a2,mk_a3))
-              debug(uhex_long(mk_a0))
+              debug("something something address error ",uhex_long(mk_effaddr),uhex_long(mk_virtualpc),uhex_long(mk_optmp0),uhex_word(mk_opword))
+              debug(uhex_reg_array(#mk_d0,#8))
+              debug(uhex_reg_array(#mk_a0,#8))
               wrlong ##$FF00FF_00,##palette32+4*16*256-4
               jmp #$
               ' get vector
@@ -2152,14 +2152,16 @@ mk_hub_movem  ' MOVEM
 .readloop
 
               testb mk_opword,#6 wc ' long/word ?
+              testb mk_optmp2,#3 wz ' Z -> A register, NZ -> D register
         if_c  call #mk_setup_ea32
         if_nc call #mk_setup_ea16
               call mk_readf
-        if_c  altd mk_optmp2,#mk_d0
-        if_c  mov 0-0,mk_memvalue
+        if_01 signx mk_memvalue,#15 ' Word size reads to address registers
+    if_not_00 altd mk_optmp2,#mk_d0
+    if_not_00 mov 0-0,mk_memvalue
+        if_00 altd mk_optmp2,#mk_d0
+        if_00 setword 0-0,mk_memvalue,#0
         if_c  add mk_effaddr,#4
-        if_nc altd mk_optmp2,#mk_d0
-        if_nc setword 0-0,mk_memvalue,#0
         if_nc add mk_effaddr,#2
 .movem_read
               'debug("at .movem_read",uhex_long(mk_optmp2),uhex_long(mk_effaddr),ubin_word(mk_optmp1),uhex_word(mk_opword))
