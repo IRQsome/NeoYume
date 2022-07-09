@@ -7274,7 +7274,7 @@ opn_adpcm_a_run
               ' Check sample end
               rdword opn_tempValue,ptra[3]
               shl opn_tempValue,#9
-              or opn_tempValue,#1
+              sub opn_tempValue,#1
               xor opn_tempValue,opn_arg3
         if_z  zerox opn_tempValue,#19+1 wz ' only bottom 20 bits are used for compare (previous Z is active bit)
         if_z  bitl adpcm_active,adpa_which
