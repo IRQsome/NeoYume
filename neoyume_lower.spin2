@@ -7288,6 +7288,9 @@ opn_adpcm_a_run
 
               ret
 
+              '' Magic NOPs
+              '' TODO: Figure out why this stopgaps audio issues
+              nop
 
 DAT ' OPNBCog I/O interface
         orgh
@@ -7618,6 +7621,7 @@ opn_portwrite
         if_z  and zk_tmp8,#$0F
               wrbyte zk_tmp8,ptrb[##OPN_SIZE]
               ret wcz
+              'nop
 
 .tctrl
               wrbyte zk_tmp8,ptrb[7]
