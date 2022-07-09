@@ -7116,7 +7116,7 @@ opn_adpcm_b_run
         if_11 wrbyte #0,ptra[6] ' set end flag
     if_not_01 jmp #.norep_retrigger
 .key_on       ' If we enter with NC, we repeat. If we enter with C, we key-on...
-        if_c  wrbyte #1,ptra[6] ' clear end flag
+        'if_c  wrbyte #1,ptra[6] ' clear end flag
               mov adpb_oldsample,#0
               mov adpb_newsample,#0
               mov adpb_phase,#0 ' Doing this for repeat feel wrong..
@@ -7185,7 +7185,7 @@ opn_adpcm_a_run
 
               modcz _nc_and_nz,_z wcz ' Set C if key-on
 
-        if_c  wrbyte #1,ptra[2] ' clear end flag
+        'if_c  wrbyte #1,ptra[2] ' clear end flag
         if_nc altgw adpa_which,#adpa_sample
               getword opn_arg1,opn_conFFF,#1
         if_nc altgb adpa_which,#adpa_stepi
@@ -7276,7 +7276,7 @@ opn_adpcm_a_run
               shl opn_tempValue,#9
               or opn_tempValue,#1
               xor opn_tempValue,opn_arg3
-              zerox opn_tempValue,#19 wz ' only bottom 20 bits are used for compare
+        if_z  zerox opn_tempValue,#19 wz ' only bottom 20 bits are used for compare (previous Z is active bit)
         if_z  bitl adpcm_active,adpa_which
         if_z  wrbyte #0,ptra[2] ' set end flag
 
@@ -7583,7 +7583,7 @@ opn_portwrite
 .common_reg
               cmp zk_memtmp1,#$10 wc
         if_b  jmp #.ssg
-              cmp zk_memtmp1,#$1C wc
+              cmp zk_memtmp1,#$1C wcz
         if_b  jmp #.adpcm_b
         if_e  jmp #.adpcm_endmask
               cmp zk_memtmp1,#$2B wcz

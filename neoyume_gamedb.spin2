@@ -137,7 +137,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 ' Note: weird issue where it sometimes starts playing through all SFX
-game_samsho3 byte "samsho3",0,"Samurai Shodown 3",0,"087-",0,GAME_OK
+game_samsho3 byte "samsho3",0,"Samurai Shodown 3",0,"087-",0,GAME_ISSUE
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
 byte LOAD_CROM,"C5",0,"C6",0,word $80_0
@@ -157,7 +157,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 ' Note: weird issue where it sometimes starts playing through all SFX
-game_samsho4 byte "samsho4",0,"Samurai Shodown 4",0,"222-",0,GAME_OK
+game_samsho4 byte "samsho4",0,"Samurai Shodown 4",0,"222-",0,GAME_ISSUE
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
 byte LOAD_CROM,"C5",0,"C6",0,word $80_0
@@ -378,6 +378,7 @@ byte 0
 
 '' NOTE: Broken sound
 game_cyberlip byte "cyberlip",0,"Cyber-Lip",0,"010-",0,GAME_ISSUE
+byte SET_TILEMASK,15
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $10_0
 byte LOAD_CROM,"C3",0,"C4",0,word $10_0
@@ -628,8 +629,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Weird graphics issues, but playable ig
-game_wakuwak7 byte "wakuwak7",0,"Waku Waku 7",0,"225-",0,GAME_ISSUE
+game_wakuwak7 byte "wakuwak7",0,"Waku Waku 7",0,"225-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
@@ -1011,8 +1011,7 @@ byte 0
 
 
 ' Holy recycled ROM on a bicycle
-' Note: Occasional electrofarts
-game_kizuna byte "kizuna",0,"Kizuna Encounter",0,"",0,GAME_ISSUE
+game_kizuna byte "kizuna",0,"Kizuna Encounter",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"059-C1",0,"059-C2",0,word $40_0
 byte SET_PROG+WITH_OFFSET,word $10_0
