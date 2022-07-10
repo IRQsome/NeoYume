@@ -321,7 +321,7 @@ mk_wrportbank
               mov mk_memtmp3,mk_effaddr
               zerox mk_memtmp3,#19
               cmp mk_memtmp3,##$FFFF0 wc
-              debug("Bankswitch write: ",uhex_long(mk_memvalue,mk_effaddr,mk_virtualpc))
+              'debug("Bankswitch write: ",uhex_long(mk_memvalue,mk_effaddr,mk_virtualpc))
               setq #1
               rdlong mk_memtmp0,#_exr_port_base
               shl mk_memvalue,#20 ' 1 MB steps
@@ -395,7 +395,7 @@ mk_rd16_io
               'jmp #.undecoded                  ' CE_xxxx (nothing?)
 
 .undecoded
-              debug("undecoded IO WORD READ: ",uhex(mk_effaddr))
+              'debug("undecoded IO WORD READ: ",uhex(mk_effaddr))
               mov mk_memvalue,#0 ' TODO
               ret wcz ' undecoded IO?
 
@@ -476,10 +476,10 @@ mk_nextop_nohook
               'cmp mk_debug_tripwire,mk_virtualpc wz
         'if_nz jmp #.no_trace
       'if_nc jmp #.no_trace
-              debug("tripwired' ",uhex_long(mk_virtualpc))
+              'debug("tripwired' ",uhex_long(mk_virtualpc))
               'call #mk_check_core_integrity
               'debug("got: ",uhex_word_(mk_opword)," before ",uhex_long_(mk_virtualpc))
-              debug("registers: ",ubin_word(mk_sr),10,13,uhex_reg_array(#mk_d0,#8),10,13,uhex_reg_array(#mk_a0,#8))
+              'debug("registers: ",ubin_word(mk_sr),10,13,uhex_reg_array(#mk_d0,#8),10,13,uhex_reg_array(#mk_a0,#8))
 
               'debug("got op: ",uhex_word(mk_opword)," before ",uhex_long(mk_virtualpc),uhex_long(mk_a3))
               'waitx ##174_00
@@ -7186,6 +7186,7 @@ opn_adpcm_a_run
               modcz _nc_and_nz,_z wcz ' Set C if key-on
 
         'if_c  wrbyte #1,ptra[2] ' clear end flag
+              nop ' I hate everything TODO: Figure out why we need this shit here
         if_nc altgw adpa_which,#adpa_sample
               getword opn_arg1,opn_conFFF,#1
         if_nc altgb adpa_which,#adpa_stepi
@@ -7288,9 +7289,6 @@ opn_adpcm_a_run
 
               ret
 
-              '' Magic NOPs
-              '' TODO: Figure out why this stopgaps audio issues
-              nop
 
 DAT ' OPNBCog I/O interface
         orgh
