@@ -2,7 +2,7 @@ OBJ vconst = "NeoVGA.spin2"
 CON
 
 '' This can be defined to skip game selection
-'#define DIRECT_BOOT game_mslug
+'#define DIRECT_BOOT game_lastblad
 
 '' Wether to use japanese AES BIOS (neo-po.bin) or export AES BIOS (neo-epo.bin)
 '' This affects text language and regional censorship.
@@ -22,10 +22,8 @@ PSRAM_BANKS = 6
 ' \/ Uncomment if PSRAM_BANKS = 1 for speedup
 '#define USE_PSRAM_NOBANKS
 
-'PSRAM_WAIT  = 10
-'PSRAM_DELAY = 5
-PSRAM_WAIT  = 9
-PSRAM_DELAY = 2
+PSRAM_WAIT  = 5
+PSRAM_DELAY = 17
 PSRAM_SYNC_CLOCK = true
 PSRAM_SYNC_DATA = false
 
@@ -33,7 +31,7 @@ PSRAM_SYNC_DATA = false
 #define USE_PSRAM_SLOW
 
 
-{
+'{
 VIDEO_MODE = vconst.MODE_VGA3X
 VIDEO_SUBMODE = 0
 
@@ -42,7 +40,7 @@ VGA_VSYNC   = VGA_BASEPIN + 4
 
 
 '}
-'{
+{
 VIDEO_MODE = vconst.MODE_SVID_AND_COMP
 VIDEO_SUBMODE = vconst.SUBMODE_NTSC
 
@@ -66,6 +64,9 @@ VGA_VSYNC   = -1
 
 AUDIO_LEFT  = 32+6
 AUDIO_RIGHT = AUDIO_LEFT + 1
+
+' \/ Uncomment for mono audio (still sent to both pins (you can set them to the same pin))
+'#define AUDIO_MIX_MONO
 
 
 '' Uncomment ONLY ONE of the below

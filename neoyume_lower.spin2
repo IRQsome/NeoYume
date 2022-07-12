@@ -27,20 +27,9 @@ INPUT_LOAD = $3_9000
 VINT_LOCK = 9
 STATIC_LOCKS = decod VINT_LOCK
 
-CON ' Stuff that we should be getting from config.spin2 but proptool is poo poo
+CON
 
 #include "config.spin2"
-{
-AUDIO_LEFT  = 24+6
-AUDIO_RIGHT = AUDIO_LEFT + 1
-
-PSRAM_CLK = 56
-PSRAM_SELECT = 57
-PSRAM_BASE = 40
-
-PSRAM_WAIT  = 10
-PSRAM_DELAY = 4
-'}
 
 DAT ' startup code & zero page
               org
@@ -6703,10 +6692,19 @@ byte ALG_ADDOUT
 '    Output current sample
 '===========================================================
 do_output
+
+#ifdef AUDIO_MIX_MONO
+              add       opn_outl,opn_outr
+              sar       opn_outl,#1
+              fges      opn_outl,##-$7F80
+              fles      opn_outl,##+$7F80
+              mov       opn_outr,opn_outl
+#else
               fges      opn_outl,##-$7F80
               fles      opn_outl,##+$7F80
               fges      opn_outr,##-$7F80
               fles      opn_outr,##+$7F80
+#endif
 
               neg       opn_arg1,opn_filter_left
               neg       opn_arg2,opn_filter_right
