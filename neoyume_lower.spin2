@@ -7186,7 +7186,6 @@ opn_adpcm_a_run
               modcz _nc_and_nz,_z wcz ' Set C if key-on
 
         'if_c  wrbyte #1,ptra[2] ' clear end flag
-              nop ' I hate everything TODO: Figure out why we need this shit here
         if_nc altgw adpa_which,#adpa_sample
               getword opn_arg1,opn_conFFF,#1
         if_nc altgb adpa_which,#adpa_stepi
