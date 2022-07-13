@@ -599,7 +599,7 @@ repeat
       if selected == drawlast and drawlast < maxgot
         repeat until byte[games_got][++drawtop]
       quit
-    elseif tmp.[5]
+    if tmp.[5]
       not jpbios
       quit
     if tmp.[4] or tmp.[8]
