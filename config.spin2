@@ -10,25 +10,25 @@ CON
 USE_JP_BIOS = false
 
 ' Enable one of these to select the exmem type to use
-'#define USE_PSRAM16
-#define USE_PSRAM8
+#define USE_PSRAM16
+'#define USE_PSRAM8
 '#define USE_PSRAM4
 
 ' For PSRAM (either type)
-PSRAM_CLK = 8 addpins 1
-PSRAM_SELECT = 10
-PSRAM_BASE = 0
-PSRAM_BANKS = 6
+PSRAM_CLK = 56
+PSRAM_SELECT = 57
+PSRAM_BASE = 40
+PSRAM_BANKS = 1
 ' \/ Uncomment if PSRAM_BANKS = 1 for speedup
-'#define USE_PSRAM_NOBANKS
+#define USE_PSRAM_NOBANKS
 
 PSRAM_WAIT  = 5
-PSRAM_DELAY = 17
-PSRAM_SYNC_CLOCK = true
-PSRAM_SYNC_DATA = false
+PSRAM_DELAY = 14
+PSRAM_SYNC_CLOCK = false
+PSRAM_SYNC_DATA = true
 
 ' \/ Uncomment for lameness
-#define USE_PSRAM_SLOW
+'#define USE_PSRAM_SLOW
 
 
 '{
@@ -39,6 +39,12 @@ VGA_BASEPIN = 32
 VGA_VSYNC   = VGA_BASEPIN + 4
 
 
+'}
+{
+VIDEO_MODE = vconst.MODE_LCD6
+VIDEO_SUBMODE = vconst.LCD_ILI9342
+VGA_BASEPIN = 0
+VGA_VSYNC = (8<<0) + (9<<8) + (10<<16) + (11<<24)
 '}
 {
 VIDEO_MODE = vconst.MODE_SVID_AND_COMP
@@ -62,7 +68,7 @@ VGA_BASEPIN = 8
 VGA_VSYNC   = -1
 '}
 
-AUDIO_LEFT  = 32+6
+AUDIO_LEFT  = 24+6
 AUDIO_RIGHT = AUDIO_LEFT + 1
 
 ' \/ Uncomment for mono audio (still sent to both pins (you can set them to the same pin))
@@ -72,6 +78,7 @@ AUDIO_RIGHT = AUDIO_LEFT + 1
 '' Uncomment ONLY ONE of the below
 #define INPUT_USE_USB
 '#define INPUT_USE_PINS
+'#define INPUT_USE_SNES
 
 
 '' USB Keyboard/gamepad pins.
@@ -110,7 +117,10 @@ PINPUT_P2_D      = -1
 PINPUT_P2_START  = -1
 PINPUT_P2_SELECT = -1
 
-
+SNES_CLK = 16
+SNES_LATCH = 17
+SNES_PLAYER1 = 18
+SNES_PLAYER2 = 19
 
 '' Ignore stuff below
 

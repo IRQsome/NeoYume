@@ -18,7 +18,7 @@ OBJ
 usb : "1CogKbM_neoyume.spin2"
 #endif
 
-PUB main() | i,p,data
+PUB main() | i,p,data,tmp
 #ifdef INPUT_USE_USB
 usb.start(USB0_BASEPIN, USB0_BASEPIN + ENABLE_PIN, USB0_BASEPIN + DM_PIN, 0, $60,%11,%1100,%11<<16,%1100<<16)
 usb.setEmuPadMapping( 0,usb.KEY_UP)             ' Up
@@ -52,6 +52,34 @@ repeat
 #endif
 
 
+#ifdef INPUT_USE_SNES
+pinl(SNES_LATCH)
+pinh(SNES_CLK)
+waitus(5)
+repeat
+  tmp := 0
+  pinh(SNES_LATCH)
+  waitus(5)
+  pinl(SNES_LATCH)
+  waitus(5)
+  repeat 16
+    tmp := tmp<<1 | pinr(SNES_PLAYER1)<<16 | pinr(SNES_PLAYER2)
+    pinl(SNES_CLK)
+    waitus(5)
+    pinh(SNES_CLK)
+    waitus(5)
+
+  tmp := !tmp rev 31
+
+  data.word[0] := snes_buttonmap(tmp.word[0])
+  data.word[1] := snes_buttonmap(tmp.word[1])
+
+  long[$60] := data
+  waitms(1) ' idle time
+
+#endif
+
+
 DAT
 #ifdef INPUT_USE_PINS
 pin_table byte
@@ -64,3 +92,29 @@ byte PINPUT_P2_A,PINPUT_P2_B,PINPUT_P2_C,PINPUT_P2_D
 byte PINPUT_P2_START,PINPUT_P2_SELECT
 byte -1[6]
 #endif
+
+PRI snes_buttonmap(in) : out
+  out := 0
+  out.[0..3] := in.[4..7] ' directions
+  out.[8] := in.[3] ' Start
+  out.[9] := in.[2] ' Select
+
+  ' NeoGeo Mini positional equivalent
+  {
+  out.[4] := in.[1] ' Y -> A
+  out.[5] := in.[0] ' B -> B
+  out.[6] := in.[9] ' X -> C
+  out.[7] := in.[8] ' A -> D
+  '}
+  
+  ' SNES Arcade style layout
+  ' B C D
+  ' A x x
+  '{
+  out.[4] := in.[ 1] ' Y -> A
+  out.[5] := in.[10] ' L -> B
+  out.[6] := in.[ 9] ' X -> C
+  out.[7] := in.[11] ' R -> D
+  '}
+
+
