@@ -575,8 +575,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Broken sound
-game_sonicwi2 byte "sonicwi2",0,"Sonic Wings 2",0,"075-",0,GAME_ISSUE
+
+game_sonicwi2 byte "sonicwi2",0,"Sonic Wings 2",0,"075-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
 byte LOAD_CROM,"C3",0,"C4",0,word $40_0
@@ -593,8 +593,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Broken sound
-game_sonicwi3 byte "sonicwi3",0,"Sonic Wings 3",0,"097-",0,GAME_ISSUE
+
+game_sonicwi3 byte "sonicwi3",0,"Sonic Wings 3",0,"097-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $40_0

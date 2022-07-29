@@ -4287,6 +4287,7 @@ zk_nextop
 zk_nmihook    nop
               rdword pa,#opn_timerAflag wz
 zk_irqhook    nop
+zk_nextop_nohook
               {
               cmp zk_pc,##$06B2 wz
         'if_nz cmp zk_pc,##$06EF wz
@@ -4629,32 +4630,34 @@ zk_i2a
 
 
 
-zk_irqret     '' RETI/RETN
-              '' These are literally the same
-              testb zk_irqenable,#ZK_IFF2_BIT wc
-        if_c  call #\zk_irqon
-              call #\zk_pop16
-        _ret_ mov zk_pc,zk_tmp16
-
 
 zk_imode      ' Don't care, always assume IM1
               ret
 zk_irqoff
               andn zk_irqenable,#(1<<ZK_IFF1_BIT)|(1<<ZK_IFF2_BIT)
         _ret_ mov zk_irqhook,#0
+
+
+zk_irqret     '' RETI/RETN
+              '' These are literally the same
+              call #\zk_pop16
+              mov zk_pc,zk_tmp16
+              testb zk_irqenable,#ZK_IFF2_BIT wc
+        if_nc ret
 zk_irqon
               or zk_irqenable,#(1<<ZK_IFF1_BIT)|(1<<ZK_IFF2_BIT)
-        _ret_ mov zk_irqhook,##(%0101_1101011_000_000000000_000101100)+zk_irqptr<<9 ' IF_NZ JMP zk_irqptr
+              mov zk_irqhook,##(%0101_1101011_000_000000000_000101100)+zk_irqptr<<9 ' IF_NZ JMP zk_irqptr
+              jmp #zk_nextop_nohook
 
-zk_irqptr     long zk_doirq'_debug
+zk_irqptr     long zk_doirq_debug
 zk_nmiptr     long zk_donmi
 
 zk_doirq_debug
-              debug("Hitting IRQ")
+              debug("IRQ")
               jmp #zk_doirq
 
 zk_donmi
-              debug("Hitting NMI")
+              debug("NMI ")
               or zk_irqenable,#(1<<ZK_NMI_NAK_BIT)
               mov zk_nmihook,#0 ' disable NMI until acknowledge
               skipf ##%0_01_00_01_00_1100
@@ -7619,6 +7622,7 @@ opn_portwrite
               'nop
 
 .tctrl
+              debug(".tctrl ",uhex_byte_(zk_tmp8),uhex_word(zk_pc))
               wrbyte zk_tmp8,ptrb[7]
               testb zk_tmp8,#4 wc ' Timer A reset
         if_c  wrbyte #0,#opn_timerAflag
