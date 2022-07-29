@@ -4649,13 +4649,14 @@ zk_irqon
               mov zk_irqhook,##(%0101_1101011_000_000000000_000101100)+zk_irqptr<<9 ' IF_NZ JMP zk_irqptr
               jmp #zk_nextop_nohook
 
-zk_irqptr     long zk_doirq_debug
+zk_irqptr     long zk_doirq'_debug
 zk_nmiptr     long zk_donmi
 
+{
 zk_doirq_debug
               debug("IRQ")
               jmp #zk_doirq
-
+'}
 zk_donmi
               debug("NMI ")
               or zk_irqenable,#(1<<ZK_NMI_NAK_BIT)
