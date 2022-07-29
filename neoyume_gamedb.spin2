@@ -376,7 +376,6 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' NOTE: Broken sound
 game_cyberlip byte "cyberlip",0,"Cyber-Lip",0,"010-",0,GAME_ISSUE
 byte SET_TILEMASK,15
 byte SET_CHAR
@@ -394,10 +393,10 @@ byte LOAD_RAW,"V13",0,word $08_0
 byte LOAD_RAW,"V14",0,word $08_0
 byte SET_ADPCM_B
 byte LOAD_RAW,"V21",0,word $08_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $01_0 ' Non-banked 64K
 byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
-byte SET_Z80
-byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 

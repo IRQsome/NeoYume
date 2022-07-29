@@ -4914,10 +4914,10 @@ zk_bank2start long $C000
 zk_bank3start long $8000
 
 zk_ramptr     long @z80_ram
-zk_bank0ptr   long @m1_rom
-zk_bank1ptr   long @m1_rom
-zk_bank2ptr   long @m1_rom
-zk_bank3ptr   long @m1_rom
+zk_bank0ptr   long @m1_rom + $F000
+zk_bank1ptr   long @m1_rom + $E000
+zk_bank2ptr   long @m1_rom + $C000
+zk_bank3ptr   long @m1_rom + $8000
 zk_staticptr  long @m1_rom
 
 zk_ffffh      long $FFFF
@@ -5588,10 +5588,7 @@ zk_doreset
               mov zk_refresh,#0
               mov zk_refreshhi,#0
               mov zk_ivector,#0
-              mov zk_bank0ptr,##@m1_rom
-              mov zk_bank1ptr,##@m1_rom
-              mov zk_bank2ptr,##@m1_rom
-              mov zk_bank3ptr,##@m1_rom
+              ' Note: Bank registers do not reset (NEO-ZMC does not have a reset pin)
               call #zk_setnmihook
               call #opn_doreset
               getct zk_lastwait
