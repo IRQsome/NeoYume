@@ -376,7 +376,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_cyberlip byte "cyberlip",0,"Cyber-Lip",0,"010-",0,GAME_ISSUE
+game_cyberlip byte "cyberlip",0,"Cyber-Lip",0,"010-",0,GAME_OK
 byte SET_TILEMASK,15
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $10_0
