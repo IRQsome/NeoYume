@@ -1929,6 +1929,7 @@ mk_hub_reset
               jmp #$
 
 mk_hub_nop
+              waitx #32 ' make NOP slow to fix Z80 race condition in some Data East games (magdrop2 etc)
               cmp mk_opword,##$4E71 wz
         if_z  ret
               debug("weird NOP ? ",uhex_word(mk_opword),uhex_long(mk_virtualpc))
@@ -3285,7 +3286,7 @@ DAT ' I/O glue
 iog_z80port_wr16
               getbyte mk_memvalue,mk_memvalue,#1
 iog_z80port_wr8
-              debug("Z80 command: ",uhex_byte(mk_memvalue))
+              debug("Z80 command: ",uhex_byte(mk_memvalue),uhex_long(mk_virtualpc))
               testb mk_eacache,#0 wc
         if_nc rdword pa,#_zk_cogatn_w
         if_nc wrbyte mk_memvalue,#z80_command_b
@@ -7620,7 +7621,7 @@ opn_portwrite
               'nop
 
 .tctrl
-              debug(".tctrl ",uhex_byte_(zk_tmp8),uhex_word(zk_pc))
+              'debug(".tctrl ",uhex_byte_(zk_tmp8),uhex_word(zk_pc))
               wrbyte zk_tmp8,ptrb[7]
               testb zk_tmp8,#4 wc ' Timer A reset
         if_c  wrbyte #0,#opn_timerAflag
