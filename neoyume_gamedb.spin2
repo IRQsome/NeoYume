@@ -38,6 +38,7 @@ wordfit @game_mslug4   - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
+wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
@@ -1236,7 +1237,29 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+'' Note: Broken sound
+game_pulstar byte "pulstar",0,"Pulstar",0,"089-",0,GAME_ISSUE
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"P2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 '' NOTE: Broken sound
+'' NOTE: Some backgrounds broken
 game_blazstar byte "blazstar",0,"Blazing Star",0,"239-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
@@ -1245,7 +1268,7 @@ byte LOAD_CROM,"C5",0,"C6",0,word $80_0
 byte LOAD_CROM,"C7",0,"C8",0,word $80_0
 byte SET_PROG
 byte LOAD_BSWAP,"P1",0,word $10_0
-byte SET_PORT,SET_BANKSWITCH_4M
+byte SET_PORT,SET_BANKSWITCH_2M
 byte LOAD_BSWAP,"P2",0,word $20_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"V1",0,word $40_0
