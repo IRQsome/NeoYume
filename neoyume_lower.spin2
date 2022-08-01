@@ -2913,7 +2913,7 @@ MA_CHAR_ASHIFT = 1
 MA_CHAR_CYCLES = 4
 MA_PCM_ASHIFT = 2
 MA_PCM_CYCLES = 8
-MA_PROGCYSHL = 2
+MA_PROGCYSHL = 1
 MA_PAGESIZE = 0 addbits 9
 MA_BANKSHIFT = 23
 #endif
@@ -2923,7 +2923,7 @@ MA_CHAR_ASHIFT = 2
 MA_CHAR_CYCLES = 8
 MA_PCM_ASHIFT = 3
 MA_PCM_CYCLES = 16
-MA_PROGCYSHL = 3
+MA_PROGCYSHL = 2
 MA_PAGESIZE = 0 addbits 8
 MA_BANKSHIFT = 23
 #endif
@@ -2933,15 +2933,17 @@ MA_CHAR_ASHIFT = 3
 MA_CHAR_CYCLES = 16
 MA_PCM_ASHIFT = 4
 MA_PCM_CYCLES = 32
-MA_PROGCYSHL = 4
+MA_PROGCYSHL = 3
 MA_PAGESIZE = 0 addbits 7
 MA_BANKSHIFT = 23
 #endif
 
 #ifdef USE_PSRAM_SLOW
-MA_CLKDIV = 4
+MA_CLKDIV = 3
+MA_CYMUL = 1
 #else
 MA_CLKDIV = 2
+MA_CYMUL = 2
 #endif
 
 DAT ' Memory arbiter (PSRAM)
@@ -2962,11 +2964,11 @@ ma_entry
 
 
               fltl #PSRAM_CLK
-              wrpin ##P_TRANSITION|P_OE|(PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #PSRAM_CLK
 #ifdef USE_PSRAM_SLOW
-              wxpin #2, #PSRAM_CLK
-              fltl #PSRAM_CLK
+              wrpin ##P_PULSE|P_OE|(PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #PSRAM_CLK
+              wxpin ##3 + (2<<16), #PSRAM_CLK
 #else
+              wrpin ##P_TRANSITION|P_OE|(PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #PSRAM_CLK
               wxpin #1, #PSRAM_CLK
               drvl #PSRAM_CLK
 #endif
@@ -3029,16 +3031,19 @@ ma_lineloop
               movbyts ma_mtmp1, #%%0123
               mergeb  ma_mtmp1
               rep @.irqshield,#1
+              drvl  ma_psram_pinfield
+#ifdef USE_PSRAM_SLOW
+              drvl  #PSRAM_CLK ' must be 2 ops before xinit
+#ifdef USE_PSRAM_NOBANKS
+              nop
+#endif
+#endif
 #ifndef USE_PSRAM_NOBANKS
               altd  ma_mtmp3,#PSRAM_SELECT
 #endif
               drvh  #PSRAM_SELECT
-              drvl  ma_psram_pinfield
-#ifdef USE_PSRAM_SLOW
-              drvl  #PSRAM_CLK
-#endif
               xinit ma_psram_addr_cmd,ma_mtmp1
-              wypin #(8+PSRAM_WAIT+MA_CHAR_CYCLES)*2,#PSRAM_CLK
+              wypin #(8+PSRAM_WAIT+MA_CHAR_CYCLES)*MA_CYMUL,#PSRAM_CLK
               setq ma_nco_fast
               xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
               wrfast ma_bit31,ptrb
@@ -3075,16 +3080,19 @@ ma_do_adpcm
               movbyts ma_mtmp1, #%%0123
               mergeb  ma_mtmp1
               rep @.irqshield,#1
+              drvl  ma_psram_pinfield
+#ifdef USE_PSRAM_SLOW
+              drvl  #PSRAM_CLK ' must be 2 ops before xinit
+#ifdef USE_PSRAM_NOBANKS
+              nop
+#endif
+#endif
 #ifndef USE_PSRAM_NOBANKS
               altd  ma_mtmp3,#PSRAM_SELECT
 #endif
               drvh  #PSRAM_SELECT
-              drvl  ma_psram_pinfield
-#ifdef USE_PSRAM_SLOW
-              drvl  #PSRAM_CLK
-#endif
               xinit ma_psram_addr_cmd,ma_mtmp1
-              wypin #(8+PSRAM_WAIT+MA_PCM_CYCLES)*2,#PSRAM_CLK
+              wypin #(8+PSRAM_WAIT+MA_PCM_CYCLES)*MA_CYMUL,#PSRAM_CLK
               setq ma_nco_fast
               xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
               waitxmt
@@ -3130,8 +3138,8 @@ ma_68krequest
               reti2
 
 ma_psram_read68k
-              mov ma_itmp0,#(8+PSRAM_WAIT)*2
-              shl ma_prog_length,#MA_PROGCYSHL
+              mov ma_itmp0,#(8+PSRAM_WAIT)*MA_CYMUL
+              shl ma_prog_length,#MA_PROGCYSHL + (encod MA_CYMUL)
               add ma_itmp0,ma_prog_length
 #ifdef USE_PSRAM8
               shl ma_prog_addr,#1
@@ -3150,19 +3158,22 @@ ma_psram_read68k
               rev     ma_prog_addr
               movbyts ma_prog_addr, #%%0123
               mergeb  ma_prog_addr
+              drvl  ma_psram_pinfield
+#ifdef USE_PSRAM_SLOW
+              drvl  #PSRAM_CLK ' must be 2 ops before xinit
+#ifdef USE_PSRAM_NOBANKS
+              nop
+#endif
+#endif
 #ifndef USE_PSRAM_NOBANKS
               altd  ma_itmp3,#PSRAM_SELECT
 #endif
               drvh  #PSRAM_SELECT
-              drvl  ma_psram_pinfield
-#ifdef USE_PSRAM_SLOW
-              drvl  #PSRAM_CLK
-#endif
               xinit ma_psram_addr_cmd,ma_prog_addr
               wypin ma_itmp0,#PSRAM_CLK
               setq ma_nco_fast
               xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
-              shr ma_prog_length,#1
+              shr ma_prog_length,#encod MA_CYMUL
               setword ma_psram_read68k_cmd,ma_prog_length,#0
               waitxmt
               fltl ma_psram_pinfield
@@ -3183,7 +3194,7 @@ ma_psram_read68k
 ma_bit31      'alias
 ma_nco_fast   long $8000_0000
 #ifdef USE_PSRAM_SLOW
-ma_nco_slow   long $2000_0000
+ma_nco_slow   long $2AAAAAAB
 #else
 ma_nco_slow   long $4000_0000
 #endif
@@ -5572,9 +5583,6 @@ zk_init
               rdlong 0,##@zk_cogbase
               setq2 #511
               rdlong 0,##@zk_lutbase
-
-              'setse1 #$10+YMINT_LOCK
-              'setse1 #$10+VINT_LOCK
 
 zk_doreset
               'drvl #39 ' DEBUG LED

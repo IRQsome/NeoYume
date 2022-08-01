@@ -694,7 +694,10 @@ long[tmp][1] := (HYPER_SYNC_CLOCK?0:1)<<exmem.UNREGCLK_BIT
 long[tmp][2] := HYPER_RESET < 32 ? 1<<HYPER_RESET : 0
 long[tmp][3] := HYPER_RESET >= 32 ? 1<<HYPER_RESET : 0
 #elseifdef USE_PSRAM_EITHER
-long[tmp][1] := (PSRAM_SYNC_CLOCK?0:1)<<exmem.UNREGCLK_BIT
+long[tmp][1] := (PSRAM_SYNC_CLOCK?0:1)<<exmem.UNREGCLK_BIT 
+#ifdef USE_PSRAM_SLOW
+long[tmp][1] |= 1<<exmem.SLOWCLK_BIT | 1<<exmem.CLKSEL_BIT
+#endif
 long[tmp][2] := 0
 long[tmp][3] := 0 
 #endif
@@ -714,19 +717,19 @@ longfill(banks,negx,32)
 
 #ifdef USE_PSRAM16
 repeat i from 0 to PSRAM_BANKS-1
-  long[banks][0+i*2] := 512<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
-  long[banks][1+i*2] := 512<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
+  long[banks][0+i*2] := 512<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
+  long[banks][1+i*2] := 512<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
   long[banks][16+i*2] := PSRAM_SELECT+i + PSRAM_CLK<<8
   long[banks][17+i*2] := PSRAM_SELECT+i + PSRAM_CLK<<8
 exmem_size := 32*1024*1024 * PSRAM_BANKS
 #elseifdef USE_PSRAM8
 repeat i from 0 to PSRAM_BANKS-1
-  long[banks][0+i] := 256<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
+  long[banks][0+i] := 256<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
   long[banks][16+i] := PSRAM_SELECT+i + PSRAM_CLK<<8
 exmem_size := 16*1024*1024 * PSRAM_BANKS
 #elseifdef USE_PSRAM4
 repeat i from 0 to (PSRAM_BANKS-1)/2
-  long[banks][0+i] := 128<<16 + (PSRAM_DELAY+1)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 23
+  long[banks][0+i] := 128<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 23
   long[banks][16+i] := PSRAM_SELECT+i*2 + PSRAM_CLK<<8 + (PSRAM_SELECT+i*2+(((PSRAM_BANKS&1)&&(i>=PSRAM_BANKS/2)) ? 0 : 1))<<16
 exmem_size := 8*1024*1024 * PSRAM_BANKS
 #elseifdef USE_HYPER
