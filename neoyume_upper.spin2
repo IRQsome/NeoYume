@@ -574,6 +574,7 @@ repeat
       putstring(string(58),GAMECHOOSE_X+GAMECHOOSE_WIDTH,i,3<<12)
   settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2," ")
   putstring(jpbios?@"Using japanese BIOS":@"Using international BIOS",GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,0<<12)
+  putstring(@"Hit D for credits!",GAMECHOOSE_X,27,0<<12)
 
   repeat
     previnput := input
@@ -602,9 +603,52 @@ repeat
     if tmp.[5]
       not jpbios
       quit
+    if tmp.[7]
+      settiles(0,39,GAMECHOOSE_Y,27," ")
+      i := GAMECHOOSE_Y
+      ent := @credits_text
+      repeat while byte[ent] <> 127
+        tmp2 := byte[ent++]
+        putstring(ent,2,i++,tmp2<<12)
+        ent += strsize(ent)+1
+#ifdef USE_PSRAM_EITHER
+      i++
+      ' A kingdom for compile time stringify
+      c.sprintf(tmpstr,@"Using PSRAM: %2d bit, sysclk/%d", PSRAM_WIDTH, PSRAM_CLKDIV)
+      putstring(tmpstr,2,i++,3<<12)
+      c.sprintf(tmpstr,@"WAIT=%2d DELAY=%2d CLK=%-5s DAT=%-5s",PSRAM_WAIT,PSRAM_DELAY,PSRAM_SYNC_CLOCK?@"SYNC":@"ASYNC",PSRAM_SYNC_DATA?@"SYNC":@"ASYNC")
+      putstring(tmpstr,2,i++,3<<12)
+      c.sprintf(tmpstr,@"BASE=%2d CLK=%2d(+%d) SELECT=%2d(+%d)",PSRAM_BASE,PSRAM_CLK&63,PSRAM_CLK>>6,PSRAM_SELECT,PSRAM_BANKS-1)
+      putstring(tmpstr,2,i++,3<<12)
+#endif
+      repeat
+        previnput := input
+        input := long[$60]
+        tmp := input & !previnput
+      until tmp & %1_1001_0000
+      settiles(0,39,GAMECHOOSE_Y,27," ")
+      quit
     if tmp.[4] or tmp.[8]
       return
 
+DAT
+
+credits_text
+byte 0,"A NeoGeo AES emulator for P2+PSRAM",0
+byte 4,"https://github.com/IRQsome/NeoYume",0
+byte 1,"Programmed by Ada Gottensträter",0
+byte 1," of IRQsome Software non-inc",0
+byte 0,"",0
+byte 2,"Additional programming:",0
+byte 0,"       Eric Smith: flexspin compiler",0
+byte 0,"   Garry Jordan &",0
+byte 0," Marco Maccaferri: USB driver ",0
+byte 0,"        Roger Loh: exmem drivers",0
+byte 0,"",0
+byte 3,"This program is free software under.",0
+byte 3,"the MIT License and is provided",0
+byte 3,34,"as is",34,",without warranty of any kind.",0
+byte 127
 
 PRI gen_gradient_palette(ptr,bg,fg) | i
 long[ptr][0]:=0
