@@ -2,7 +2,7 @@ OBJ vconst = "NeoVGA.spin2"
 CON
 
 '' This can be defined to skip game selection
-'#define DIRECT_BOOT game_lastblad
+'#define DIRECT_BOOT game_mslug
 
 '' Wether to use japanese AES BIOS (neo-po.bin) or export AES BIOS (neo-epo.bin)
 '' This affects text language and regional censorship.
@@ -37,14 +37,6 @@ VIDEO_SUBMODE = 0
 
 VGA_BASEPIN = 32
 VGA_VSYNC   = VGA_BASEPIN + 4
-
-
-'}
-{
-VIDEO_MODE = vconst.MODE_LCD6
-VIDEO_SUBMODE = vconst.LCD_ILI9342
-VGA_BASEPIN = 0
-VGA_VSYNC = (8<<0) + (9<<8) + (10<<16) + (11<<24)
 '}
 {
 VIDEO_MODE = vconst.MODE_SVID_AND_COMP
@@ -66,6 +58,12 @@ VIDEO_SUBMODE = 0
 
 VGA_BASEPIN = 8
 VGA_VSYNC   = -1
+'}
+{
+VIDEO_MODE = vconst.MODE_LCD6
+VIDEO_SUBMODE = vconst.LCD_ILI9342
+VGA_BASEPIN = 0
+VGA_VSYNC = (8<<0) + (9<<8) + (10<<16) + (11<<24)
 '}
 
 AUDIO_LEFT  = 24+6
@@ -126,10 +124,18 @@ SNES_PLAYER2 = 19
 
 #ifdef USE_PSRAM4
 #define USE_PSRAM_EITHER
+PSRAM_WIDTH = 4
 #endif
 #ifdef USE_PSRAM8
+PSRAM_WIDTH = 8
 #define USE_PSRAM_EITHER
 #endif
 #ifdef USE_PSRAM16
+PSRAM_WIDTH = 16
 #define USE_PSRAM_EITHER
+#endif
+#ifdef USE_PSRAM_SLOW
+PSRAM_CLKDIV = 3
+#else
+PSRAM_CLKDIV = 2
 #endif
