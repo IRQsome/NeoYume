@@ -46,6 +46,8 @@ As an alternative to illicit acquisition of game ROMs, you may also:
 
 Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere (don't feel bad, for they did for some reason (read: they probably just got a BIOS romset from a shady site themselves) include unibios, which is against its terms of use (then again, unibios itself exists in violation of copyright)).
 
+Also note that I have not tested every single available game, YMMV
+
 tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download it. Be gay do crime.
 
 ### Compiling
@@ -57,50 +59,77 @@ tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download 
 
 ## Game Compatibility
 
-Note that due to RAM size, late-era games over 255 megabit _can't work_ on P2-EC32MB, though they can be tested with missing graphics (see mslug2).
-
 These are just the games I tested, to the extent that I tested them. Don't complain if the victory screen crashes and burns your house down.
 
-|ROMset name|Title|Compatibility|
-|-|-|-|
-|`aodk`|Aggressors of Dark Kombat|**Works**|
-|`aof`|Art of Fighting|**Works**|
-|`ctomaday`|Captain Tomaday|**Works**|
-|`crswords`|Crossed Swords|**Works**|
-|`cyberlip`|Cyber-Lip|Doesn't boot|
-|`doubledr`|Double Dragon|**Works**|
-|`fatfury1`|Fatal Fury|**Works**|
-|`fatfursp`|Fatal Fury Special|**Works**|
-|`ganryu`|Ganryu|**Works** (Needs decrypted C/S)|
-|`ironclad`|Ironclad|**Works** (need to rename files to fit in 8.3 (remove "proto_" prefix))|
-|`kabukikl`|Far East of Eden - Kabuki Klash|**Works**|
-|`karnovr`|Karnov's Revenge|Black screen after eyecatcher|
-|`kof94`|King of Fighters '94|**Works**|
-|`kof95`|King of Fighters '95|Works in theory, in practice the memory map is too holey to fit|
-|`kotmh`|King of the Monsters|**Works**|
-|`magdrop2`|Magical Drop 2|Broken sound|
-|`magdrop3`|Magical Drop 3|**Works**|
-|`mslug`|Metal Slug|**Works**|
-|`mslug2`|Metal Slug 2|**Would work** (needs bigger PSRAM to load all graphics)|
-|`mslugx`|Metal Slug X|**Would work** (needs bigger PSRAM to load all graphics)|
-|`mutnat`|Mutation Nation|**Works**|
-|`neobombe`|Neo Bomberman|**Works**|
-|`neodrift`|Neo Drift Out|Glitching graphics, sound seems to die after one game|
-|`pbobbl2n`|Puzzle Bobble 2|**Works**|
-|`samsho`|Samurai Shodown|**Works**|
-|`samsho2`|Samurai Shodown 2|**Works**|
-|`sengoku`|Sengoku|**Works**|
-|`sengoku2`|Sengoku 2|Hangs quickly|
-|`sonicwi2`|Sonic Wings 2|Broken sound|
-|`sonicwi3`|Sonic Wings 3|Broken sound|
-|`strhoop`|Street Hoop|Broken sound|
-|`spinmast`|Spinmaster|Black screen after eyecatcher|
-|`twinspri`|Twinkle Star Sprites|**Works**|
-|`viewpoint`|Viewpoint|Hangs immediately|
-|`wakuwak7`|Waku Waku 7|Would be too big, but also crashes immediately|
-|`wh2`|World Heroes 2|**Works**|
-|`wjammers`|Windjammers|Broken sound|
-|`zedblade`|Zed Blade|**Works**|
+Note 1: I sometimes gloss over very minor issues that don't significantly impact the enjoyment. In particular, some games rarely have a "wrong sound" issue wherein an ADPCM channel runs through all consecutive data in ROM until another actual sound is triggered - except for samsho3/samsho4, this happens rarely enough that it is very difficult to even verify.
+
+Note 2: There currently isn't a public tool for V ROM decryption, thus all games with encrypted V are marked as GAME_ISSUE in the internal database, even if they actually work fine.
+
+|ROMset name|Title|RAM Required|Compatibility|
+|-|-|-:|-|
+|`aodk`|Aggressors of Dark Kombat|24 MB|**Works**|
+|`aof`|Art of Fighting|16 MB|**Works**|
+|`blazstar`|Blazing Star|48 MB|Broken sound, broken backgrounds|
+|`ctomaday`|Captain Tomaday|16 MB|**Works**|
+|`crswords`|Crossed Swords|8 MB|**Works**|
+|`cyberlip`|Cyber-Lip|8 MB|**Works**|
+|`doubledr`|Double Dragon|24 MB|**Works**|
+|`fatfury1`|Fatal Fury|8 MB|**Works**|
+|`fatfursp`|Fatal Fury Special|24 MB|**Works**|
+|`ganryu`|Ganryu|24 MB|**Works** (Needs decrypted C)|
+|`ironclad`|Ironclad|24 MB|**Works** (need to rename files to fit in 8.3 (remove "proto_" prefix))|
+|`kabukikl`|Far East of Eden - Kabuki Klash|32 MB|**Works**|
+|`karnovr`|Karnov's Revenge|16 MB|**Works**|
+|`kof94`|King of Fighters '94|32 MB|**Works**|
+|`kof95`|King of Fighters '95|**48 MB**|**Works**|
+|`kof96`|King of Fighters '96|**48 MB**|**Works**|
+|`kof97`|King of Fighters '97|**64 MB**|**Works**|
+|`kof98`|King of Fighters '98|**96 MB**|**Works** (Needs decrypted C)|
+|`kof99`|King of Fighters '99|**96 MB**|**Works** (Needs decrypted C)|
+|`kof2000`|King of Fighters 2000|**96 MB**|Broken fix layer (Needs decrypted C)|
+|`kof2001`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C)|
+|`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C and V)|
+|`kotmh`|King of the Monsters|8 MB|**Works**|
+|`kizuna`|Kizuna Encounter|**48 MB**|**Works**|
+|`lastblad`|The Last Blade|**64 MB**|**Works**|
+|`lastbld2`|The Last Blade 2|**80 MB**|**Works**|
+|`magdrop2`|Magical Drop 2|16 MB|**Works**|
+|`magdrop3`|Magical Drop 3|24 MB|**Works**|
+|`matrim`|Matrimelee|**96 MB**|**Works** (Needs decrypted C/V/M1)|
+|`mslug`|Metal Slug|32 MB|**Works**|
+|`mslug2`|Metal Slug 2|**48 MB**|**Works**|
+|`mslugx`|Metal Slug X|**64 MB**|**Works**|
+|`mslug3`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
+|`mslug4`|Metal Slug 4|**96 MB**|**Works** (Needs decrypted C/M1)|
+|`mutnat`|Mutation Nation|8 MB|**Works**|
+|`neobombe`|Neo Bomberman|24 MB|**Works**|
+|`neodrift`|Neo Drift Out|16 MB|Glitching graphics, sound seems to die after one game|
+|`pulstar`|Pulstar|48 MB|Broken Sound|
+|`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
+|`samsho`|Samurai Shodown|24 MB|**Works**|
+|`samsho2`|Samurai Shodown 2|32 MB|**Works**|
+|`samsho3`|Samurai Shodown 3|**48 MB**|Minor sound issues|
+|`samsho4`|Samurai Shodown 4|**48 MB**|Minor sound issues|
+|`samsho5`|Samurai Shodown 5|**96 MB**|Broken sound (Needs decrypted C)|
+|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|Broken sound (Needs decrypted C)|
+|`sengoku`|Sengoku|8 MB|**Works**|
+|`sengoku2`|Sengoku 2|16 MB|**Works**|
+|`sengoku3`|Sengoku 3|**64 MB**|**Works**|
+|`sengoku3`|Sengoku 3|**64 MB**|**Works** (Needs decrypted C)|
+|`shocktro`|Shock Troopers|**48 MB**|**Works**|
+|`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|**Works**|
+|`sonicwi2`|Sonic Wings 2|16 MB|**Works**|
+|`sonicwi3`|Sonic Wings 3|24 MB|**Works**|
+|`strhoop`|Street Hoop|16 MB|**Works**|
+|`spinmast`|Spinmaster|16 MB|Black screen after eyecatcher|
+|`twinspri`|Twinkle Star Sprites|24 MB|**Works**|
+|`viewpoint`|Viewpoint|16 MB|**Works**|
+|`wakuwak7`|Waku Waku 7|**48 MB**|**Works**|
+|`wh2`|World Heroes 2|24 MB|**Works**|
+|`wjammers`|Windjammers|16 MB|**Works**|
+|`zedblade`|Zed Blade|16 MB|**Works**|
+
+Note: RAM requirements are rounded to the next highest of 8MB, 16MB, 24MB, 32MB, 48MB, 64MB, 80MB, 96MB
 
 ## USB Controller compatibility
 
@@ -164,5 +193,5 @@ Keymap:
 NeoYume was programmed almost entirely by me, Ada Gottensträter.
 The AY/SSG core is adapted from work by Johannes Ahlebrand.
 The USB driver was written by Garry Jordan, with additional work by Marco Maccaferri,
-The loader memory driver (psram16drv.spin2) was written by Roger Loh.
+The loader memory driver (`psram16drv.spin2` and friends) was written by Roger Loh.
 
