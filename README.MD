@@ -95,12 +95,12 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`lastbld2`|The Last Blade 2|**80 MB**|**Works**|
 |`magdrop2`|Magical Drop 2|16 MB|**Works**|
 |`magdrop3`|Magical Drop 3|24 MB|**Works**|
-|`matrim`|Matrimelee|**96 MB**|**Works** (Needs decrypted C/V/M1)|
+|`matrim`|Matrimelee|**96 MB**|**Works** (Needs decrypted C/V)|
 |`mslug`|Metal Slug|32 MB|**Works**|
 |`mslug2`|Metal Slug 2|**48 MB**|**Works**|
 |`mslugx`|Metal Slug X|**64 MB**|**Works**|
 |`mslug3`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
-|`mslug4`|Metal Slug 4|**96 MB**|**Works** (Needs decrypted C/M1)|
+|`mslug4`|Metal Slug 4|**96 MB**|**Works** (Needs decrypted C)|
 |`mutnat`|Mutation Nation|8 MB|**Works**|
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
 |`neodrift`|Neo Drift Out|16 MB|Glitching graphics, sound seems to die after one game|

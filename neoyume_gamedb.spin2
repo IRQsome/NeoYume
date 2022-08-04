@@ -178,7 +178,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: NO SOUND (scrambled M1?)
+'' Note: Broken sound (V encryption?)
 game_samsho5 byte "samsho5",0,"Samurai Shodown 5",0,"",0,GAME_ISSUE
 byte LOAD_CROM,"SS5_C1",0,"SS5_C2",0,word $100_0
 byte LOAD_CROM,"SS5_C3",0,"SS5_C4",0,word $100_0
@@ -206,12 +206,12 @@ byte LOAD_RAW,"270-V2",0,word $80_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"SS5_C7",0,"SS5_C8",0,word $02_0,word $07F_0
 byte SET_Z80
-byte LOAD_RAW,"270-M1",0,word $02_0
+byte LOAD_M1_CMC,"270-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
 
-'' Note: NO SOUND (scrambled M1?)
+'' Note: Broken sound (V encryption?)
 game_samsh5sp byte "samsh5sp",0,"Samurai Shodown 5 Special",0,"",0,GAME_ISSUE
 byte LOAD_CROM,"SS5S_C1",0,"SS5S_C2",0,word $100_0
 byte LOAD_CROM,"SS5S_C3",0,"SS5S_C4",0,word $100_0
@@ -240,7 +240,7 @@ byte LOAD_RAW,"272-V2",0,word $80_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"SS5S_C7",0,"SS5S_C8",0,word $02_0,word $07F_0
 byte SET_Z80
-byte LOAD_RAW,"272-M1",0,word $02_0
+byte LOAD_M1_CMC,"272-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -353,7 +353,7 @@ byte LOAD_LSWAP,"263-V2",0,word $80_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"MS4N_C5",0,"MS4N_C6",0,word $02_0,word $07D_0
 byte SET_Z80
-byte LOAD_RAW,"MS4N_M1",0,word $02_0
+byte LOAD_M1_CMC,"263-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -799,7 +799,7 @@ byte LOAD_RAW,"257-V4",0,word $40_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"KOF2K_C7",0,"KOF2K_C8",0,word $02_0,word $07C_0
 byte SET_Z80
-byte LOAD_RAW,"KOF2K_M1",0,word $02_0
+byte LOAD_M1_CMC,"257-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -823,7 +823,7 @@ byte LOAD_RAW,"262-V4",0,word $40_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"KF2K1_C7",0,"KF2K1_C8",0,word $02_0,word $07F_0
 byte SET_Z80
-byte LOAD_RAW,"KF2K1_M1",0,word $02_0
+byte LOAD_M1_CMC,"262-M1",0,word $02_0 ' Note: needs rename
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -852,7 +852,7 @@ byte LOAD_RAW,"KF2K2_VM",0,word $100_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"KF2K2_C7",0,"KF2K2_C8",0,word $02_0,word $07F_0
 byte SET_Z80
-byte LOAD_RAW,"KF2K2_M1",0,word $02_0
+byte LOAD_M1_CMC,"265-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -1190,7 +1190,7 @@ byte LOAD_RAW,"MATR_VM",0,word $100_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"MATR_C7",0,"MATR_C8",0,word $02_0,word $7E_0
 byte SET_Z80
-byte LOAD_RAW,"MATR_M1",0,word $02_0
+byte LOAD_M1_CMC,"266-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
