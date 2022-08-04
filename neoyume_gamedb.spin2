@@ -178,7 +178,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: Broken sound (V encryption?)
+'' Note: Needs PCM2 descramble
+'' Note: Sound issues
 game_samsho5 byte "samsho5",0,"Samurai Shodown 5",0,"",0,GAME_ISSUE
 byte LOAD_CROM,"SS5_C1",0,"SS5_C2",0,word $100_0
 byte LOAD_CROM,"SS5_C3",0,"SS5_C4",0,word $100_0
@@ -201,8 +202,9 @@ byte LOAD_BSWAP+WITH_OFFSET,"270-P1C",0,word $08_0,word $38_0
 byte SET_PROG
 byte LOAD_BSWAP,"270-P1C",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"270-V1",0,word $80_0
-byte LOAD_RAW,"270-V2",0,word $80_0
+'byte LOAD_RAW,"270-V1",0,word $80_0
+'byte LOAD_RAW,"270-V2",0,word $80_0
+byte LOAD_RAW,"SS5_VM",0,word $100_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"SS5_C7",0,"SS5_C8",0,word $02_0,word $07F_0
 byte SET_Z80
@@ -211,7 +213,9 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 
-'' Note: Broken sound (V encryption?)
+
+'' Note: Needs PCM2 descramble
+'' Note: Sound issues (I assume)
 game_samsh5sp byte "samsh5sp",0,"Samurai Shodown 5 Special",0,"",0,GAME_ISSUE
 byte LOAD_CROM,"SS5S_C1",0,"SS5S_C2",0,word $100_0
 byte LOAD_CROM,"SS5S_C3",0,"SS5S_C4",0,word $100_0
@@ -235,8 +239,9 @@ byte LOAD_BSWAP+WITH_OFFSET,"272-P1",0,word $08_0,word $18_0
 byte SET_PROG
 byte LOAD_BSWAP,"272-P1",0,word $10_0
 byte SET_ADPCM_A,SET_ADPCM_B
-byte LOAD_RAW,"272-V1",0,word $80_0
-byte LOAD_RAW,"272-V2",0,word $80_0
+'byte LOAD_RAW,"272-V1",0,word $80_0
+'byte LOAD_RAW,"272-V2",0,word $80_0
+byte LOAD_RAW,"SS5S_VM",0,word $100_0
 byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"SS5S_C7",0,"SS5S_C8",0,word $02_0,word $07F_0
 byte SET_Z80

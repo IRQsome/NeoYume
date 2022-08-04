@@ -110,8 +110,8 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
 |`samsho3`|Samurai Shodown 3|**48 MB**|Minor sound issues|
 |`samsho4`|Samurai Shodown 4|**48 MB**|Minor sound issues|
-|`samsho5`|Samurai Shodown 5|**96 MB**|Broken sound (Needs decrypted C)|
-|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|Broken sound (Needs decrypted C)|
+|`samsho5`|Samurai Shodown 5|**96 MB**|Sound issues (Needs decrypted C and V)|
+|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|Sound issues(?) (Needs decrypted C and V)|
 |`sengoku`|Sengoku|8 MB|**Works**|
 |`sengoku2`|Sengoku 2|16 MB|**Works**|
 |`sengoku3`|Sengoku 3|**64 MB**|**Works**|
