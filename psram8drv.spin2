@@ -1325,8 +1325,9 @@ body_done                   and     d, #3                   'determine if any re
             if_nz           jmp     #trailer_done           '..so the next transfer will become aligned and efficent
 
                             'we have 1-3 more aligned residual bytes left to send as the trailer
-                            or      d, #$1f0                'setup mux mask address
-                            rdlut   pa, d                   'read mux mask for this length at offset 0
+                            mul     d, #8                   'scale into bytes
+                            sub     d, #1                   'bmask adds 1 to its argument so compensate here
+                            bmask   pa, d                   'create mux mask
                             push    addr1                   'save address
 
 ' use this code (note: foldover can occur here in PSRAM bank)
