@@ -4633,7 +4633,7 @@ zk_i2a
 
               and zk_accu,#$FF wcz
               bitz zk_flags,#ZK_ZERO_BIT
-              test zk_irqenable,#ZK_IFF2_BIT wc
+              testb zk_irqenable,#ZK_IFF2_BIT wc
               bitc zk_flags,#ZK_OVER_BIT
               andn zk_flags,#(1<<ZK_NMODE_BIT)|(1<<ZK_HALF_BIT)
               setq #ZK_SIGNXYMASK
@@ -7155,8 +7155,6 @@ opn_adpcm_b_run
               scas adpb_oldsample,opn_tempValue
               subs opn_tempValue2,0-0
 
-              'mov opn_tempValue2,adpb_newsample '' DEBUG
-
               rdbyte opn_tempValue,ptra[$B]
               muls opn_tempValue2,opn_tempValue
               sar opn_tempValue2,#8+1
@@ -7282,7 +7280,7 @@ opn_adpcm_a_run
               ' Check sample end
               rdword opn_tempValue,ptra[3]
               shl opn_tempValue,#9
-              sub opn_tempValue,#1
+              add opn_tempValue,#1
               xor opn_tempValue,opn_arg3
         if_z  zerox opn_tempValue,#19+1 wz ' only bottom 20 bits are used for compare (previous Z is active bit)
         if_z  bitl adpcm_active,adpa_which
