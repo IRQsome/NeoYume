@@ -4,6 +4,7 @@ gamelist word
 wordfit @game_aodk     - @gamedb_base
 wordfit @game_aof      - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
+wordfit @game_bjourney - @gamedb_base
 wordfit @game_ctomaday - @gamedb_base
 wordfit @game_crsword  - @gamedb_base
 wordfit @game_cyberlip - @gamedb_base
@@ -29,6 +30,7 @@ wordfit @game_lastblad - @gamedb_base
 wordfit @game_lastbld2 - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_magdrop3 - @gamedb_base
+wordfit @game_maglord  - @gamedb_base
 wordfit @game_matrim   - @gamedb_base
 wordfit @game_mslug    - @gamedb_base
 wordfit @game_mslug2   - @gamedb_base
@@ -36,10 +38,15 @@ wordfit @game_mslugx   - @gamedb_base
 wordfit @game_mslug3   - @gamedb_base
 wordfit @game_mslug4   - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
+wordfit @game_nam1975  - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
+wordfit @game_nitd     - @gamedb_base
+wordfit @game_overtop  - @gamedb_base
+wordfit @game_pnyaa    - @gamedb_base
 wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
+wordfit @game_rotd     - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
 wordfit @game_samsho3  - @gamedb_base
@@ -55,6 +62,7 @@ wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
 wordfit @game_spinmast - @gamedb_base
+wordfit @game_trally   - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
 wordfit @game_viewpoin - @gamedb_base
 wordfit @game_wakuwak7 - @gamedb_base
@@ -1319,6 +1327,153 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_pnyaa byte "pnyaa",0,"Pochi and Nyaa",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"PAN_C1",0,"PAN_C2",0,word $100_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"267-P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_WSWAP,"267-V1",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"PAN_C1",0,"PAN_C2",0,word $02_0,word $7F_0
+byte SET_Z80
+byte LOAD_M1_CMC,"267-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_nitd byte "nitd",0,"Nightmare in the Dark",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"NITDN_C1",0,"NITDN_C2",0,word $100_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"260-P1",0,word $08_0
+byte LOAD_BSWAP,"260-P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"260-V1",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"NITDN_C1",0,"NITDN_C2",0,word $02_0,word $7F_0
+byte SET_Z80
+byte LOAD_RAW,"260-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_rotd byte "rotd",0,"Rage of the Dragons",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"RODN_C1",0,"RODN_C2",0,word $100_0
+byte LOAD_CROM,"RODN_C3",0,"RODN_C4",0,word $100_0
+byte LOAD_CROM,"RODN_C5",0,"RODN_C6",0,word $100_0
+byte LOAD_CROM,"RODN_C7",0,"RODN_C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"264-PK1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"264-PK2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_QSWAP,"264-V1",0,word $80_0
+byte LOAD_QSWAP,"264-V2",0,word $80_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"RODN_C7",0,"RODN_C8",0,word $02_0,word $7F_0
+byte SET_Z80
+byte LOAD_M1_CMC,"264-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_maglord byte "maglord",0,"Magician Lord",0,"005-",0,GAME_OK
+byte SET_CHAR, SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte LOAD_CROM,"C5",0,"C6",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"PG1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte LOAD_RAW,"V22",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_nam1975 byte "nam1975",0,"NAM-1975",0,"001-",0,GAME_OK
+byte SET_CHAR, SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte LOAD_CROM,"C5",0,"C6",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V1",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V2",0,word $08_0
+byte LOAD_RAW,"V22",0,word $08_0
+byte LOAD_RAW,"V23",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_bjourney byte "bjourney",0,"Blue's Journey",0,"022-",0,GAME_OK
+byte SET_CHAR, SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V11",0,word $10_0
+byte LOAD_RAW,"V22",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Note: Broken graphics when zoomed far out (same issue as neodrift!)
+game_trally byte "trally",0,"Thrash Rally",0,"038-",0,GAME_ISSUE
+byte SET_CHAR, SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+' See, this one doesn't have any scaling
+game_overtop byte "overtop",0,"Over Top",0,"212-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 
 

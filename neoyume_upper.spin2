@@ -483,6 +483,23 @@ repeat while pos < size
         long[i+4] := k
       exmem_write(target+pos,MKRAM_BASE,$10000,false)
       pushed:=$10000
+    LOAD_WSWAP:
+      c.fread(MKRAM_BASE,1,$10000,f1)
+      repeat i from MKRAM_BASE to MKRAM_BASE+$FFFC step 4
+        long[i] := __movbyts(long[i],%%1032)
+      exmem_write(target+pos,MKRAM_BASE,$10000,false)
+      pushed:=$10000
+    LOAD_QSWAP:
+      c.fread(MKRAM_BASE,1,$10000,f1)
+      repeat i from MKRAM_BASE+$0000 to MKRAM_BASE+$10000-16 step 16
+        k := long[i]
+        long[i] := long[i+8]
+        long[i+8] := k
+        k := long[i+4]
+        long[i+4] := long[i+12]
+        long[i+12] := k
+      exmem_write(target+pos,MKRAM_BASE,$10000,false)
+      pushed:=$10000
     LOAD_M1_CMC:
       c.fread(MKRAM_BASE,1,$10000,f1)
       memo1 := cmc_decrypt_m1_block(memo1,pos/+$10000)
@@ -708,7 +725,7 @@ endasm
 CON
 
 #1
-LOAD_RAW,LOAD_BSWAP,LOAD_LSWAP,LOAD_CROM,LOAD_SROM_CMC,LOAD_SROM,LOAD_M1_CMC
+LOAD_RAW,LOAD_BSWAP,LOAD_WSWAP,LOAD_LSWAP,LOAD_QSWAP,LOAD_CROM,LOAD_SROM_CMC,LOAD_SROM,LOAD_M1_CMC
 LOAD_BIOS
 LOAD_FILLER
 SET_PROG,SET_PORT,SET_UNUSED,SET_BIOS,SET_ADPCM_A,SET_ADPCM_B,SET_CHAR,SET_FIX,SET_Z80

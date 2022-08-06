@@ -70,6 +70,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`aodk`|Aggressors of Dark Kombat|24 MB|**Works**|
 |`aof`|Art of Fighting|16 MB|**Works**|
 |`blazstar`|Blazing Star|48 MB|Broken sound|
+|`bjourney`|Blue's Journey|8 MB|**Works**|
 |`ctomaday`|Captain Tomaday|16 MB|**Works**|
 |`crswords`|Crossed Swords|8 MB|**Works**|
 |`cyberlip`|Cyber-Lip|8 MB|**Works**|
@@ -95,6 +96,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`lastbld2`|The Last Blade 2|**80 MB**|**Works**|
 |`magdrop2`|Magical Drop 2|16 MB|**Works**|
 |`magdrop3`|Magical Drop 3|24 MB|**Works**|
+|`maglord`|Magician Lord|8 MB|**Works**|
 |`matrim`|Matrimelee|**96 MB**|**Works** (Needs decrypted C/V)|
 |`mslug`|Metal Slug|32 MB|**Works**|
 |`mslug2`|Metal Slug 2|**48 MB**|**Works**|
@@ -102,10 +104,15 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`mslug3`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
 |`mslug4`|Metal Slug 4|**96 MB**|**Works** (Needs decrypted C)|
 |`mutnat`|Mutation Nation|8 MB|**Works**|
+|`nam1975`|NAM-1975|8 MB|**Works**|
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
 |`neodrift`|Neo Drift Out|16 MB|Glitching graphics, sound seems to die after one game|
+|`nitd`|Nightmare in the Dark|24 MB|**Works** (Needs decrypted C)|
+|`overtop`|Over Top|32 MB|**Works**|
+|`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C)|
 |`pulstar`|Pulstar|48 MB|Broken Sound|
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
+|`rotd`|Rage of the Dragons|96 MB|**Works** (Needs decrypted C)|
 |`samsho`|Samurai Shodown|24 MB|**Works**|
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
 |`samsho3`|Samurai Shodown 3|**48 MB**|**Works**|
@@ -122,6 +129,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`sonicwi3`|Sonic Wings 3|24 MB|**Works**|
 |`strhoop`|Street Hoop|16 MB|**Works**|
 |`spinmast`|Spinmaster|16 MB|Black screen after eyecatcher|
+|`trally`|Thrash Rally|8 MB|Graphical issues|
 |`twinspri`|Twinkle Star Sprites|24 MB|**Works**|
 |`viewpoint`|Viewpoint|16 MB|**Works**|
 |`wakuwak7`|Waku Waku 7|**48 MB**|**Works**|
