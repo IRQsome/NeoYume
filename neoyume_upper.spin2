@@ -324,6 +324,8 @@ repeat
     c.sprintf(fn1,@"exptr over: %08X !",exptr)
     putstring(fn1,2,25,0)
     repeat
+if exmem_size>exptr
+  exmem_fill(exptr,$DB,exmem_size-exptr,false) ' fill remaining memory with pattern
 
 PRI apply_pattern_patch(gameptr,exptr,actually) : newptr | tmp,pattern,plen,replace,rlen,roff,sinc,chklen,tmpstr
 exptr += long[gameptr] - $8000
@@ -867,7 +869,7 @@ byte $c2, $86, $f3, $67, $ba, $60, $43, $c9, $04, $b3, $b0, $1e, $b5, $c8, $eb, 
 byte $76, $ea, $5c, $82, $1a, $4f, $aa, $ca, $e1, $0b, $4e, $cb, $6a, $ef, $d1, $d6
 
 
-PRI exmem_start() | tmp,cogs,banks,i
+PRI exmem_start() | tmp,cogs,banks,i,sizelen
 
 tmp := c.malloc(8*4+8*4+32*4)
 cogs := tmp+8*4
@@ -904,22 +906,25 @@ longfill(cogs+4,-1<<16,7)
 longfill(banks,negx,32)
 
 #ifdef USE_PSRAM16
+exmem_size := 32*1024*1024 * PSRAM_BANKS
+sizelen := encod(exmem_size-1)+1
 repeat i from 0 to PSRAM_BANKS-1
-  long[banks][0+i*2] := 512<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
-  long[banks][1+i*2] := 512<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
+  long[banks][0+i*2] := 512<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + sizelen
+  long[banks][1+i*2] := 512<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + sizelen
   long[banks][16+i*2] := PSRAM_SELECT+i + PSRAM_CLK<<8
   long[banks][17+i*2] := PSRAM_SELECT+i + PSRAM_CLK<<8
-exmem_size := 32*1024*1024 * PSRAM_BANKS
 #elseifdef USE_PSRAM8
-repeat i from 0 to PSRAM_BANKS-1
-  long[banks][0+i] := 256<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 24
-  long[banks][16+i] := PSRAM_SELECT+i + PSRAM_CLK<<8
 exmem_size := 16*1024*1024 * PSRAM_BANKS
+sizelen := encod(exmem_size-1)+1
+repeat i from 0 to PSRAM_BANKS-1
+  long[banks][0+i] := 256<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + sizelen
+  long[banks][16+i] := PSRAM_SELECT+i + PSRAM_CLK<<8
 #elseifdef USE_PSRAM4
-repeat i from 0 to (PSRAM_BANKS-1)/2
-  long[banks][0+i] := 128<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + 23
-  long[banks][16+i] := PSRAM_SELECT+i*2 + PSRAM_CLK<<8 + (PSRAM_SELECT+i*2+(((PSRAM_BANKS&1)&&(i>=PSRAM_BANKS/2)) ? 0 : 1))<<16
 exmem_size := 8*1024*1024 * PSRAM_BANKS
+sizelen := encod(exmem_size-1)+1
+repeat i from 0 to (PSRAM_BANKS-1)/2
+  long[banks][0+i] := 128<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + sizelen
+  long[banks][16+i] := PSRAM_SELECT+i*2 + PSRAM_CLK<<8 + (PSRAM_SELECT+i*2+(((PSRAM_BANKS&1)&&(i>=PSRAM_BANKS/2)) ? 0 : 1))<<16
 #elseifdef USE_HYPER
 long[banks][0] := 128<<16 + (HYPER_DELAY+1)<<13 + 1<<12 + 24
 long[banks][16] := HYPER_SELECT + HYPER_CLK<<8 + HYPER_RWDS<<16 + 6<<25 ' Latency????
