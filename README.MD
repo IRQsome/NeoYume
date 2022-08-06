@@ -61,7 +61,7 @@ tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download 
 
 These are just the games I tested, to the extent that I tested them. Don't complain if the victory screen crashes and burns your house down.
 
-Note 1: I sometimes gloss over very minor issues that don't significantly impact the enjoyment. In particular, some games rarely have a "wrong sound" issue wherein an ADPCM channel runs through all consecutive data in ROM until another actual sound is triggered - except for samsho3/samsho4, this happens rarely enough that it is very difficult to even verify.
+Note 1: I sometimes gloss over very minor issues that don't significantly impact the enjoyment. ~~In particular, some games rarely have a "wrong sound" issue wherein an ADPCM channel runs through all consecutive data in ROM until another actual sound is triggered - except for samsho3/samsho4, this happens rarely enough that it is very difficult to even verify.~~ Issue is fixed now. I hope.
 
 Note 2: There currently isn't a public tool for V ROM decryption, thus all games with encrypted V are marked as GAME_ISSUE in the internal database, even if they actually work fine.
 
@@ -69,7 +69,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |-|-|-:|-|
 |`aodk`|Aggressors of Dark Kombat|24 MB|**Works**|
 |`aof`|Art of Fighting|16 MB|**Works**|
-|`blazstar`|Blazing Star|48 MB|Broken sound, broken backgrounds|
+|`blazstar`|Blazing Star|48 MB|Broken sound|
 |`ctomaday`|Captain Tomaday|16 MB|**Works**|
 |`crswords`|Crossed Swords|8 MB|**Works**|
 |`cyberlip`|Cyber-Lip|8 MB|**Works**|
@@ -108,10 +108,10 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
 |`samsho`|Samurai Shodown|24 MB|**Works**|
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
-|`samsho3`|Samurai Shodown 3|**48 MB**|Minor sound issues|
-|`samsho4`|Samurai Shodown 4|**48 MB**|Minor sound issues|
-|`samsho5`|Samurai Shodown 5|**96 MB**|Sound issues (Needs decrypted C and V)|
-|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|Sound issues(?) (Needs decrypted C and V)|
+|`samsho3`|Samurai Shodown 3|**48 MB**|**Works**|
+|`samsho4`|Samurai Shodown 4|**48 MB**|**Works**|
+|`samsho5`|Samurai Shodown 5|**96 MB**|**Works** (Needs decrypted C and V)|
+|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C and V)|
 |`sengoku`|Sengoku|8 MB|**Works**|
 |`sengoku2`|Sengoku 2|16 MB|**Works**|
 |`sengoku3`|Sengoku 3|**64 MB**|**Works**|

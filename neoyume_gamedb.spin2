@@ -137,8 +137,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-' Note: weird issue where it sometimes starts playing through all SFX
-game_samsho3 byte "samsho3",0,"Samurai Shodown 3",0,"087-",0,GAME_ISSUE
+game_samsho3 byte "samsho3",0,"Samurai Shodown 3",0,"087-",0,GAME_OK
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
 byte LOAD_CROM,"C5",0,"C6",0,word $80_0
@@ -157,8 +156,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-' Note: weird issue where it sometimes starts playing through all SFX
-game_samsho4 byte "samsho4",0,"Samurai Shodown 4",0,"222-",0,GAME_ISSUE
+game_samsho4 byte "samsho4",0,"Samurai Shodown 4",0,"222-",0,GAME_OK
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
 byte LOAD_CROM,"C5",0,"C6",0,word $80_0
@@ -179,7 +177,6 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' Note: Needs PCM2 descramble
-'' Note: Sound issues
 game_samsho5 byte "samsho5",0,"Samurai Shodown 5",0,"",0,GAME_ISSUE
 byte LOAD_CROM,"SS5_C1",0,"SS5_C2",0,word $100_0
 byte LOAD_CROM,"SS5_C3",0,"SS5_C4",0,word $100_0
@@ -215,7 +212,6 @@ byte 0
 
 
 '' Note: Needs PCM2 descramble
-'' Note: Sound issues (I assume)
 game_samsh5sp byte "samsh5sp",0,"Samurai Shodown 5 Special",0,"",0,GAME_ISSUE
 byte LOAD_CROM,"SS5S_C1",0,"SS5S_C2",0,word $100_0
 byte LOAD_CROM,"SS5S_C3",0,"SS5S_C4",0,word $100_0
@@ -1264,7 +1260,6 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Broken sound
-'' NOTE: Some backgrounds broken
 game_blazstar byte "blazstar",0,"Blazing Star",0,"239-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0

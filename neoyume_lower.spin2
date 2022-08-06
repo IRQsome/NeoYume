@@ -55,9 +55,9 @@ z80_command_b byte 0
 z80_reply_b   byte 0
 opn_timerAflag byte 0
 opn_timerBflag byte 0
-opn_register  byte 0
-_lspc_animctr byte 0
+opn_register  word 0
 _lspc_modereg word 0
+_lspc_animctr byte 0
 
               orgh $60
               ' control bit format is %ET_DCBA_RLDU (E=sElect,T=sTart)
@@ -7281,6 +7281,13 @@ opn_adpcm_a_run
               rdword opn_tempValue,ptra[3]
               shl opn_tempValue,#9
               add opn_tempValue,#1
+            {  
+            cmp opn_tempValue,opn_arg3 wc
+      if_nc_or_nz jmp #.nodebug
+            debug("OPN Hazard! ",udec(adpa_which),uhex_long(opn_tempValue,opn_arg3))
+            cogstop #5
+            jmp #$
+.nodebug    '}
               xor opn_tempValue,opn_arg3
         if_z  zerox opn_tempValue,#19+1 wz ' only bottom 20 bits are used for compare (previous Z is active bit)
         if_z  bitl adpcm_active,adpa_which
@@ -7348,7 +7355,6 @@ opn_statusread
 
 
 opn_portwrite
-              'drvh #39 ' DEBUG LED
               and zk_tmp8,#255 ' make sure we only get one byte
               testb zk_ea,#0 wc
         if_nc jmp #.address
