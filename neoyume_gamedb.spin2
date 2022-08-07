@@ -3,6 +3,7 @@ DAT
 gamelist word
 wordfit @game_aodk     - @gamedb_base
 wordfit @game_aof      - @gamedb_base
+wordfit @game_bangbead - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
 wordfit @game_bjourney - @gamedb_base
 wordfit @game_ctomaday - @gamedb_base
@@ -28,6 +29,9 @@ wordfit @game_kotmh    - @gamedb_base
 wordfit @game_kizuna   - @gamedb_base
 wordfit @game_lastblad - @gamedb_base
 wordfit @game_lastbld2 - @gamedb_base
+wordfit @game_lresort  - @gamedb_base
+wordfit @game_lbowling - @gamedb_base
+wordfit @game_mahretsu - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_magdrop3 - @gamedb_base
 wordfit @game_maglord  - @gamedb_base
@@ -42,10 +46,14 @@ wordfit @game_nam1975  - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
 wordfit @game_nitd     - @gamedb_base
+wordfit @game_ncombat  - @gamedb_base
 wordfit @game_overtop  - @gamedb_base
 wordfit @game_pnyaa    - @gamedb_base
+wordfit @game_preisle2 - @gamedb_base
 wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
+wordfit @game_puzzledp - @gamedb_base
+wordfit @game_puzzldpr - @gamedb_base
 wordfit @game_rotd     - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
@@ -61,6 +69,7 @@ wordfit @game_shocktr2 - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
+wordfit @game_s1945p   - @gamedb_base
 wordfit @game_spinmast - @gamedb_base
 wordfit @game_trally   - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
@@ -69,6 +78,7 @@ wordfit @game_wakuwak7 - @gamedb_base
 wordfit @game_wh2      - @gamedb_base
 wordfit @game_wjammers - @gamedb_base
 wordfit @game_zedblade - @gamedb_base
+wordfit @game_zupapa   - @gamedb_base
 gamelist_end
 
 gamedb_base
@@ -1474,7 +1484,184 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_mahretsu byte "mahretsu",0,"Mahjong Kyo Retsuden",0,"004-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte LOAD_RAW,"V22",0,word $08_0
+byte LOAD_RAW,"V23",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
+game_bangbead byte "bangbead",0,"Bang Bead",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"BGN_C1",0,"BGN_C2",0,word $100_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"259-P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"259-V1",0,word $40_0
+byte LOAD_RAW,"259-V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"BGN_C1",0,"BGN_C2",0,word $02_0,word $7F_0
+byte SET_Z80
+byte LOAD_RAW,"259-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_zupapa byte "zupapa",0,"Zupapa!",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"ZUPAN_C1",0,"ZUPAN_C2",0,word $100_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"070-P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"070-V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"ZUPAN_C1",0,"ZUPAN_C2",0,word $02_0,word $7F_0
+byte SET_Z80
+byte LOAD_RAW,"070-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_preisle2 byte "preisle2",0,"Prehistoric Isle 2",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"PI2N_C1",0,"PI2N_C2",0,word $100_0
+byte LOAD_CROM,"PI2N_C3",0,"PI2N_C4",0,word $100_0
+byte LOAD_CROM,"PI2N_C5",0,"PI2N_C6",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"255-P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"255-P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"255-V1",0,word $40_0
+byte LOAD_RAW,"255-V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"PI2N_C5",0,"PI2N_C6",0,word $02_0,word $7F_0
+byte SET_Z80
+byte LOAD_RAW,"255-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_s1945p byte "s1945p",0,"Strikers 1945 Plus",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"S45PN_C1",0,"S45PN_C2",0,word $100_0
+byte LOAD_CROM,"S45PN_C3",0,"S45PN_C4",0,word $100_0
+byte LOAD_CROM,"S45PN_C5",0,"S45PN_C6",0,word $100_0
+byte LOAD_CROM,"S45PN_C7",0,"S45PN_C8",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"254-P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"254-P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"254-V1",0,word $40_0
+byte LOAD_RAW,"254-V2",0,word $40_0
+byte LOAD_RAW,"254-V3",0,word $40_0
+byte LOAD_RAW,"254-V4",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"S45PN_C7",0,"S45PN_C8",0,word $02_0,word $7F_0
+byte SET_Z80
+byte LOAD_RAW,"254-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_puzzledp byte "puzzledp",0,"Puzzle de Pon",0,"202-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_puzzldpr byte "puzzldpr",0,"Puzzle de Pon R",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"202-C1",0,"202-C2",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"235-P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"202-V1",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"235-S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"202-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_lresort byte "lresort",0,"Last Resort",0,"024-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_lbowling byte "lbowling",0,"League Bowling",0,"019-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_ncombat byte "ncombat",0,"Ninja Combat",0,"009-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte LOAD_CROM,"C5",0,"C6",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte LOAD_RAW,"V13",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 

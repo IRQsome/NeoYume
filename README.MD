@@ -69,6 +69,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |-|-|-:|-|
 |`aodk`|Aggressors of Dark Kombat|24 MB|**Works**|
 |`aof`|Art of Fighting|16 MB|**Works**|
+|`bangbead`|Bang Bead|24 MB|**Works** (Needs decrypted C)|
 |`blazstar`|Blazing Star|48 MB|Broken sound|
 |`bjourney`|Blue's Journey|8 MB|**Works**|
 |`ctomaday`|Captain Tomaday|16 MB|**Works**|
@@ -94,6 +95,9 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`kizuna`|Kizuna Encounter|**48 MB**|**Works**|
 |`lastblad`|The Last Blade|**64 MB**|**Works**|
 |`lastbld2`|The Last Blade 2|**80 MB**|**Works**|
+|`lresort`|Last Resort|8 MB|**Works**|
+|`lbowling`|League Bowling|4 MB|**Works**|
+|`mahretsu`|Mahjong Kyo Retsuden|8 MB|**Works**|
 |`magdrop2`|Magical Drop 2|16 MB|**Works**|
 |`magdrop3`|Magical Drop 3|24 MB|**Works**|
 |`maglord`|Magician Lord|8 MB|**Works**|
@@ -108,11 +112,15 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
 |`neodrift`|Neo Drift Out|16 MB|Glitching graphics, sound seems to die after one game|
 |`nitd`|Nightmare in the Dark|24 MB|**Works** (Needs decrypted C)|
+|`ncombat`|Ninja Combat|8 MB|**Works**|
 |`overtop`|Over Top|32 MB|**Works**|
 |`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C)|
 |`pulstar`|Pulstar|48 MB|Broken Sound|
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
-|`rotd`|Rage of the Dragons|96 MB|**Works** (Needs decrypted C)|
+|`puzzledp`|Puzzle de Pon|4 MB|**Works**|
+|`puzzldpr`|Puzzle de Pon R|4 MB|**Works**|
+|`preisle2`|Prehistoric Isle 2|**64 MB**|**Works** (Needs decrypted C)|
+|`rotd`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C)|
 |`samsho`|Samurai Shodown|24 MB|**Works**|
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
 |`samsho3`|Samurai Shodown 3|**48 MB**|**Works**|
@@ -128,6 +136,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`sonicwi2`|Sonic Wings 2|16 MB|**Works**|
 |`sonicwi3`|Sonic Wings 3|24 MB|**Works**|
 |`strhoop`|Street Hoop|16 MB|**Works**|
+|`s1945p`|Strikers 1945 Plus|**96 MB**|**Works** (Needs decrypted C)|
 |`spinmast`|Spinmaster|16 MB|Black screen after eyecatcher|
 |`trally`|Thrash Rally|8 MB|Graphical issues|
 |`twinspri`|Twinkle Star Sprites|24 MB|**Works**|
@@ -136,8 +145,9 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`wh2`|World Heroes 2|24 MB|**Works**|
 |`wjammers`|Windjammers|16 MB|**Works**|
 |`zedblade`|Zed Blade|16 MB|**Works**|
+|`zupapa`|Zupapa!|24 MB|**Works** (Needs decrypted C)|
 
-Note: RAM requirements are rounded to the next highest of 8MB, 16MB, 24MB, 32MB, 48MB, 64MB, 80MB, 96MB
+Note: RAM requirements are rounded to the next highest of 4MB, 8MB, 16MB, 24MB, 32MB, 48MB, 64MB, 80MB, 96MB
 
 ## USB Controller compatibility
 
