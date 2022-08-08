@@ -61,6 +61,8 @@ exmem : "psram16drv.spin2"
 exmem : "psram8drv.spin2"
 #elseifdef USE_PSRAM4
 exmem : "psram4drv-dualCE.spin2"
+#elseifdef USE_HYPER
+exmem : "hyperdrv.spin2"
 #endif
 
 PUB main() | tmp,tmp2
@@ -943,9 +945,11 @@ repeat i from 0 to (PSRAM_BANKS-1)/2
   long[banks][0+i] := 128<<16 + (PSRAM_DELAY-10)<<13 + (PSRAM_SYNC_DATA?0:1)<<12 + sizelen
   long[banks][16+i] := PSRAM_SELECT+i*2 + PSRAM_CLK<<8 + (PSRAM_SELECT+i*2+(((PSRAM_BANKS&1)&&(i>=PSRAM_BANKS/2)) ? 0 : 1))<<16
 #elseifdef USE_HYPER
-long[banks][0] := 128<<16 + (HYPER_DELAY+1)<<13 + 1<<12 + 24
-long[banks][16] := HYPER_SELECT + HYPER_CLK<<8 + HYPER_RWDS<<16 + 6<<25 ' Latency????
-exmem_size := 8*1024*1024
+exmem_size := 16*1024*1024 * HYPER_BANKS
+sizelen := encod(exmem_size-1)+1
+repeat i from 0 to HYPER_BANKS-1
+  long[banks][0+i] := 256<<16 + (HYPER_DELAY-7)<<13 + (HYPER_SYNC_DATA?0:1)<<12 + sizelen
+  long[banks][16+i] := HYPER_SELECT+i + HYPER_CLK<<8 + HYPER_RWDS<<16 + 6<<25 ' Latency????
 #endif
 
 exmem_mailbox[0] := -1
