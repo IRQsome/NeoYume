@@ -646,6 +646,16 @@ repeat
       putstring(tmpstr,2,i++,3<<12)
       c.sprintf(tmpstr,@"BASE=%2d CLK=%2d(+%d) SELECT=%2d(+%d)",PSRAM_BASE,PSRAM_CLK&63,PSRAM_CLK>>6,PSRAM_SELECT,PSRAM_BANKS-1)
       putstring(tmpstr,2,i++,3<<12)
+#elseifdef USE_HYPER
+      i++
+      c.sprintf(tmpstr,@"Using HyperRAM: %2d bit, sysclk/%d", 8, 2)
+      putstring(tmpstr,2,i++,3<<12)
+      c.sprintf(tmpstr,@"WAIT=%2d DELAY=%2d CLK=%-5s DAT=%-5s",HYPER_WAIT,HYPER_DELAY,HYPER_SYNC_CLOCK?@"SYNC":@"ASYNC",HYPER_SYNC_DATA?@"SYNC":@"ASYNC")
+      putstring(tmpstr,2,i++,3<<12)
+      c.sprintf(tmpstr,@"BASE=%2d CLK=%2d(+%d) SELECT=%2d(+%d)",HYPER_BASE,HYPER_CLK&63,HYPER_CLK>>6,HYPER_SELECT,HYPER_BANKS-1)
+      putstring(tmpstr,2,i++,3<<12)
+      c.sprintf(tmpstr,@"RWDS=%2d RESET=%2d(+%d)",HYPER_RWDS,HYPER_RESET&63,HYPER_RESET>>6)
+      putstring(tmpstr,2,i++,3<<12)
 #endif
       repeat
         previnput := input
