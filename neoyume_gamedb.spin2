@@ -8,10 +8,13 @@ wordfit @game_aof      - @gamedb_base
 wordfit @game_aof2     - @gamedb_base
 wordfit @game_aof3     - @gamedb_base
 wordfit @game_bangbead - @gamedb_base
+wordfit @game_bstars   - @gamedb_base
+wordfit @game_bstars2  - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
 wordfit @game_bjourney - @gamedb_base
 wordfit @game_ctomaday - @gamedb_base
 wordfit @game_crsword  - @gamedb_base
+wordfit @game_crswd2bl - @gamedb_base
 wordfit @game_cyberlip - @gamedb_base
 wordfit @game_doubledr - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
@@ -56,12 +59,14 @@ wordfit @game_ncombat  - @gamedb_base
 wordfit @game_ncommand - @gamedb_base
 wordfit @game_overtop  - @gamedb_base
 wordfit @game_pnyaa    - @gamedb_base
+wordfit @game_popbounc - @gamedb_base
 wordfit @game_preisle2 - @gamedb_base
 wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_puzzledp - @gamedb_base
 wordfit @game_puzzldpr - @gamedb_base
 wordfit @game_rotd     - @gamedb_base
+wordfit @game_roboarmy - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
 wordfit @game_samsho3  - @gamedb_base
@@ -75,14 +80,19 @@ wordfit @game_shocktro - @gamedb_base
 wordfit @game_shocktr2 - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
+wordfit @game_spinmast - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
 wordfit @game_s1945p   - @gamedb_base
-wordfit @game_spinmast - @gamedb_base
+wordfit @game_superspy - @gamedb_base
+wordfit @game_tophuntr - @gamedb_base
 wordfit @game_trally   - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
 wordfit @game_viewpoin - @gamedb_base
 wordfit @game_wakuwak7 - @gamedb_base
+wordfit @game_wh1h     - @gamedb_base
 wordfit @game_wh2      - @gamedb_base
+wordfit @game_wh2j     - @gamedb_base
+wordfit @game_whp      - @gamedb_base
 wordfit @game_wjammers - @gamedb_base
 wordfit @game_zedblade - @gamedb_base
 wordfit @game_zupapa   - @gamedb_base
@@ -618,6 +628,21 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_crswd2bl byte "crswd2bl",0,"Crossed Swords 2",0,"054-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 game_sonicwi2 byte "sonicwi2",0,"Sonic Wings 2",0,"075-",0,GAME_OK
 byte SET_CHAR
@@ -901,7 +926,25 @@ byte 0
 
 
 
-
+game_wh1h byte "wh1h",0,"World Heroes",0,"053-",0,GAME_OK
+byte SET_CHAR
+byte SET_TILEMASK,15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
+byte SET_PROG
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V4",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 game_wh2 byte "wh2",0,"World Heroes 2",0,"057-",0,GAME_OK
@@ -920,6 +963,48 @@ byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_wh2j byte "wh2j",0,"World Heroes 2 Jet",0,"064-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+' FrankenROM, lol
+game_whp byte "whp",0,"World Heroes Perfect",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"090-C1",0,"090-C2",0,word $80_0
+byte LOAD_CROM,"064-C3",0,"064-C4",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"090-P1",0,word $20_0
+byte LOAD_FILLER,255,word $20_0
+byte LOAD_CROM,"064-C5",0,"064-C6",0,word $40_0
+byte LOAD_FILLER,255,word $40_0
+byte LOAD_CROM,"064-C7",0,"064-C8",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"090-V1",0,word $20_0
+byte LOAD_RAW,"064-V2",0,word $20_0
+byte LOAD_RAW,"090-V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"090-S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"090-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
@@ -1801,8 +1886,119 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 
+game_bstars byte "bstars",0,"Baseball Stars",0,"002-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte LOAD_CROM,"C5",0,"C6",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte LOAD_RAW,"V13",0,word $08_0
+byte LOAD_RAW,"V14",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
+game_bstars2 byte "bstars2",0,"Baseball Stars 2",0,"041-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte LOAD_RAW,"V3",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
+game_tophuntr byte "tophuntr",0,"Top Hunter",0,"046-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte LOAD_CROM,"C5",0,"C6",0,word $20_0
+byte LOAD_CROM,"C7",0,"C8",0,word $20_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P2",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte LOAD_RAW,"V4",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_superspy byte "superspy",0,"Super Spy",0,"011-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"SP2",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $10_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_roboarmy byte "roboarmy",0,"Robo Army",0,"032-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_popbounc byte "popbounc",0,"Pop n' Bounce",0,"237-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 

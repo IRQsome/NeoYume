@@ -76,10 +76,13 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`aof2`|Art of Fighting 2|24 MB|**Works**|
 |`aof3`|Art of Fighting 3|**48 MB**|**Works**|
 |`bangbead`|Bang Bead|24 MB|**Works** (Needs decrypted C)|
+|`bstars`|Baseball Stars|8 MB|**Works**|
+|`bstars2`|Baseball Stars 2|8 MB|**Works**|
 |`blazstar`|Blazing Star|48 MB|Broken sound|
 |`bjourney`|Blue's Journey|8 MB|**Works**|
 |`ctomaday`|Captain Tomaday|16 MB|**Works**|
 |`crswords`|Crossed Swords|8 MB|**Works**|
+|`crswd2bl`|Crossed Swords 2 (Unofficial conversion)|16 MB|**Works**|
 |`cyberlip`|Cyber-Lip|8 MB|**Works**|
 |`doubledr`|Double Dragon|24 MB|**Works**|
 |`fatfury1`|Fatal Fury|8 MB|**Works**|
@@ -124,12 +127,14 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`ncommand`|Ninja Commando|8 MB|**Works**|
 |`overtop`|Over Top|32 MB|**Works**|
 |`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C)|
+|`popbounc`|Pop n' Bounce|8 MB|**Works**|
+|`preisle2`|Prehistoric Isle 2|**64 MB**|**Works** (Needs decrypted C)|
 |`pulstar`|Pulstar|48 MB|Broken Sound|
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
 |`puzzledp`|Puzzle de Pon|4 MB|**Works**|
 |`puzzldpr`|Puzzle de Pon R|4 MB|**Works**|
-|`preisle2`|Prehistoric Isle 2|**64 MB**|**Works** (Needs decrypted C)|
 |`rotd`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C)|
+|`roboarmy`|Robo Army|8 MB|**Works**|
 |`samsho`|Samurai Shodown|24 MB|**Works**|
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
 |`samsho3`|Samurai Shodown 3|**48 MB**|**Works**|
@@ -138,20 +143,24 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C and V)|
 |`sengoku`|Sengoku|8 MB|**Works**|
 |`sengoku2`|Sengoku 2|16 MB|**Works**|
-|`sengoku3`|Sengoku 3|**64 MB**|**Works**|
 |`sengoku3`|Sengoku 3|**64 MB**|**Works** (Needs decrypted C)|
 |`shocktro`|Shock Troopers|**48 MB**|**Works**|
 |`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|**Works**|
 |`sonicwi2`|Sonic Wings 2|16 MB|**Works**|
 |`sonicwi3`|Sonic Wings 3|24 MB|**Works**|
+|`spinmast`|Spinmaster|16 MB|Black screen after eyecatcher|
 |`strhoop`|Street Hoop|16 MB|**Works**|
 |`s1945p`|Strikers 1945 Plus|**96 MB**|**Works** (Needs decrypted C)|
-|`spinmast`|Spinmaster|16 MB|Black screen after eyecatcher|
+|`superspy`|The Super Spy|8 MB|**Works**|
+|`tophuntr`|Top Hunter - Roddy and Cathy|16 MB|**Works**|
 |`trally`|Thrash Rally|8 MB|Graphical issues|
 |`twinspri`|Twinkle Star Sprites|24 MB|**Works**|
 |`viewpoint`|Viewpoint|16 MB|**Works**|
 |`wakuwak7`|Waku Waku 7|**48 MB**|**Works**|
+|`wh1h`|World Heroes|16 MB|**Works**|
 |`wh2`|World Heroes 2|24 MB|**Works**|
+|`wh2j`|World Heroes 2 Jet|24 MB|**Works**|
+|`whp`|World Heroes Perfect|48 MB|**Works**|
 |`wjammers`|Windjammers|16 MB|**Works**|
 |`zedblade`|Zed Blade|16 MB|**Works**|
 |`zupapa`|Zupapa!|24 MB|**Works** (Needs decrypted C)|
