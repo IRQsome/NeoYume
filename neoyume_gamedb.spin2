@@ -2,6 +2,8 @@ DAT
 
 gamelist word
 wordfit @game_aodk     - @gamedb_base
+wordfit @game_alpham2  - @gamedb_base
+wordfit @game_androdun - @gamedb_base
 wordfit @game_aof      - @gamedb_base
 wordfit @game_bangbead - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
@@ -13,6 +15,7 @@ wordfit @game_doubledr - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
 wordfit @game_fatfursp - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
+wordfit @game_gpilots  - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
 wordfit @game_kabukikl - @gamedb_base
 wordfit @game_karnovr  - @gamedb_base
@@ -1662,6 +1665,65 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_gpilots byte "gpilots",0,"Ghost Pilots",0,"020-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $02_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $10_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_androdun byte "androdun",0,"Andro Dunos",0,"049-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $08_0
+byte LOAD_RAW,"V2",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_alpham2 byte "alpham2",0,"Alpha Mission 2",0,"007-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $02_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+
+
 
 
 

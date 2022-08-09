@@ -68,6 +68,8 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
 |`aodk`|Aggressors of Dark Kombat|24 MB|**Works**|
+|`alpham2`|Alpha Mission 2|8 MB|**Works**|
+|`androdun`|Andro Dunos|8 MB|**Works**|
 |`aof`|Art of Fighting|16 MB|**Works**|
 |`bangbead`|Bang Bead|24 MB|**Works** (Needs decrypted C)|
 |`blazstar`|Blazing Star|48 MB|Broken sound|
@@ -79,6 +81,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`fatfury1`|Fatal Fury|8 MB|**Works**|
 |`fatfursp`|Fatal Fury Special|24 MB|**Works**|
 |`ganryu`|Ganryu|24 MB|**Works** (Needs decrypted C)|
+|`gpilots`|Ghost Pilots|8 MB|**Works**|
 |`ironclad`|Ironclad|24 MB|**Works** (need to rename files to fit in 8.3 (remove "proto_" prefix))|
 |`kabukikl`|Far East of Eden - Kabuki Klash|32 MB|**Works**|
 |`karnovr`|Karnov's Revenge|16 MB|**Works**|
