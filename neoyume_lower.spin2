@@ -309,14 +309,26 @@ mk_rdimm
 mk_wrportbank
               mov mk_memtmp3,mk_effaddr
               zerox mk_memtmp3,#19
-              cmp mk_memtmp3,##$FFFF0 wc
-              'debug("Bankswitch write: ",uhex_long(mk_memvalue,mk_effaddr,mk_virtualpc))
+              cmp mk_memtmp3,##$FFFF0 wcz
               setq #1
               rdlong mk_memtmp0,#_exr_port_base
+              tjs mk_memtmp1,#.pvc
+              'debug("Bankswitch write: ",uhex_long(mk_memvalue,mk_effaddr,mk_virtualpc))
               shl mk_memvalue,#20 ' 1 MB steps
               and mk_memtmp1,mk_memvalue
               add mk_memtmp0,mk_memtmp1
         if_ae mov mk_port_base,mk_memtmp0
+              ret wcz
+.pvc
+              'debug("PVC write ",uhex_long(mk_memtmp3,mk_memvalue))
+        if_e  setword mk_pvc_bankreg,mk_memvalue,#0
+              cmp mk_memtmp3,##$FFFF2 wcz
+        if_e  setword mk_pvc_bankreg,mk_memvalue,#1
+              mov     mk_memvalue,mk_pvc_bankreg
+              shr     mk_memvalue,#8
+              zerox   mk_memvalue,mk_memtmp1 ' limit range
+              add     mk_memtmp0,mk_memvalue
+              mov     mk_port_base,mk_memtmp0
               ret wcz
 
 
@@ -813,6 +825,7 @@ mk_vectors_ptr res 1
 mk_prog_base    res 1
 mk_port_base    res 1
 mk_bios_base    res 1
+mk_pvc_bankreg  res 1
 
 mk_virtualpc  res 1 ' PC in virtual space
 mk_effaddr    res 1 ' calculated effective address

@@ -44,6 +44,7 @@ wordfit @game_mslug2   - @gamedb_base
 wordfit @game_mslugx   - @gamedb_base
 wordfit @game_mslug3   - @gamedb_base
 wordfit @game_mslug4   - @gamedb_base
+wordfit @game_mslug5   - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_nam1975  - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
@@ -376,6 +377,23 @@ byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"MS4N_C5",0,"MS4N_C6",0,word $02_0,word $07D_0
 byte SET_Z80
 byte LOAD_M1_CMC,"263-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_mslug5 byte "mslug5",0,"Metal Slug 5",0,"",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"MS5N_C1",0,"MS5N_C2",0,word $100_0
+byte LOAD_CROM,"MS5N_C3",0,"MS5N_C4",0,word $100_0
+byte LOAD_CROM,"MS5N_C5",0,"MS5N_C6",0,word $100_0
+byte LOAD_CROM,"MS5N_C7",0,"MS5N_C8",0,word $100_0
+byte SET_PROG,SET_PORT+WITH_OFFSET,word $10_0,SET_BANKSWITCH_PVC_8M
+byte LOAD_RAW,"MS5N_PD",0,word $80_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"MS5N_VM",0,word $100_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"MS5N_C7",0,"MS5N_C8",0,word $02_0,word $07F_0
+byte SET_Z80
+byte LOAD_M1_CMC,"268-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
