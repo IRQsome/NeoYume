@@ -71,6 +71,8 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`alpham2`|Alpha Mission 2|8 MB|**Works**|
 |`androdun`|Andro Dunos|8 MB|**Works**|
 |`aof`|Art of Fighting|16 MB|**Works**|
+|`aof2`|Art of Fighting 2|24 MB|**Works**|
+|`aof3`|Art of Fighting 3|**48 MB**|**Works**|
 |`bangbead`|Bang Bead|24 MB|**Works** (Needs decrypted C)|
 |`blazstar`|Blazing Star|48 MB|Broken sound|
 |`bjourney`|Blue's Journey|8 MB|**Works**|
@@ -110,12 +112,14 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`mslugx`|Metal Slug X|**64 MB**|**Works**|
 |`mslug3`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
 |`mslug4`|Metal Slug 4|**96 MB**|**Works** (Needs decrypted C)|
+|`mslug5`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P)|
 |`mutnat`|Mutation Nation|8 MB|**Works**|
 |`nam1975`|NAM-1975|8 MB|**Works**|
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
 |`neodrift`|Neo Drift Out|16 MB|Glitching graphics, sound seems to die after one game|
 |`nitd`|Nightmare in the Dark|24 MB|**Works** (Needs decrypted C)|
 |`ncombat`|Ninja Combat|8 MB|**Works**|
+|`ncommand`|Ninja Commando|8 MB|**Works**|
 |`overtop`|Over Top|32 MB|**Works**|
 |`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C)|
 |`pulstar`|Pulstar|48 MB|Broken Sound|

@@ -5,6 +5,8 @@ wordfit @game_aodk     - @gamedb_base
 wordfit @game_alpham2  - @gamedb_base
 wordfit @game_androdun - @gamedb_base
 wordfit @game_aof      - @gamedb_base
+wordfit @game_aof2     - @gamedb_base
+wordfit @game_aof3     - @gamedb_base
 wordfit @game_bangbead - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
 wordfit @game_bjourney - @gamedb_base
@@ -51,6 +53,7 @@ wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
 wordfit @game_nitd     - @gamedb_base
 wordfit @game_ncombat  - @gamedb_base
+wordfit @game_ncommand - @gamedb_base
 wordfit @game_overtop  - @gamedb_base
 wordfit @game_pnyaa    - @gamedb_base
 wordfit @game_preisle2 - @gamedb_base
@@ -1188,6 +1191,47 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_aof2 byte "aof2",0,"Art of Fighting 2",0,"056-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_aof3 byte "aof3",0,"Art of Fighting 3",0,"096-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"P2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 game_strhoop byte "strhoop",0,"Street Hoop",0,"079-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
@@ -1738,6 +1782,24 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_ncommand byte "ncommand",0,"Ninja Commando",0,"050-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 
 
