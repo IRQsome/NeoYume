@@ -14,7 +14,7 @@
 ```
 
 NeoYume is a NeoGeo AES emulator for Parallax P2 micro-controllers with appropriate external memory
-(Currently supported: 4xQPI PSRAM, as on [P2-EC32MB](https://www.parallax.com/product/p2-edge-module-with-32mb-ram/) (owie ouch, that retail price)).
+(Currently supported: 4xQPI PSRAM, as on [P2-EC32MB](https://www.parallax.com/product/p2-edge-module-with-32mb-ram/) (owie ouch, that retail price), 2xQPI PSRAM, 1xQPI PSRAM (not recommended), 1xHyperRAM).
 
 Features include:
   - Low latency framebuffer-less high-level emulation
@@ -63,7 +63,9 @@ These are just the games I tested, to the extent that I tested them. Don't compl
 
 Note 1: I sometimes gloss over very minor issues that don't significantly impact the enjoyment. ~~In particular, some games rarely have a "wrong sound" issue wherein an ADPCM channel runs through all consecutive data in ROM until another actual sound is triggered - except for samsho3/samsho4, this happens rarely enough that it is very difficult to even verify.~~ Issue is fixed now. I hope.
 
-Note 2: There currently isn't a public tool for V ROM decryption, thus all games with encrypted V are marked as GAME_ISSUE in the internal database, even if they actually work fine.
+Note 2: There currently isn't a public tool for V ROM decryption, thus all games with encrypted V are marked as GAME_ISSUE in the internal database, even if they actually work fine. Games with P ROM encryption are marked as GAME_BROKEN.
+
+Note 3: The romset names don't always match the needed MAME set - in particular, for some games an -h suffix set is needed (AES version)
 
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
@@ -111,7 +113,7 @@ Note 2: There currently isn't a public tool for V ROM decryption, thus all games
 |`mslug2`|Metal Slug 2|**48 MB**|**Works**|
 |`mslugx`|Metal Slug X|**64 MB**|**Works**|
 |`mslug3`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
-|`mslug4`|Metal Slug 4|**96 MB**|**Works** (Needs decrypted C)|
+|`mslug4`|Metal Slug 4|**80 MB**|**Works** (Needs decrypted C)|
 |`mslug5`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P)|
 |`mutnat`|Mutation Nation|8 MB|**Works**|
 |`nam1975`|NAM-1975|8 MB|**Works**|
