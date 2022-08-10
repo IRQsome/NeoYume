@@ -17,6 +17,7 @@ wordfit @game_crsword  - @gamedb_base
 wordfit @game_crswd2bl - @gamedb_base
 wordfit @game_cyberlip - @gamedb_base
 wordfit @game_doubledr - @gamedb_base
+wordfit @game_eightman - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
 wordfit @game_fatfursp - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
@@ -34,6 +35,7 @@ wordfit @game_kof2000  - @gamedb_base
 wordfit @game_kof2001  - @gamedb_base
 wordfit @game_kof2002  - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
+wordfit @game_kotm2    - @gamedb_base
 wordfit @game_kizuna   - @gamedb_base
 wordfit @game_lastblad - @gamedb_base
 wordfit @game_lastbld2 - @gamedb_base
@@ -50,6 +52,7 @@ wordfit @game_mslugx   - @gamedb_base
 wordfit @game_mslug3   - @gamedb_base
 wordfit @game_mslug4   - @gamedb_base
 wordfit @game_mslug5   - @gamedb_base
+wordfit @game_miexchng - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_nam1975  - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
@@ -1047,6 +1050,24 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_kotm2 byte "kotm2",0,"King of the Monsters 2",0,"039-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $08_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V4",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 game_magdrop2 byte "magdrop2",0,"Magical Drop 2",0,"221-",0,GAME_OK
 byte SET_CHAR
@@ -2000,6 +2021,38 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_miexchng byte "miexchng",0,"Money Puzzle Exchanger",0,"231-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_eightman byte "eightman",0,"Eight Man",0,"025-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 

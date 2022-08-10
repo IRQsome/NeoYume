@@ -85,6 +85,7 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`crswd2bl`|Crossed Swords 2 (Unofficial conversion)|16 MB|**Works**|
 |`cyberlip`|Cyber-Lip|8 MB|**Works**|
 |`doubledr`|Double Dragon|24 MB|**Works**|
+|`eightman`|Eight Man|8 MB|**Works**|
 |`fatfury1`|Fatal Fury|8 MB|**Works**|
 |`fatfursp`|Fatal Fury Special|24 MB|**Works**|
 |`ganryu`|Ganryu|24 MB|**Works** (Needs decrypted C)|
@@ -102,6 +103,7 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`kof2001`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C)|
 |`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C and V)|
 |`kotmh`|King of the Monsters|8 MB|**Works**|
+|`kotm2`|King of the Monsters 2|16 MB|**Works**|
 |`kizuna`|Kizuna Encounter|**48 MB**|**Works**|
 |`lastblad`|The Last Blade|**64 MB**|**Works**|
 |`lastbld2`|The Last Blade 2|**80 MB**|**Works**|
@@ -118,6 +120,7 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`mslug3`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
 |`mslug4`|Metal Slug 4|**80 MB**|**Works** (Needs decrypted C)|
 |`mslug5`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P)|
+|`game_miexchng`|Money Puzzle Exchanger|16 MB|**Works**|
 |`mutnat`|Mutation Nation|8 MB|**Works**|
 |`nam1975`|NAM-1975|8 MB|**Works**|
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
