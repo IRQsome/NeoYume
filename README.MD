@@ -65,7 +65,7 @@ Note 1: I sometimes gloss over very minor issues that don't significantly impact
 
 Note 2: There currently isn't a public tool for V ROM decryption, thus all games with encrypted V are marked as GAME_ISSUE in the internal database, even if they actually work fine. Games with P ROM encryption are marked as GAME_BROKEN.
 
-Note 3: The romset names don't always match the needed MAME set - in particular, for some games an -h suffix set is needed (AES version)
+Note 3: The romset names hopefully match the needed MAME set - I may have missed a needed -h suffix somewhere.
 
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
@@ -97,10 +97,10 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`kof95`|King of Fighters '95|**48 MB**|**Works**|
 |`kof96`|King of Fighters '96|**48 MB**|**Works**|
 |`kof97`|King of Fighters '97|**64 MB**|**Works**|
-|`kof98`|King of Fighters '98|**96 MB**|**Works** (Needs decrypted C)|
-|`kof99`|King of Fighters '99|**96 MB**|**Works** (Needs decrypted C)|
-|`kof2000`|King of Fighters 2000|**96 MB**|Broken fix layer (Needs decrypted C)|
-|`kof2001`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C)|
+|`kof98h`|King of Fighters '98|**96 MB**|**Works** (Needs decrypted C)|
+|`kof99h`|King of Fighters '99|**96 MB**|**Works** (Needs decrypted C)|
+|`kof2000n`|King of Fighters 2000|**96 MB**|Broken fix layer (Needs decrypted C)|
+|`kof2001h`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C)|
 |`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C and V)|
 |`kotmh`|King of the Monsters|8 MB|**Works**|
 |`kotm2`|King of the Monsters 2|16 MB|**Works**|
@@ -117,10 +117,10 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`mslug`|Metal Slug|32 MB|**Works**|
 |`mslug2`|Metal Slug 2|**48 MB**|**Works**|
 |`mslugx`|Metal Slug X|**64 MB**|**Works**|
-|`mslug3`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
-|`mslug4`|Metal Slug 4|**80 MB**|**Works** (Needs decrypted C)|
-|`mslug5`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P)|
-|`game_miexchng`|Money Puzzle Exchanger|16 MB|**Works**|
+|`mslug3h`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
+|`mslug4h`|Metal Slug 4|**80 MB**|**Works** (Needs decrypted C)|
+|`mslug5h`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P)|
+|`miexchng`|Money Puzzle Exchanger|16 MB|**Works**|
 |`mutnat`|Mutation Nation|8 MB|**Works**|
 |`nam1975`|NAM-1975|8 MB|**Works**|
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
@@ -136,13 +136,13 @@ Note 3: The romset names don't always match the needed MAME set - in particular,
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
 |`puzzledp`|Puzzle de Pon|4 MB|**Works**|
 |`puzzldpr`|Puzzle de Pon R|4 MB|**Works**|
-|`rotd`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C)|
+|`rotdh`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C)|
 |`roboarmy`|Robo Army|8 MB|**Works**|
 |`samsho`|Samurai Shodown|24 MB|**Works**|
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
-|`samsho3`|Samurai Shodown 3|**48 MB**|**Works**|
+|`samsho3h`|Samurai Shodown 3|**48 MB**|**Works**|
 |`samsho4`|Samurai Shodown 4|**48 MB**|**Works**|
-|`samsho5`|Samurai Shodown 5|**96 MB**|**Works** (Needs decrypted C and V)|
+|`samsho5h`|Samurai Shodown 5|**96 MB**|**Works** (Needs decrypted C and V)|
 |`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C and V)|
 |`sengoku`|Sengoku|8 MB|**Works**|
 |`sengoku2`|Sengoku 2|16 MB|**Works**|

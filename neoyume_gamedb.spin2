@@ -29,10 +29,10 @@ wordfit @game_kof94    - @gamedb_base
 wordfit @game_kof95    - @gamedb_base
 wordfit @game_kof96    - @gamedb_base
 wordfit @game_kof97    - @gamedb_base
-wordfit @game_kof98    - @gamedb_base
-wordfit @game_kof99    - @gamedb_base
-wordfit @game_kof2000  - @gamedb_base
-wordfit @game_kof2001  - @gamedb_base
+wordfit @game_kof98h   - @gamedb_base
+wordfit @game_kof99h   - @gamedb_base
+wordfit @game_kof2000n - @gamedb_base
+wordfit @game_kof2001h - @gamedb_base
 wordfit @game_kof2002  - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
 wordfit @game_kotm2    - @gamedb_base
@@ -49,9 +49,9 @@ wordfit @game_matrim   - @gamedb_base
 wordfit @game_mslug    - @gamedb_base
 wordfit @game_mslug2   - @gamedb_base
 wordfit @game_mslugx   - @gamedb_base
-wordfit @game_mslug3   - @gamedb_base
-wordfit @game_mslug4   - @gamedb_base
-wordfit @game_mslug5   - @gamedb_base
+wordfit @game_mslug3h  - @gamedb_base
+wordfit @game_mslug4h  - @gamedb_base
+wordfit @game_mslug5h  - @gamedb_base
 wordfit @game_miexchng - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_nam1975  - @gamedb_base
@@ -68,13 +68,13 @@ wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_puzzledp - @gamedb_base
 wordfit @game_puzzldpr - @gamedb_base
-wordfit @game_rotd     - @gamedb_base
+wordfit @game_rotdh    - @gamedb_base
 wordfit @game_roboarmy - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
-wordfit @game_samsho3  - @gamedb_base
+wordfit @game_samsho3h - @gamedb_base
 wordfit @game_samsho4  - @gamedb_base
-wordfit @game_samsho5  - @gamedb_base
+wordfit @game_samsho5h - @gamedb_base
 wordfit @game_samsh5sp - @gamedb_base
 wordfit @game_sengoku  - @gamedb_base
 wordfit @game_sengoku2 - @gamedb_base
@@ -175,7 +175,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_samsho3 byte "samsho3",0,"Samurai Shodown 3",0,"087-",0,GAME_OK
+game_samsho3h byte "samsho3h",0,"Samurai Shodown 3",0,"087-",0,GAME_OK
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
 byte LOAD_CROM,"C5",0,"C6",0,word $80_0
@@ -215,7 +215,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' Note: Needs PCM2 descramble
-game_samsho5 byte "samsho5",0,"Samurai Shodown 5",0,"",0,GAME_ISSUE
+game_samsho5h byte "samsho5h",0,"Samurai Shodown 5",0,"",0,GAME_ISSUE
 byte LOAD_CROM,"SS5_C1",0,"SS5_C2",0,word $100_0
 byte LOAD_CROM,"SS5_C3",0,"SS5_C4",0,word $100_0
 byte LOAD_CROM,"SS5_C5",0,"SS5_C6",0,word $100_0
@@ -355,7 +355,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 ' Note: M1 too big -> broken sound
-game_mslug3 byte "mslug3",0,"Metal Slug 3",0,"",0,GAME_ISSUE
+game_mslug3h byte "mslug3h",0,"Metal Slug 3",0,"",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"MS3N_C1",0,"MS3N_C2",0,word $100_0
 byte LOAD_CROM,"MS3N_C3",0,"MS3N_C4",0,word $100_0
@@ -377,7 +377,7 @@ byte LOAD_RAW,"256-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_mslug4 byte "mslug4",0,"Metal Slug 4",0,"",0,GAME_OK
+game_mslug4h byte "mslug4h",0,"Metal Slug 4",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"MS4N_C1",0,"MS4N_C2",0,word $100_0
 byte LOAD_CROM,"MS4N_C3",0,"MS4N_C4",0,word $100_0
@@ -396,7 +396,7 @@ byte LOAD_M1_CMC,"263-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_mslug5 byte "mslug5",0,"Metal Slug 5",0,"",0,GAME_BROKEN
+game_mslug5h byte "mslug5h",0,"Metal Slug 5",0,"",0,GAME_BROKEN
 byte SET_CHAR
 byte LOAD_CROM,"MS5N_C1",0,"MS5N_C2",0,word $100_0
 byte LOAD_CROM,"MS5N_C3",0,"MS5N_C4",0,word $100_0
@@ -807,7 +807,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' Note: MG1 is 256k, but sound isn't obviously broken
-game_kof98 byte "kof98",0,"King of Fighters '98",0,"242-",0,GAME_OK
+game_kof98h byte "kof98h",0,"King of Fighters '98",0,"242-",0,GAME_OK
 byte LOAD_CROM,"C1",0,"C2",0,word $100_0
 byte LOAD_CROM,"C3",0,"C4",0,word $100_0
 byte LOAD_CROM,"C5",0,"C6",0,word $100_0
@@ -828,7 +828,7 @@ byte LOAD_RAW,"MG1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_kof99 byte "kof99",0,"King of Fighters '99",0,"",0,GAME_OK
+game_kof99h byte "kof99h",0,"King of Fighters '99",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"KF99N_C1",0,"KF99N_C2",0,word $100_0
 byte LOAD_CROM,"KF99N_C3",0,"KF99N_C4",0,word $100_0
@@ -852,7 +852,7 @@ byte 0
 
 
 '' Note: Broken fix layer (actually uses bankswitch!)
-game_kof2000 byte "kof2000",0,"King of Fighters 2000",0,"",0,GAME_ISSUE
+game_kof2000n byte "kof2000n",0,"King of Fighters 2000",0,"",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"KOF2K_C1",0,"KOF2K_C2",0,word $100_0
 byte LOAD_CROM,"KOF2K_C3",0,"KOF2K_C4",0,word $100_0
@@ -876,7 +876,7 @@ byte 0
 
 
 '' Note: M1 is 256k, but sound isn't obviously broken
-game_kof2001 byte "kof2001",0,"King of Fighters 2001",0,"",0,GAME_OK
+game_kof2001h byte "kof2001h",0,"King of Fighters 2001",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"KF2K1_C1",0,"KF2K1_C2",0,word $100_0
 byte LOAD_CROM,"KF2K1_C3",0,"KF2K1_C4",0,word $100_0
@@ -1540,7 +1540,7 @@ byte LOAD_RAW,"260-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_rotd byte "rotd",0,"Rage of the Dragons",0,"",0,GAME_OK
+game_rotdh byte "rotdh",0,"Rage of the Dragons",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"RODN_C1",0,"RODN_C2",0,word $100_0
 byte LOAD_CROM,"RODN_C3",0,"RODN_C4",0,word $100_0
