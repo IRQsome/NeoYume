@@ -601,6 +601,8 @@ repeat
     else
       putstring(string(58),GAMECHOOSE_X+GAMECHOOSE_WIDTH,i,3<<12)
   settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2," ")
+  c.sprintf(tmpstr,@"Got: %3d/%d",got_count,max_count)
+  putstring(tmpstr,GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+1,3<<12)
   putstring(jpbios?@"Using japanese BIOS":@"Using international BIOS",GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,0<<12)
   putstring(@"Hit D for credits!",GAMECHOOSE_X,27,0<<12)
 
