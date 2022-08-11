@@ -690,6 +690,57 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
 
 end
 
+class DecryptSMATask < Struct.new(:newname,:srcfiles,:type)
+
+    def decrypt_sma_garou(data)
+        words = data.unpack("S<*")
+        wdata = words[0x20000..].map{|x|bit_reorder(x,13,12,14,10,8,2,3,1,5,9,11,4,15,0,6,7)}
+        out = Array.new
+
+        raise unless wdata.size == 0x40_0000
+
+        bitt = [18,4,5,16,14,7,9,6,13,17,15,3,1,2,12,11,8,10,0]
+        (0x00000...0x60000).each do |i|
+            out << wdata[0x308000 + bit_reorder(i,*bitt)]
+        end
+        out.concat words[0...0x20000] # SMA ROM
+        reorder_tab = Array.new(0x4000){|i|bit_reorder(i,9,4,8,3,13,6,2,7,0,12,1,11,10,5)}
+        (0...0x400000).each do |i|
+            out << wdata[(i&0xFFC000)+reorder_tab[i&0x3FFF]]
+        end
+        p out.size
+        return out.pack("S<*") 
+    end
+
+    def run(basepath,cleanup)
+        newpath = File.join(basepath,newname+".bin")
+        unless File.exist? newpath
+            srcdata = String.new
+            srcfiles.each do |fname|
+                fpath = File.join(basepath,fname+".bin")
+                if File.exist? fpath
+                    srcdata << File.binread(fpath)
+                else
+                    puts "Missing file #{fpath} (for decryption to #{newpath})"
+                    return false
+                end
+            end
+            puts "Decrypting #{srcfiles.join ?,} into #{newpath} (SMA #{type})"
+            case type
+            when :garou
+                File.binwrite(newpath,decrypt_sma_garou(srcdata))
+            else raise
+            end
+        end
+        if cleanup
+            srcfiles.each{|fname|try_delete File.join(basepath,fname+".bin")}
+        end
+        return true
+    end
+
+end
+
+
 class PatchTask < Struct.new(:newname,:oldname,:transform)
     
     def run(basepath,cleanup)
@@ -754,6 +805,7 @@ end
 GENERIC_TASKS = [
     DeleteTask[/^(uni-bios|sp-|sp1|sm1|sfix|000-lo|v2\.bin|vs-bios|asia-|japan-|usa_)/], # Delete redundant BIOS files
     RenameTask[->(md){md[1]+".bin"},/^(.+)\.(m|c|p|sp|v|s)\d$/], # Rename funny extensions to .bin
+    RenameTask[->(md){md[1]+".bin"},/^(\d+\-sma)\.\w{2}$/], # Rename SMA files to .bin
     RenameTask[->(md){md[1]+".bin"},/^(.+)\.rom$/], # Rename .rom to .bin
     RenameTask[->(md){md[1]},/^proto_(.+)$/], # Proto prefix doesn't fit in 8.3
 ]
@@ -782,6 +834,10 @@ ROMSET_TASKS = {
     "fatfursp" => [],
     "ganryu" => [
         DecryptCTask["252-c%dd","252-c%d",1,:cmc42,0x07],
+    ],
+    "garou" => [
+        DecryptSMATask["253-pd",%w[253-sma 253-ep1 253-ep2 253-ep3 253-ep4],:garou],
+        DecryptCTask["253-c%dd","253-c%d",4,:cmc42,0x06],
     ],
     "gpilots" => [],
     "ironclad" => [],
