@@ -97,8 +97,8 @@ Note 3: The romset names hopefully match the needed MAME set - I may have missed
 |`kof95`|King of Fighters '95|**48 MB**|**Works**|
 |`kof96`|King of Fighters '96|**48 MB**|**Works**|
 |`kof97`|King of Fighters '97|**64 MB**|**Works**|
-|`kof98h`|King of Fighters '98|**96 MB**|**Works** (Needs decrypted C)|
-|`kof99h`|King of Fighters '99|**96 MB**|**Works** (Needs decrypted C)|
+|`kof98h`|King of Fighters '98|**96 MB**|**Works**|
+|`kof99ka`|King of Fighters '99|**96 MB**|**Works** (Needs decrypted C)|
 |`kof2000n`|King of Fighters 2000|**96 MB**|Broken fix layer (Needs decrypted C)|
 |`kof2001h`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C)|
 |`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C and V)|

@@ -30,7 +30,7 @@ wordfit @game_kof95    - @gamedb_base
 wordfit @game_kof96    - @gamedb_base
 wordfit @game_kof97    - @gamedb_base
 wordfit @game_kof98h   - @gamedb_base
-wordfit @game_kof99h   - @gamedb_base
+wordfit @game_kof99ka   - @gamedb_base
 wordfit @game_kof2000n - @gamedb_base
 wordfit @game_kof2001h - @gamedb_base
 wordfit @game_kof2002  - @gamedb_base
@@ -828,7 +828,7 @@ byte LOAD_RAW,"MG1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_kof99h byte "kof99h",0,"King of Fighters '99",0,"",0,GAME_OK
+game_kof99ka byte "kof99ka",0,"King of Fighters '99",0,"",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"KF99N_C1",0,"KF99N_C2",0,word $100_0
 byte LOAD_CROM,"KF99N_C3",0,"KF99N_C4",0,word $100_0
