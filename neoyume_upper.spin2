@@ -207,11 +207,6 @@ repeat
       gameptr += 2
     SET_TILEMASK:
       gameptr++
-    PATCH_SINGLE:
-      gameptr+=4
-      gameptr+=1+byte[gameptr]
-    PATCH_PATTERN:
-      gameptr := apply_pattern_patch(gameptr,0,false)
     other: ' Do nothing
 
 
@@ -312,14 +307,6 @@ repeat
       long[$88] := 22 + negx
     SET_TILEMASK:
       long[$A4] := byte[gameptr++]
-    PATCH_SINGLE:
-      tmp := exptr + long[gameptr]
-      gameptr+=4
-      len := byte[gameptr++]
-      exmem_write(tmp,gameptr,len,true)
-      gameptr+=len
-    PATCH_PATTERN:
-      gameptr := apply_pattern_patch(gameptr,exptr,true)
     other:
       c.sprintf(fn1,@"bad script: %d !",cmd)
       putstring(fn1,2,25,0)
@@ -331,40 +318,6 @@ repeat
 if exmem_size>exptr
   exmem_fill(exptr,$DB,exmem_size-exptr,false) ' fill remaining memory with pattern
 
-PRI apply_pattern_patch(gameptr,exptr,actually) : newptr | tmp,pattern,plen,replace,rlen,roff,sinc,chklen,tmpstr
-exptr += long[gameptr] - $8000
-gameptr += 4
-chklen := long[gameptr]
-gameptr += 4
-sinc := byte[gameptr++]
-plen := byte[gameptr++]
-pattern := gameptr
-gameptr+=plen
-roff := byte[gameptr++]
-rlen := byte[gameptr++]
-replace := gameptr
-gameptr+=rlen
-
-if actually
-  tmpstr := __builtin_alloca(64)
-  settiles(0,39,22,27," ")
-  putstring(@"Applying patch pattern...",2,22,0)
-  tmp := MKRAM_BASE + $8000
-  repeat
-    if tmp >= MKRAM_BASE + $8000
-      tmp -= $8000
-      exmem_read(MKRAM_BASE,exptr+=$8000,$8000+plen,false)
-    ifnot c.memcmp(tmp,pattern,plen)
-      c.memcpy(tmp+roff,replace,rlen)
-      exmem_write(exptr+tmp+roff-MKRAM_BASE,replace,rlen,true)
-      c.sprintf(tmpstr,@"Match: %08X ",exptr+tmp+roff-MKRAM_BASE)
-      putstring(tmpstr,3,23,0)
-      'waitms(10000)
-      'repeat
-    tmp += sinc
-  while --chklen
-
-return gameptr
 
 PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,tmp2,i,j,k,l,tmpstr,pushed,memo1
 settiles(0,39,22,27," ")
@@ -502,11 +455,6 @@ repeat while pos < size
         k := long[i+4]
         long[i+4] := long[i+12]
         long[i+12] := k
-      exmem_write(target+pos,MKRAM_BASE,$10000,false)
-      pushed:=$10000
-    LOAD_M1_CMC:
-      c.fread(MKRAM_BASE,1,$10000,f1)
-      memo1 := cmc_decrypt_m1_block(memo1,pos/+$10000)
       exmem_write(target+pos,MKRAM_BASE,$10000,false)
       pushed:=$10000
     other:
@@ -741,13 +689,12 @@ endasm
 CON
 
 #1
-LOAD_RAW,LOAD_BSWAP,LOAD_WSWAP,LOAD_LSWAP,LOAD_QSWAP,LOAD_CROM,LOAD_SROM_CMC,LOAD_SROM,LOAD_M1_CMC
+LOAD_RAW,LOAD_BSWAP,LOAD_WSWAP,LOAD_LSWAP,LOAD_QSWAP,LOAD_CROM,LOAD_SROM_CMC,LOAD_SROM
 LOAD_BIOS
 LOAD_FILLER
 SET_PROG,SET_PORT,SET_UNUSED,SET_BIOS,SET_ADPCM_A,SET_ADPCM_B,SET_CHAR,SET_FIX,SET_Z80
 SET_BANKSWITCH_2M,SET_BANKSWITCH_4M,SET_BANKSWITCH_8M,SET_BANKSWITCH_PVC_8M
 SET_TILEMASK
-PATCH_SINGLE,PATCH_PATTERN
 
 LOADCMD_FIRST = LOAD_RAW
 LOADCMD_LAST = LOAD_BIOS-1 ' Note: LOAD_BIOS doesn't count
@@ -762,145 +709,6 @@ GREYM = $010101_00
 DAT
 menu_palette
 long 0,$01*GREYM,$13*GREYM,$25*GREYM,$37*GREYM,$49*GREYM,$5B*GREYM,$6D*GREYM,$7F*GREYM,$91*GREYM,$A3*GREYM,$B5*GREYM,$C7*GREYM,$D9*GREYM,$EB*GREYM,$FD*GREYM
-
-PRI cmc_decrypt_m1_block(keymemo,blockno) : key | tmp,i,j
-if blockno
-  key := keymemo
-else
-  org
-    mov key,#0
-    rdfast #0,##MKRAM_BASE
-    rep @.sumlp,##$10000
-    rfbyte tmp
-    add key,tmp
-  .sumlp
-  end
-  key := {
-  } (key&$0088)<< 2 | {
-  } (key&$1100)<< 3 | {
-  } (key&$0002)<< 5 | {
-  } (key&$0010)<< 8 | {
-  } (key&$0004)<<11 | {
-  } (key&$0001)<<14 | {
-  } (key&$4000)>>13 | {
-  } (key&$0800)>> 8 | {
-  } (key&$0200)>> 7 | {
-  } (key&$a020)>> 5 | {
-  } (key&$0400)>> 3 | {
-  } (key&$0040)>> 2
-
-
-' load block permutation table into magic cog ram ($1e0)
-' note the reversal!
-tmp := @cmcm1_block_permuters + blockno*16
-repeat i from 0 to 15
-  reg[$1ef-i] := byte[tmp][i]
-  
-repeat i from $0000 to $ffff
-  j := i
-  repeat
-    j := j^key
-    ' apply block permutation
-    asm
-      mov tmp,j
-      testb tmp,$1e0+0 wc
-      wrc j
-      testb tmp,$1e0+1 wc
-      rcl j,#1
-      testb tmp,$1e0+2 wc
-      rcl j,#1
-      testb tmp,$1e0+3 wc
-      rcl j,#1
-      testb tmp,$1e0+4 wc
-      rcl j,#1
-      testb tmp,$1e0+5 wc
-      rcl j,#1
-      testb tmp,$1e0+6 wc
-      rcl j,#1
-      testb tmp,$1e0+7 wc
-      rcl j,#1
-      testb tmp,$1e0+8 wc
-      rcl j,#1
-      testb tmp,$1e0+9 wc
-      rcl j,#1
-      testb tmp,$1e0+10 wc
-      rcl j,#1
-      testb tmp,$1e0+11 wc
-      rcl j,#1
-      testb tmp,$1e0+12 wc
-      rcl j,#1
-      testb tmp,$1e0+13 wc
-      rcl j,#1
-      testb tmp,$1e0+14 wc
-      rcl j,#1
-      testb tmp,$1e0+15 wc
-      rcl j,#1
-    endasm
-    ' apply XORs
-    j ^= cmcm1_low_xor[(j>>8)&255]
-    j ^= cmcm1_high_xor[j&255]<<8
-    ' final permutation
-    asm
-      movbyts j,#%%3120
-      mov tmp,j
-      mergew j
-      movbyts tmp,#%%1032
-      mergew tmp
-      setq ##$CC00
-      muxq j,tmp
-    endasm
-  while i > j
-  tmp := byte[MKRAM_BASE+i]
-  byte[MKRAM_BASE+i] := byte[MKRAM_BASE+j]
-  byte[MKRAM_BASE+j] := tmp
-
-DAT
-cmcm1_block_permuters
-byte 15,14,10,7,1,2,3,8,0,12,11,13,6,9,5,4
-byte 7,1,8,11,15,9,2,3,5,13,4,14,10,0,6,12
-byte 8,6,14,3,10,7,15,1,4,0,2,5,13,11,12,9
-byte 2,8,15,9,3,4,11,7,13,6,0,10,1,12,14,5
-byte 1,13,6,15,14,3,8,10,9,4,7,12,5,2,0,11
-byte 11,15,3,4,7,0,9,2,6,14,12,1,8,5,10,13
-byte 10,5,13,8,6,15,1,14,11,9,3,0,12,7,4,2
-byte 9,3,7,0,2,12,4,11,14,10,5,8,15,13,1,6
-
-cmcm1_high_xor byte
-byte $0a, $72, $b7, $af, $67, $de, $1d, $b1, $78, $c4, $4f, $b5, $4b, $18, $76, $dd
-byte $11, $e2, $36, $a1, $82, $03, $98, $a0, $10, $5f, $3f, $d6, $1f, $90, $6a, $0b
-byte $70, $e0, $64, $cb, $9f, $38, $8b, $53, $04, $ca, $f8, $d0, $07, $68, $56, $32
-byte $ae, $1c, $2e, $48, $63, $92, $9a, $9c, $44, $85, $41, $40, $09, $c0, $c8, $bf
-byte $ea, $bb, $f7, $2d, $99, $21, $f6, $ba, $15, $ce, $ab, $b0, $2a, $60, $bc, $f1
-byte $f0, $9e, $d5, $97, $d8, $4e, $14, $9d, $42, $4d, $2c, $5c, $2b, $a6, $e1, $a7
-byte $ef, $25, $33, $7a, $eb, $e7, $1b, $6d, $4c, $52, $26, $62, $b6, $35, $be, $80
-byte $01, $bd, $fd, $37, $f9, $47, $55, $71, $b4, $f2, $ff, $27, $fa, $23, $c9, $83
-byte $17, $39, $13, $0d, $c7, $86, $16, $ec, $49, $6f, $fe, $34, $05, $8f, $00, $e6
-byte $a4, $da, $7b, $c1, $f3, $f4, $d9, $75, $28, $66, $87, $a8, $45, $6c, $20, $e9
-byte $77, $93, $7e, $3c, $1e, $74, $f5, $8c, $3e, $94, $d4, $c2, $5a, $06, $0e, $e8
-byte $3d, $a9, $b2, $e3, $e4, $22, $cf, $24, $8e, $6b, $8a, $8d, $84, $4a, $d2, $91
-byte $88, $79, $57, $a5, $0f, $cd, $b9, $ac, $3b, $aa, $b3, $d1, $ee, $31, $81, $7c
-byte $d7, $89, $d3, $96, $43, $c5, $c6, $c3, $69, $7f, $46, $df, $30, $5b, $6e, $e5
-byte $08, $95, $9b, $fb, $b8, $58, $0c, $61, $50, $5d, $3a, $a2, $29, $12, $fc, $51
-byte $7d, $1a, $02, $65, $54, $5e, $19, $cc, $dc, $db, $73, $ed, $ad, $59, $2f, $a3
-
-cmcm1_low_xor byte
-byte $f4, $bc, $02, $f7, $2c, $3d, $e8, $d9, $50, $62, $ec, $bd, $53, $73, $79, $61
-byte $00, $34, $cf, $a2, $63, $28, $90, $af, $44, $3b, $c5, $8d, $3a, $46, $07, $70
-byte $66, $be, $d8, $8b, $e9, $a0, $4b, $98, $dc, $df, $e2, $16, $74, $f1, $37, $f5
-byte $b7, $21, $81, $01, $1c, $1b, $94, $36, $09, $a1, $4a, $91, $30, $92, $9b, $9a
-byte $29, $b1, $38, $4d, $55, $f2, $56, $18, $24, $47, $9d, $3f, $80, $1f, $22, $a4
-byte $11, $54, $84, $0d, $25, $48, $ee, $c6, $59, $15, $03, $7a, $fd, $6c, $c3, $33
-byte $5b, $c4, $7b, $5a, $05, $7f, $a6, $40, $a9, $5d, $41, $8a, $96, $52, $d3, $f0
-byte $ab, $72, $10, $88, $6f, $95, $7c, $a8, $cd, $9c, $5f, $32, $ae, $85, $39, $ac
-byte $e5, $d7, $fb, $d4, $08, $23, $19, $65, $6b, $a7, $93, $bb, $2b, $bf, $b8, $35
-byte $d0, $06, $26, $68, $3e, $dd, $b9, $69, $2a, $b2, $de, $87, $45, $58, $ff, $3c
-byte $9e, $7d, $da, $ed, $49, $8c, $14, $8e, $75, $2f, $e0, $6e, $78, $6d, $20, $d2
-byte $fa, $2d, $51, $cc, $c7, $e7, $1d, $27, $97, $fc, $31, $db, $f8, $42, $e3, $99
-byte $5e, $83, $0e, $b4, $2e, $f6, $c0, $0c, $4c, $57, $b6, $64, $0a, $17, $a3, $c1
-byte $77, $12, $fe, $e6, $8f, $13, $71, $e4, $f9, $ad, $9f, $ce, $d5, $89, $7e, $0f
-byte $c2, $86, $f3, $67, $ba, $60, $43, $c9, $04, $b3, $b0, $1e, $b5, $c8, $eb, $a5
-byte $76, $ea, $5c, $82, $1a, $4f, $aa, $ca, $e1, $0b, $4e, $cb, $6a, $ef, $d1, $d6
-
 
 PRI exmem_start() | tmp,cogs,banks,i,sizelen
 
