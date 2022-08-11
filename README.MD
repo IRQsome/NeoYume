@@ -146,7 +146,7 @@ Note 3: The romset names hopefully match the needed MAME set - I may have missed
 |`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C and V)|
 |`sengoku`|Sengoku|8 MB|**Works**|
 |`sengoku2`|Sengoku 2|16 MB|**Works**|
-|`sengoku3`|Sengoku 3|**64 MB**|**Works** (Needs decrypted C)|
+|`sengoku3`|Sengoku 3|**80 MB**|**Works** (Needs decrypted C)|
 |`shocktro`|Shock Troopers|**48 MB**|**Works**|
 |`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|**Works**|
 |`sonicwi2`|Sonic Wings 2|16 MB|**Works**|
