@@ -123,7 +123,7 @@ exmem_read(tmp,$080_00_00,64,false)
 putstring(tmp,14,6,0)
 c.free(tmp)
 putstring(@"PROP-GEAR SPEC",13,7,0)
-putstring(@"Beta 05",2,6,0)
+putstring(@"Beta 06",2,6,0)
 
 {
 repeat
