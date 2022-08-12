@@ -33,7 +33,15 @@ Note: all filenames and paths are case-insensitive. The FAT driver without LFN a
 - Create a `NEOYUME` directory on the root of the card
 - Place your `neo-epo.bin` (or `neo-po.bin` if `USE_JP_BIOS` is set in config) into `/NEOYUME/NEOGEO/` (i.e. `/NEOYUME/NEOGEO/NEO-EPO.BIN`)
 - Unzip your MAME-style game ROMs into the `NEOYUME` directory, such that the paths look like this: `/NEOYUME/MSLUG/201-C1.BIN`. **All files must have a .bin extension, rename them if they have .c1,.v1,etc kinda extensions!**
-- Some games (noted in the compatibility list) need pre-decrypted ROMs. (Decrypting the normal MAME sets on load is possible, but would be extremely slow)
+- Some games have multiple romset variations. You will need the one matching the game list entry.
+- Some games (noted in the compatibility list) require decryption/patching. To do this, use the romfix tool (see below)
+
+#### Using the romfix tool
+`romfix.rb` is a Ruby script that automatically decrypts/patches ROMs that need it. As a bonus, it also takes care of any renaming that may be neccessary.
+To use it:
+ - Make sure you have a Ruby interpreter installed (On Windows, you can use [RubyInstaller](https://rubyinstaller.org))
+ - Copy `romfix.rb` into your NEOYUME directory.
+ - Open a command prompt there and run `ruby ./romfix.rb`. You may also use `ruby ./romfix.rb --cleanup` to have it automatically delete unneeded files.
 
 #### Notes on acquiring ROMs legally
 
@@ -46,9 +54,9 @@ As an alternative to illicit acquisition of game ROMs, you may also:
 
 Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere (don't feel bad, for they did for some reason (read: they probably just got a BIOS romset from a shady site themselves) include unibios, which is against its terms of use (then again, unibios itself exists in violation of copyright)).
 
-Also note that I have not tested every single available game, YMMV
-
 tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download it. Be gay do crime.
+
+Also note that I have not tested every single available game, YMMV
 
 ### Compiling
 
@@ -61,9 +69,7 @@ tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download 
 
 These are just the games I tested, to the extent that I tested them. Don't complain if the victory screen crashes and burns your house down.
 
-Note 1: I sometimes gloss over very minor issues that don't significantly impact the enjoyment. ~~In particular, some games rarely have a "wrong sound" issue wherein an ADPCM channel runs through all consecutive data in ROM until another actual sound is triggered - except for samsho3/samsho4, this happens rarely enough that it is very difficult to even verify.~~ Issue is fixed now. I hope.
-
-Note 2: There currently isn't a public tool for V ROM decryption, thus all games with encrypted V are marked as GAME_ISSUE in the internal database, even if they actually work fine. Games with P ROM encryption are marked as GAME_BROKEN.
+Note 1: I sometimes gloss over very minor issues that don't significantly impact the enjoyment.
 
 Note 3: The romset names hopefully match the needed MAME set - I may have missed a needed -h suffix somewhere.
 
@@ -99,9 +105,9 @@ Note 3: The romset names hopefully match the needed MAME set - I may have missed
 |`kof97`|King of Fighters '97|**64 MB**|**Works**|
 |`kof98h`|King of Fighters '98|**96 MB**|**Works**|
 |`kof99ka`|King of Fighters '99|**96 MB**|**Works** (Needs decrypted C)|
-|`kof2000n`|King of Fighters 2000|**96 MB**|Broken fix layer (Needs decrypted C)|
-|`kof2001h`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C)|
-|`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C and V)|
+|`kof2000n`|King of Fighters 2000|**96 MB**|Broken fix layer (Needs decrypted C/M)|
+|`kof2001h`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C/M)|
+|`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C/V/M)|
 |`kotmh`|King of the Monsters|8 MB|**Works**|
 |`kotm2`|King of the Monsters 2|16 MB|**Works**|
 |`kizuna`|Kizuna Encounter|**48 MB**|**Works**|
@@ -113,37 +119,37 @@ Note 3: The romset names hopefully match the needed MAME set - I may have missed
 |`magdrop2`|Magical Drop 2|16 MB|**Works**|
 |`magdrop3`|Magical Drop 3|24 MB|**Works**|
 |`maglord`|Magician Lord|8 MB|**Works**|
-|`matrim`|Matrimelee|**96 MB**|**Works** (Needs decrypted C/V)|
+|`matrim`|Matrimelee|**96 MB**|**Works** (Needs decrypted C/V/M)|
 |`mslug`|Metal Slug|32 MB|**Works**|
 |`mslug2`|Metal Slug 2|**48 MB**|**Works**|
-|`mslugx`|Metal Slug X|**64 MB**|**Works**|
+|`mslugx`|Metal Slug X|**64 MB**|**Works** (Needs patched P)|
 |`mslug3h`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
-|`mslug4h`|Metal Slug 4|**80 MB**|**Works** (Needs decrypted C)|
-|`mslug5h`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P)|
+|`mslug4h`|Metal Slug 4|**80 MB**|**Works** (Needs decrypted C/M)|
+|`mslug5h`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P/M)|
 |`miexchng`|Money Puzzle Exchanger|16 MB|**Works**|
 |`mutnat`|Mutation Nation|8 MB|**Works**|
 |`nam1975`|NAM-1975|8 MB|**Works**|
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
-|`neodrift`|Neo Drift Out|16 MB|Glitching graphics, sound seems to die after one game|
+|`neodrift`|Neo Drift Out|16 MB|Graphical issues (#4)|
 |`nitd`|Nightmare in the Dark|24 MB|**Works** (Needs decrypted C)|
 |`ncombat`|Ninja Combat|8 MB|**Works**|
 |`ncommand`|Ninja Commando|8 MB|**Works**|
 |`overtop`|Over Top|32 MB|**Works**|
-|`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C)|
+|`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C/M)|
 |`popbounc`|Pop n' Bounce|8 MB|**Works**|
 |`preisle2`|Prehistoric Isle 2|**64 MB**|**Works** (Needs decrypted C)|
 |`pulstar`|Pulstar|48 MB|Broken Sound|
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
 |`puzzledp`|Puzzle de Pon|4 MB|**Works**|
 |`puzzldpr`|Puzzle de Pon R|4 MB|**Works**|
-|`rotdh`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C)|
+|`rotdh`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C/M)|
 |`roboarmy`|Robo Army|8 MB|**Works**|
 |`samsho`|Samurai Shodown|24 MB|**Works**|
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
 |`samsho3h`|Samurai Shodown 3|**48 MB**|**Works**|
 |`samsho4`|Samurai Shodown 4|**48 MB**|**Works**|
-|`samsho5h`|Samurai Shodown 5|**96 MB**|**Works** (Needs decrypted C and V)|
-|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C and V)|
+|`samsho5h`|Samurai Shodown 5|**96 MB**|**Works** (Needs decrypted C/V/M)|
+|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C/V/M)|
 |`sengoku`|Sengoku|8 MB|**Works**|
 |`sengoku2`|Sengoku 2|16 MB|**Works**|
 |`sengoku3`|Sengoku 3|**80 MB**|**Works** (Needs decrypted C)|
@@ -151,7 +157,7 @@ Note 3: The romset names hopefully match the needed MAME set - I may have missed
 |`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|**Works**|
 |`sonicwi2`|Sonic Wings 2|16 MB|**Works**|
 |`sonicwi3`|Sonic Wings 3|24 MB|**Works**|
-|`spinmast`|Spinmaster|16 MB|Black screen after eyecatcher|
+|`spinmast`|Spinmaster|16 MB|Black screen (Timer IRQ)|
 |`strhoop`|Street Hoop|16 MB|**Works**|
 |`s1945p`|Strikers 1945 Plus|**96 MB**|**Works** (Needs decrypted C)|
 |`superspy`|The Super Spy|8 MB|**Works**|
@@ -174,7 +180,7 @@ Note: RAM requirements are rounded to the next highest of 4MB, 8MB, 16MB, 24MB, 
 
 Currently four types of USB controller are supported, see below sections.
 
-Currently only one USB port is supported, so no 2 player mode (yes, no 2 player in a neo geo emu. complain that the USB driver sucks.)
+Currently only one USB port is supported, so no 2 player mode (yes, no 2 player in a neo geo emu. complain that the USB driver is less than ideal.)
 
 ### Keyboard
 
@@ -229,7 +235,7 @@ Keymap:
 
 ## About
 
-NeoYume was programmed almost entirely by me, Ada Gottensträter.
+NeoYume was programmed almost entirely by me, Ada Gottensträter, though taking clues from existing projects (mostly MAME).
 The AY/SSG core is adapted from work by Johannes Ahlebrand.
 The USB driver was written by Garry Jordan, with additional work by Marco Maccaferri,
 The loader memory driver (`psram16drv.spin2` and friends) was written by Roger Loh.
