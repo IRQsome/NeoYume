@@ -214,8 +214,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: Needs PCM2 descramble
-game_samsho5h byte "samsho5h",0,"Samurai Shodown 5",0,"270-",0,GAME_ISSUE
+
+game_samsho5h byte "samsho5h",0,"Samurai Shodown 5",0,"270-",0,GAME_OK
 byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
 byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
 byte LOAD_CROM,"C5D",0,"C6D",0,word $100_0
@@ -249,8 +249,7 @@ byte 0
 
 
 
-'' Note: Needs PCM2 descramble
-game_samsh5sp byte "samsh5sp",0,"Samurai Shodown 5 Special",0,"272-",0,GAME_ISSUE
+game_samsh5sp byte "samsh5sp",0,"Samurai Shodown 5 Special",0,"272-",0,GAME_OK
 byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
 byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
 byte LOAD_CROM,"C5D",0,"C6D",0,word $100_0
@@ -396,7 +395,7 @@ byte LOAD_RAW,"M1D",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_mslug5h byte "mslug5h",0,"Metal Slug 5",0,"268-",0,GAME_BROKEN
+game_mslug5h byte "mslug5h",0,"Metal Slug 5",0,"268-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
 byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
@@ -1354,8 +1353,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: Need to figure out PCM2 descramble (MATR_VM.BIN is dumped from mame debugger)
-game_matrim byte "matrim",0,"Matrimelee",0,"266-",0,GAME_ISSUE
+game_matrim byte "matrim",0,"Matrimelee",0,"266-",0,GAME_OK
 byte SET_CHAR
 byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
 byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
