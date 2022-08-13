@@ -363,7 +363,7 @@ repeat while pos < size
     LOAD_BSWAP:
       c.fread(MKRAM_BASE,1,$10000,f1)
       repeat i from MKRAM_BASE to MKRAM_BASE+$FFFC step 4
-        long[i] := __movbyts(long[i],%%2301)
+        long[i] := __builtin_movbyts(long[i],%%2301)
       exmem_write(target+pos,MKRAM_BASE,$1_0000,false)
       pushed:=$10000
     LOAD_CROM:
@@ -415,7 +415,7 @@ repeat while pos < size
       k := MKRAM_BASE
       l := MKRAM_BASE+$8000
       repeat 8192
-        long[l] := __movbyts(word[k],%%0123) | __movbyts(word[k+$4000],%%2301)
+        long[l] := __builtin_movbyts(word[k],%%0123) | __builtin_movbyts(word[k+$4000],%%2301)
         l+=4
         k+=2
       exmem_write(target+pos,MKRAM_BASE+$8000,$8000,false)
@@ -443,7 +443,7 @@ repeat while pos < size
     LOAD_WSWAP:
       c.fread(MKRAM_BASE,1,$10000,f1)
       repeat i from MKRAM_BASE to MKRAM_BASE+$FFFC step 4
-        long[i] := __movbyts(long[i],%%1032)
+        long[i] := __builtin_movbyts(long[i],%%1032)
       exmem_write(target+pos,MKRAM_BASE,$10000,false)
       pushed:=$10000
     LOAD_QSWAP:
@@ -644,46 +644,11 @@ repeat i from 0 to 14
   long[ptr][i+1]:= __blnpix(bg,fg, i frac $e0e0e0e)
 
 
-PRI __mulpix(a,b) : r
-r := a
-asm
-  mulpix r,b
-endasm
-PRI __addpix(a,b) : r
-r := a
-asm
-  addpix r,b
-endasm
 PRI __blnpix(a,b,ratio) : r
 r := a
 asm
   setpiv ratio
   blnpix r,b
-endasm
-PRI __movbyts(in,pattern) : r
-r := in
-asm
-  movbyts r,pattern
-endasm
-PRI __splitb(in) : r
-r := in
-asm
-  splitb r
-endasm
-PRI __splitw(in) : r
-r := in
-asm
-  splitw r
-endasm
-PRI __mergeb(in) : r
-r := in
-asm
-  mergeb r
-endasm
-PRI __mergew(in) : r
-r := in
-asm
-  mergew r
 endasm
 
 CON
