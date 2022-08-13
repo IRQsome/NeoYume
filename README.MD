@@ -19,10 +19,9 @@ NeoYume is a NeoGeo AES emulator for Parallax P2 micro-controllers with appropri
 Features include:
   - Low latency framebuffer-less high-level emulation
   - Pretty good audio
-  - Video output over VGA, HDMI, YPbPr, S-video or Composite
-  - USB Keyboard input (also select gamepads, see below)
-  - Bugs.
-  - PLAYS METÄL SLÜG!!!einself!"!!!
+  - Video output over VGA, HDMI, YPbPr, S-video, Composite or 6bit RGB bus (ILI9342 LCD)
+  - USB input (Keyboard and select gamepads, see below)
+  - Bugs. But not that many.
 
 ## Usage
 
@@ -60,7 +59,9 @@ Also note that I have not tested every single available game, YMMV
 
 ### Compiling
 
-- Configure video, audio and USB pins in `config.spin2`
+- Configure video, audio, input and RAM in `config.spin2`
+  - The comments hopefully explain the settings
+  - See [RAMCONFIG.MD](RAMCONFIG.MD) for details on the RAM configuration
 - Make sure you have flexspin 5.9.12 or higher installed
 - Run `build.sh`
 - Load the resulting `neoyume_lower.binary`
@@ -69,9 +70,7 @@ Also note that I have not tested every single available game, YMMV
 
 These are just the games I tested, to the extent that I tested them. Don't complain if the victory screen crashes and burns your house down.
 
-Note 1: I sometimes gloss over very minor issues that don't significantly impact the enjoyment.
-
-Note 3: The romset names hopefully match the needed MAME set - I may have missed a needed -h suffix somewhere.
+Note: I sometimes gloss over very minor issues that don't significantly impact the enjoyment and/or are somewhat difficult to reproduce.
 
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
