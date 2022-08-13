@@ -10,7 +10,7 @@ Most of the configuration values are separate but follow the same logic as the P
 
 ## Known-good configs
 
-Note that these are specific to NeoYume. Or rather, it's ~338 MHz clock mode. The delay/sync values need to be changed to account for differences in clock speed.
+Note that these are specific to NeoYume. Or rather, its ~338 MHz clock mode. The delay/sync values need to be changed to account for differences in clock speed.
 
 ### P2EDGE 32MB
 
