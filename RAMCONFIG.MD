@@ -63,6 +63,32 @@ PSRAM_SYNC_DATA = true
 #define USE_PSRAM_SLOW
 ```
 
+### Rayslogic 24MB PSRAM board (on P2EVAL, basepin 48)
+
+```spin
+' Enable one of these to select the exmem type to use
+'#define USE_PSRAM16
+'#define USE_PSRAM8
+#define USE_PSRAM4
+'#define USE_HYPER
+
+' For PSRAM (either type)
+PSRAM_CLK = 48+4
+PSRAM_SELECT = 48+5
+PSRAM_BASE = 48
+PSRAM_BANKS = 3
+' \/ Uncomment if PSRAM_BANKS = 1 for speedup
+'#define USE_PSRAM_NOBANKS
+
+PSRAM_WAIT  = 5
+PSRAM_DELAY = 15
+PSRAM_SYNC_CLOCK = true
+PSRAM_SYNC_DATA = false
+
+' \/ Uncomment for lameness
+'#define USE_PSRAM_SLOW
+```
+
 ## Configurable Values
 
 ### USE_PSRAM4 / USE_PSRAM8 / USE_PSRAM16 / USE_HYPER
