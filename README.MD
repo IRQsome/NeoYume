@@ -23,8 +23,9 @@ Features include:
 
 Note: all filenames and paths are case-insensitive. The FAT driver without LFN always sees uppercase 8.3 names.
 
+- Make sure your card is formatted to FAT32
 - Create a `NEOYUME` directory on the root of the card
-- Place your `neo-epo.bin` (or `neo-po.bin` if `USE_JP_BIOS` is set in config) into `/NEOYUME/NEOGEO/` (i.e. `/NEOYUME/NEOGEO/NEO-EPO.BIN`)
+- Place your `neo-epo.bin` (or `neo-po.bin` for the Japanese BIOS) into `/NEOYUME/NEOGEO/` (i.e. `/NEOYUME/NEOGEO/NEO-EPO.BIN`)
 - Unzip your MAME-style game ROMs into the `NEOYUME` directory, such that the paths look like this: `/NEOYUME/MSLUG/201-C1.BIN`. **All files must have a .bin extension, rename them if they have .c1,.v1,etc kinda extensions!**
 - Some games have multiple romset variations. You will need the one matching the game list entry.
 - Some games (noted in the compatibility list) require decryption/patching. To do this, use the romfix tool (see below)
@@ -56,7 +57,7 @@ Also note that I have not tested every single available game, YMMV
 - Configure video, audio, input and RAM in `config.spin2`
   - The comments hopefully explain the settings
   - See [RAMCONFIG.MD](RAMCONFIG.MD) for details on the RAM configuration
-- Make sure you have flexspin 5.9.12 or higher installed
+- Make sure you have [flexspin](github.com/totalspectrum/spin2cpp) 5.9.12 or higher installed
 - Run `build.sh`
 - Load the resulting `neoyume_lower.binary`
 
