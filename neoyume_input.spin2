@@ -99,22 +99,36 @@ PRI snes_buttonmap(in) : out
   out.[8] := in.[3] ' Start
   out.[9] := in.[2] ' Select
 
+#ifdef SNES_LAYOUT_MINI_POSITIONAL
   ' NeoGeo Mini positional equivalent
-  {
   out.[4] := in.[1] ' Y -> A
   out.[5] := in.[0] ' B -> B
   out.[6] := in.[9] ' X -> C
   out.[7] := in.[8] ' A -> D
-  '}
-  
+#elseifdef SNES_LAYOUT_ARCADE_POSITIONAL
   ' SNES Arcade style layout
   ' B C D
   ' A x x
-  '{
   out.[4] := in.[ 1] ' Y -> A
   out.[5] := in.[10] ' L -> B
   out.[6] := in.[ 9] ' X -> C
   out.[7] := in.[11] ' R -> D
-  '}
+#elseifdef SNES_LAYOUT_LETTERS
+  ' Letter matched layout
+  out.[4] := in.[8] ' A -> A
+  out.[5] := in.[0] ' B -> B
+  out.[6] := in.[9] ' X -> C
+  out.[7] := in.[1] ' Y -> D
+#elseifdef SNES_LAYOUT_COLORS
+  ' Color matched layout
+  out.[4] := in.[0] ' B -> A
+  out.[5] := in.[8] ' A -> B
+  out.[6] := in.[1] ' Y -> C
+  out.[7] := in.[9] ' X -> D
+#else
+#ifdef INPUT_USE_SNES
+#error "No SNES layout map selected"
+#endif
+#endif
 
 
