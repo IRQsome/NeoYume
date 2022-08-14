@@ -811,6 +811,7 @@ GENERIC_TASKS = [
 ]
 
 ROMSET_TASKS = {
+    "3countb" => [],
     "aodk" => [],
     "alpham2" => [],
     "androdun" => [],
@@ -832,6 +833,8 @@ ROMSET_TASKS = {
     "eightman" => [],
     "fatfury1" => [],
     "fatfursp" => [],
+    "fatfury3" => [],
+    "fbfrenzy" => [],
     "ganryu" => [
         DecryptCTask["252-c%dd","252-c%d",1,:cmc42,0x07],
     ],
@@ -934,6 +937,7 @@ ROMSET_TASKS = {
         DecryptCTask["264-c%dd","264-c%d",4,:cmc50,0x3f],
         DecryptM1Task["264-m1"],
     ],
+    "rbff1" => [],
     "roboarmy" => [],
     "samsho" => [],
     "samsho2" => [],

@@ -1,6 +1,7 @@
 DAT
 
 gamelist word
+wordfit @game_3countb  - @gamedb_base
 wordfit @game_aodk     - @gamedb_base
 wordfit @game_alpham2  - @gamedb_base
 wordfit @game_androdun - @gamedb_base
@@ -20,6 +21,8 @@ wordfit @game_doubledr - @gamedb_base
 wordfit @game_eightman - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
 wordfit @game_fatfursp - @gamedb_base
+wordfit @game_fatfury3 - @gamedb_base
+wordfit @game_fbfrenzy - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
 wordfit @game_gpilots  - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
@@ -30,7 +33,7 @@ wordfit @game_kof95    - @gamedb_base
 wordfit @game_kof96    - @gamedb_base
 wordfit @game_kof97    - @gamedb_base
 wordfit @game_kof98h   - @gamedb_base
-wordfit @game_kof99ka   - @gamedb_base
+wordfit @game_kof99ka  - @gamedb_base
 wordfit @game_kof2000n - @gamedb_base
 wordfit @game_kof2001h - @gamedb_base
 wordfit @game_kof2002  - @gamedb_base
@@ -69,6 +72,7 @@ wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_puzzledp - @gamedb_base
 wordfit @game_puzzldpr - @gamedb_base
 wordfit @game_rotdh    - @gamedb_base
+wordfit @game_rbff1    - @gamedb_base
 wordfit @game_roboarmy - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
@@ -610,6 +614,49 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_fatfury3 byte "fatfury3",0,"Fatal Fury 3",0,"069-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"SP2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+game_rbff1 byte "rbff1",0,"Real Bout Fatal Fury",0,"",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"069-C1",0,"069-C2",0,word $80_0
+byte LOAD_CROM,"069-C3",0,"069-C4",0,word $80_0
+byte LOAD_CROM,"095-C5",0,"095-C6",0,word $80_0
+byte LOAD_CROM,"095-C7",0,"095-C8",0,word $40_0
+byte SET_PROG
+byte LOAD_BSWAP,"095-P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"095-P2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"069-V1",0,word $40_0
+byte LOAD_RAW,"069-V2",0,word $40_0
+byte LOAD_RAW,"095-V3",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"095-S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"095-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 
 game_crsword byte "crsword",0,"Crossed Swords",0,"037-",0,GAME_OK
@@ -2035,6 +2082,42 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 game_eightman byte "eightman",0,"Eight Man",0,"025-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_3countb byte "3countb",0,"3 Count Bout",0,"043-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
+byte LOAD_CROM+WITH_OFFSET,"C3",0,"C4",0,word $20_0,word $10_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_fbfrenzy byte "fbfrenzy",0,"Football Frenzy",0,"034-",0,GAME_OK
 byte SET_CHAR,SET_TILEMASK, 15
 byte LOAD_CROM,"C1",0,"C2",0,word $20_0
 byte LOAD_CROM,"C3",0,"C4",0,word $10_0

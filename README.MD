@@ -71,6 +71,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
+|`3countb`|3 Count Bout|16 MB|**Works**|
 |`aodk`|Aggressors of Dark Kombat|24 MB|**Works**|
 |`alpham2`|Alpha Mission 2|8 MB|**Works**|
 |`androdun`|Andro Dunos|8 MB|**Works**|
@@ -89,7 +90,9 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`doubledr`|Double Dragon|24 MB|**Works**|
 |`eightman`|Eight Man|8 MB|**Works**|
 |`fatfury1`|Fatal Fury|8 MB|**Works**|
+|`fatfury3`|Fatal Fury|**48 MB**|**Works**|
 |`fatfursp`|Fatal Fury Special|24 MB|**Works**|
+|`fbfrenzy`|Football Frenzy|8 MB|**Works**|
 |`ganryu`|Ganryu|24 MB|**Works** (Needs decrypted C)|
 |`gpilots`|Ghost Pilots|8 MB|**Works**|
 |`ironclad`|Ironclad|24 MB|**Works** (need to rename files to fit in 8.3 (remove "proto_" prefix))|
@@ -139,6 +142,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`puzzledp`|Puzzle de Pon|4 MB|**Works**|
 |`puzzldpr`|Puzzle de Pon R|4 MB|**Works**|
 |`rotdh`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C/M)|
+|`rbff1`|Real Bout Fatal Fury|**48 MB**|**Works**|
 |`roboarmy`|Robo Army|8 MB|**Works**|
 |`samsho`|Samurai Shodown|24 MB|**Works**|
 |`samsho2`|Samurai Shodown 2|32 MB|**Works**|
