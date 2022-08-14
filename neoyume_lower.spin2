@@ -1107,21 +1107,6 @@ mk_do_roxl
               ret
 
 
-
-
-mk_readrom_ea32
-              mov mk_romio_length,#2
-              skipf #%10
-mk_readrom_ea
-              mov pa,mk_effaddr
-              mov mk_romio_length,#1
-              rczr pa wcz
-              mov mk_romio_target,mk_romio_area_ptr
-        if_c  sub mk_romio_target,#2
-        if_z  sub mk_romio_target,#1
-
-              jmp #$
-
 mk_setup_nothing8
 mk_setup_nothing16
 mk_setup_nothing32
@@ -2714,65 +2699,6 @@ mk_init
               waitx ##1000000
               rdword mk_romio_atnval,#_ma_cogatn_w
 
-
-              {
-              ' Compute timing constant for H counter emulation
-              ' (note that "pixel" here means hcounter values, which are actually 2 pixels)
-              rdlong pa,#_clkf
-              qmul pa,##round(6.36e-5/211.0*4294967296.0) ' cy/s * s/px -> cy/px
-              getqy pa ' cycles per pixel
-              getqx pb ' fractional part
-              rolword pa,pb,#1
-              qfrac #1,pa
-              getqx pa ' our timing reciporal
-              wrword pa,#vdp_cyc2hcnt_w
-              debug("H counter timing constant: ",udec_word_array(#vdp_cyc2hcnt_w,#1))
-
-              ' Compute timing constant for 6-button state machine reset
-              rdlong pa,#_clkf
-              qdiv pa,##666 ' 1.5 ms - unfortunate reciporal
-              getqx pa
-              wrlong pa,#io_6btn_timeout
-
-              ' Reset I/O ports (so it seems like we're cold-booting)
-              wrbyte #0,#io_pl1_dir
-              wrbyte #0,#io_pl2_dir
-              wrbyte #0,#io_pl1_out
-              wrbyte #0,#io_pl2_out
-               }
-
-              ' allocate all the locks like some sort of maniac
-              {
-              mov pa,#0
-              rep @.lockmadness,#16
-              locknew pb wc
-        if_nc bith pa,pb
-.lockmadness
-              ' deallocate all the ones we don't want
-              andn pa,##STATIC_LOCKS
-              mov pb,#0
-              rep @.lockmadness2,#16
-              shr pa,#1 wc
-        if_c  lockret pb
-              add pb,#1
-.lockmadness2}
-
-{
-              rdbyte mk_romio_zerox,#rom_zerox
-              sub mk_romio_zerox,#2 ' we apply it to long-unit addresses
-
-              rdlong mk_sram_begin,#sram_map_start
-              rdlong mk_sram_stop,#sram_map_end
-
-              ' Reset ROM/SRAM mapping
-              rdbyte mk_memvalue,#sram_bankreg
-              call #sram_set_bank
-}
-
-              ' setup interrupts
-              'setse1 #$10+HINT_LOCK
-              'setse2 #$10+VINT_LOCK
-              'drvl #38 addpins 1 ' DEBUG LEDs
 
               rdlong mk_prog_base,#_exr_prog_base
               rdlong mk_port_base,#_exr_port_base
