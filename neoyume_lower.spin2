@@ -960,22 +960,22 @@ mk_nibble_5_not_addsub
 
 mk_romque_refill
               mov mk_romqueio_target,mk_romque_area_ptr
-              mov mk_romqueio_length,#MK_ROMQUE_SIZE/2
-              mov mk_romque_left,#MK_ROMQUE_SIZE wcz ' clear C and Z
+              mov mk_romqueio_length,#MK_ROMQUE_SIZE/2  wcz ' clear C and Z
               mov mk_romqueio_addr,mk_virtualpc
-              zerox mk_romqueio_addr,mk_romque_zerox' Limit to 1 MB range
+              zerox mk_romqueio_addr,mk_romque_zerox ' Limit to 1 MB range
               add mk_romqueio_addr,mk_romque_base
               ' Handle not long-aligned access
               rczr mk_romqueio_addr wcz
-        if_z  jmp #mk_address_error_debug ' TODO: maybe make AE function code read program in this case?
+        'if_z  jmp #mk_address_error_debug ' TODO: maybe make AE function code read program in this case?
         if_c  sub  mk_romqueio_target,#2
         if_c  add  mk_romqueio_length,#1
               setq #2
               wrlong mk_romqueio_addr,#_progrq_addr
               cogatn mk_romio_atnval
               mov ptra,mk_romque_area_ptr
-              waitatn
-              jmp #mk_getop_rom
+              mov mk_romque_left,#MK_ROMQUE_SIZE
+              push #mk_getop_rom
+        _ret_ waitatn
 
 
 mk_compute_ea ' CAN AND WILL OVERWRITE FLAGS
