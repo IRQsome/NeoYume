@@ -14,7 +14,7 @@ CON ' Header
 
 VERSION_MAJOR = 1
 VERSION_MINOR = 0
-VERSION_RC    = 0
+VERSION_RC    = 1
 
 #include "config.spin2"
 
@@ -143,11 +143,6 @@ load_game(gamelist[tmp]+@gamedb_base)
 
 putstring(@"Load ok?",2,10,0)
 'repeat
-
-putstring(@"ABCD",0,0,0)
-putstring(@"ABCD",0,27,0)
-putstring(@"ABCD",40-4,0,0)
-putstring(@"ABCD",40-4,27,0)
 
 ' test
 exmem_stop()
@@ -333,16 +328,12 @@ if path2
 
 f1 := c.fopen(path1,@"rb")
 ifnot f1
-  'c.sprintf(tmpstr,@"file1 fail: %d !",errno)
-  'putstring(tmpstr,2,25,0)
   putstring(@"file1: ",2,26,0)
   putstring(c.strerror(errno),2+7,26,0)
   repeat
 if is_dualfile(type)
   f2 := c.fopen(path2,@"rb")
   ifnot f2
-    'c.sprintf(tmpstr,@"file2 fail: %d !",errno)
-    'putstring(tmpstr,2,25,0)
     putstring(@"file2: ",2,26,0)
     putstring(c.strerror(errno),2+7,26,0)
     repeat
@@ -543,8 +534,6 @@ repeat
   putstring(string(4),GAMECHOOSE_X+GAMECHOOSE_WIDTH,GAMECHOOSE_Y,drawtop == mingot ? 3<<12 : 0)
   putstring(string(5),GAMECHOOSE_X+GAMECHOOSE_WIDTH,GAMECHOOSE_Y+GAMECHOOSE_SIZE-1,drawlast == maxgot ? 3<<12 : 0)
   tmp := ((byte[games_got][drawtop]-1)*(GAMECHOOSE_SIZE-2)) / (got_count-GAMECHOOSE_SIZE) <# GAMECHOOSE_SIZE-3
-  'c.sprintf(tmpstr,@"test: %3d",tmp)
-  'putstring(tmpstr,GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+1,0)
   repeat i from GAMECHOOSE_Y+1 to GAMECHOOSE_Y+GAMECHOOSE_SIZE-2
     if i-(GAMECHOOSE_Y+1) == tmp && got_count > GAMECHOOSE_SIZE
       putstring(string(14),GAMECHOOSE_X+GAMECHOOSE_WIDTH,i,0<<12)
