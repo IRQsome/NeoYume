@@ -825,6 +825,7 @@ ROMSET_TASKS = {
     "bstars2" => [],
     "blazstar" => [],
     "bjourney" => [],
+    "burningf" => [],
     "ctomaday" => [],
     "crsword" => [],
     "crswd2bl" => [],
@@ -834,6 +835,7 @@ ROMSET_TASKS = {
     "fatfury1" => [],
     "fatfursp" => [],
     "fatfury3" => [],
+    "fightfev" => [],
     "fbfrenzy" => [],
     "ganryu" => [
         DecryptCTask["252-c%dd","252-c%d",1,:cmc42,0x07],
@@ -876,6 +878,7 @@ ROMSET_TASKS = {
     "lastbld2" => [],
     "lresort" => [],
     "lbowling" => [],
+    "legendos" => [],
     "mahretsu" => [],
     "magdrop2" => [],
     "magdrop3" => [],
@@ -953,6 +956,7 @@ ROMSET_TASKS = {
         DecryptVTask["272-vd",%w[272-v1 272-v2],6],
         DecryptCTask["272-c%dd","272-c%d",4,:cmc50,0x0d]
     ],
+    "savagere" => [],
     "sengoku" => [],
     "sengoku2" => [],
     "sengoku3" => [

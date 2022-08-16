@@ -82,6 +82,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`bstars`|Baseball Stars|8 MB|**Works**|
 |`bstars2`|Baseball Stars 2|8 MB|**Works**|
 |`blazstar`|Blazing Star|48 MB|Broken sound|
+|`burningf`|Burning Fight|8 MB|**Works**|
 |`bjourney`|Blue's Journey|8 MB|**Works**|
 |`ctomaday`|Captain Tomaday|16 MB|**Works**|
 |`crswords`|Crossed Swords|8 MB|**Works**|
@@ -92,6 +93,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`fatfury1`|Fatal Fury|8 MB|**Works**|
 |`fatfury3`|Fatal Fury|**48 MB**|**Works**|
 |`fatfursp`|Fatal Fury Special|24 MB|**Works**|
+|`fightfev`|Fight Fever|16 MB|**Works**|
 |`fbfrenzy`|Football Frenzy|8 MB|**Works**|
 |`ganryu`|Ganryu|24 MB|**Works** (Needs decrypted C)|
 |`gpilots`|Ghost Pilots|8 MB|**Works**|
@@ -114,6 +116,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`lastbld2`|The Last Blade 2|**80 MB**|**Works**|
 |`lresort`|Last Resort|8 MB|**Works**|
 |`lbowling`|League Bowling|4 MB|**Works**|
+|`legendos`|Legend of Success Joe|8 MB|**Works**|
 |`mahretsu`|Mahjong Kyo Retsuden|8 MB|**Works**|
 |`magdrop2`|Magical Drop 2|16 MB|**Works**|
 |`magdrop3`|Magical Drop 3|24 MB|**Works**|
@@ -150,6 +153,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`samsho4`|Samurai Shodown 4|**48 MB**|**Works**|
 |`samsho5h`|Samurai Shodown 5|**96 MB**|**Works** (Needs decrypted C/V/M)|
 |`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C/V/M)|
+|`savagere`|Savage Reign|32 MB|**Works**|
 |`sengoku`|Sengoku|8 MB|**Works**|
 |`sengoku2`|Sengoku 2|16 MB|**Works**|
 |`sengoku3`|Sengoku 3|**80 MB**|**Works** (Needs decrypted C)|

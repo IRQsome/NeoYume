@@ -13,6 +13,7 @@ wordfit @game_bstars   - @gamedb_base
 wordfit @game_bstars2  - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
 wordfit @game_bjourney - @gamedb_base
+wordfit @game_burningf - @gamedb_base
 wordfit @game_ctomaday - @gamedb_base
 wordfit @game_crsword  - @gamedb_base
 wordfit @game_crswd2bl - @gamedb_base
@@ -22,6 +23,7 @@ wordfit @game_eightman - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
 wordfit @game_fatfursp - @gamedb_base
 wordfit @game_fatfury3 - @gamedb_base
+wordfit @game_fightfev - @gamedb_base
 wordfit @game_fbfrenzy - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
 wordfit @game_gpilots  - @gamedb_base
@@ -44,6 +46,7 @@ wordfit @game_lastblad - @gamedb_base
 wordfit @game_lastbld2 - @gamedb_base
 wordfit @game_lresort  - @gamedb_base
 wordfit @game_lbowling - @gamedb_base
+wordfit @game_legendos - @gamedb_base
 wordfit @game_mahretsu - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_magdrop3 - @gamedb_base
@@ -80,6 +83,7 @@ wordfit @game_samsho3h - @gamedb_base
 wordfit @game_samsho4  - @gamedb_base
 wordfit @game_samsho5h - @gamedb_base
 wordfit @game_samsh5sp - @gamedb_base
+wordfit @game_savagere - @gamedb_base
 wordfit @game_sengoku  - @gamedb_base
 wordfit @game_sengoku2 - @gamedb_base
 wordfit @game_sengoku3 - @gamedb_base
@@ -2133,6 +2137,78 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_savagere byte "savagere",0,"Savage Reign",0,"059-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0
+byte SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_fightfev byte "fightfev",0,"Fight Fever",0,"060-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_burningf byte "burningf",0,"Burning Fight",0,"018-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_legendos byte "legendos",0,"Legend of Success Joe",0,"029-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 
 
