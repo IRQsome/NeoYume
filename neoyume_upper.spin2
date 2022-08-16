@@ -11,6 +11,11 @@ CON ' Header
 ''                              ＭＡＸ　２５６　ＭＥＧＡ
 ''                            ＰＲＯＰ－ＧＥＡＲ　ＳＰＥＣ
 ''
+
+VERSION_MAJOR = 1
+VERSION_MINOR = 0
+VERSION_RC    = 0
+
 #include "config.spin2"
 
 MKRAM_BASE = $1_0000
@@ -111,20 +116,17 @@ exmem_start()
 
 tmp := c.malloc(64)
 c.sprintf(tmp,@"MAX %d MEGA",exmem_size+/$20000)
-{
-c.strcpy(tmp,@"Hewwo Wowld!!!")
-exmem_write($000_00_00,tmp,64,false)
-c.strcpy(tmp,@"We like the pain")
-exmem_write($080_00_00,tmp,64,false)
-
-c.strcpy(tmp,@"ooops")
-exmem_read(tmp,$080_00_00,64,false)
-}
 putstring(tmp,14,6,0)
-c.free(tmp)
 putstring(@"PROP-GEAR SPEC",13,7,0)
-putstring(@"Beta 06",2,6,0)
+if VERSION_RC < 0
+  c.sprintf(tmp,@"V%d.%d",VERSION_MAJOR,VERSION_MINOR)
+elseif VERSION_RC == 0
+  c.sprintf(tmp,@"V%d.%d-beta",VERSION_MAJOR,VERSION_MINOR)
+else
+  c.sprintf(tmp,@"V%d.%d-RC%d",VERSION_MAJOR,VERSION_MINOR,VERSION_RC)
+putstring(tmp,2,6,0)
 
+c.free(tmp)
 {
 repeat
   repeat tmp2 from 0 to 9
