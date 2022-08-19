@@ -82,8 +82,8 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`bstars`|Baseball Stars|8 MB|**Works**|
 |`bstars2`|Baseball Stars 2|8 MB|**Works**|
 |`blazstar`|Blazing Star|48 MB|Broken sound|
-|`burningf`|Burning Fight|8 MB|**Works**|
 |`bjourney`|Blue's Journey|8 MB|**Works**|
+|`burningf`|Burning Fight|8 MB|**Works**|
 |`ctomaday`|Captain Tomaday|16 MB|**Works**|
 |`crswords`|Crossed Swords|8 MB|**Works**|
 |`crswd2bl`|Crossed Swords 2 (Unofficial conversion)|16 MB|**Works**|

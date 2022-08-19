@@ -665,11 +665,11 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
         oldpath2 = File.join(basepath,oldname2+".bin")
         unless File.exist? newpath
             unless File.exist? oldpath1
-                puts "Missing file #{oldpath1} (for rename to #{newpath})"
+                puts "Missing file #{oldpath1} (for decryption to #{newpath})"
                 return false
             end
             unless File.exist? oldpath2
-                puts "Missing file #{oldpath2} (for rename to #{newpath})"
+                puts "Missing file #{oldpath2} (for decryption to #{newpath})"
                 return false
             end
             data1 = File.binread(oldpath1)
