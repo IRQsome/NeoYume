@@ -63,7 +63,7 @@ Also note that I have not tested every single available game, YMMV
 
 ## Game Compatibility
 
-Due to the nature of NeoGeo ROm dumps, the emulator requires prior knowledge of all games. Thus games not listed here (or rather, `neoyume_gamedb.spin2`) just will not even try to load.
+Due to the nature of NeoGeo ROM dumps, the emulator requires prior knowledge of all games. Thus games not listed here (or rather, `neoyume_gamedb.spin2`) just will not even try to load.
 
 Note 1: I haven't tested every game thoroughly. Don't complain if the victory screen crashes and burns your house down.
 
