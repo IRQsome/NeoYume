@@ -806,6 +806,7 @@ mk_dreg_mask      long %111_000_000_000
 
 mk_vectors_mask long $FF_FF80
 mk_bit31      long 1<<31
+mk_minus4     long -4
 
 
 mk_cogvar_start
@@ -1439,8 +1440,9 @@ mk_dbcc       ' DBcc
               sub mk_optmp0,#1 wc
               altd mk_opword,#mk_d0
               setword 0-0,mk_optmp0,#0
-        if_nc jmp #mk_dobranch
-              ret
+              cmp mk_branchdisplace,mk_minus4 wz
+        if_z  waitx #100 ' Slow down delay loops - fix Z80 race condition in pulstar/blazstar
+        _ret_ tjnf mk_optmp0,#mk_dobranch
 
 mk_get_second_reg
               mov pb,mk_opword

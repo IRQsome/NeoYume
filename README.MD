@@ -81,7 +81,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`bangbead`|Bang Bead|24 MB|**Works** (Needs decrypted C)|
 |`bstars`|Baseball Stars|8 MB|**Works**|
 |`bstars2`|Baseball Stars 2|8 MB|**Works**|
-|`blazstar`|Blazing Star|**48 MB**|Broken sound|
+|`blazstar`|Blazing Star|**48 MB**|**Works**|
 |`bjourney`|Blue's Journey|8 MB|**Works**|
 |`burningf`|Burning Fight|8 MB|**Works**|
 |`ctomaday`|Captain Tomaday|16 MB|**Works**|
@@ -140,7 +140,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C/M)|
 |`popbounc`|Pop n' Bounce|8 MB|**Works**|
 |`preisle2`|Prehistoric Isle 2|**64 MB**|**Works** (Needs decrypted C)|
-|`pulstar`|Pulstar|**48 MB**|Broken Sound|
+|`pulstar`|Pulstar|**48 MB**|**Works**|
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
 |`puzzledp`|Puzzle de Pon|4 MB|**Works**|
 |`puzzldpr`|Puzzle de Pon R|4 MB|**Works**|
