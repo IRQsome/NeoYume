@@ -5260,24 +5260,6 @@ zk_lutbase
               long zk_immmath + (%11_00_00_0000_0011_0_10_00_0<<10) ' $FE: CP imm8
               long zk_rst                               ' $FF: RST 38h
 
-              ' PSRAM helper table. Must be at $300
-              long $0000
-              long $1111
-              long $2222
-              long $3333
-              long $4444
-              long $5555
-              long $6666
-              long $7777
-              long $8888
-              long $9999
-              long $AAAA
-              long $BBBB
-              long $CCCC
-              long $DDDD
-              long $EEEE
-              long $FFFF
-
 
 zk_rolla      mov zk_tmp8,zk_accu
 zk_shiftop
