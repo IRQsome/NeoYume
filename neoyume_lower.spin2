@@ -3661,7 +3661,7 @@ lspc_linelp
         if_11 incmod lspc_autoframe,#7
         if_11 wrbyte lspc_autoframe,#_lspc_animctr
 
-              cmp lspc_chkline,#224 wz
+              cmp lspc_chkline,#224+1 wz ' +1 to avoid glitches on last few line
         if_z  locktry #VINT_LOCK wc
         if_z  lockrel #VINT_LOCK
         'if_11 drvnot #38
