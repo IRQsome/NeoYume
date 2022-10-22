@@ -63,6 +63,7 @@ wordfit @game_mutnat   - @gamedb_base
 wordfit @game_nam1975  - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
+wordfit @game_neomrdo  - @gamedb_base
 wordfit @game_nitd     - @gamedb_base
 wordfit @game_ncombat  - @gamedb_base
 wordfit @game_ncommand - @gamedb_base
@@ -2209,6 +2210,20 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_neomrdo byte "neomrdo",0,"Neo Mr. Do!",0,"207-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte SET_PROG
+byte SET_PORT ' huh...
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 
