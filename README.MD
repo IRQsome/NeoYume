@@ -71,113 +71,113 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
-|`3countb`|3 Count Bout|16 MB|**Works**|
-|`aodk`|Aggressors of Dark Kombat|24 MB|**Works**|
-|`alpham2`|Alpha Mission 2|8 MB|**Works**|
-|`androdun`|Andro Dunos|8 MB|**Works**|
-|`aof`|Art of Fighting|16 MB|**Works**|
-|`aof2`|Art of Fighting 2|24 MB|**Works**|
-|`aof3`|Art of Fighting 3|**48 MB**|**Works**|
-|`bangbead`|Bang Bead|24 MB|**Works** (Needs decrypted C)|
-|`bstars`|Baseball Stars|8 MB|**Works**|
-|`bstars2`|Baseball Stars 2|8 MB|**Works**|
-|`blazstar`|Blazing Star|**48 MB**|**Works**|
-|`bjourney`|Blue's Journey|8 MB|**Works**|
-|`burningf`|Burning Fight|8 MB|**Works**|
-|`ctomaday`|Captain Tomaday|16 MB|**Works**|
-|`crswords`|Crossed Swords|8 MB|**Works**|
-|`crswd2bl`|Crossed Swords 2 (Unofficial conversion)|16 MB|**Works**|
-|`cyberlip`|Cyber-Lip|8 MB|**Works**|
-|`doubledr`|Double Dragon|24 MB|**Works**|
-|`eightman`|Eight Man|8 MB|**Works**|
-|`fatfury1`|Fatal Fury|8 MB|**Works**|
-|`fatfury3`|Fatal Fury|**48 MB**|**Works**|
-|`fatfursp`|Fatal Fury Special|24 MB|**Works**|
-|`fightfev`|Fight Fever|16 MB|**Works**|
-|`fbfrenzy`|Football Frenzy|8 MB|**Works**|
-|`ganryu`|Ganryu|24 MB|**Works** (Needs decrypted C)|
-|`gpilots`|Ghost Pilots|8 MB|**Works**|
-|`ironclad`|Ironclad|24 MB|**Works** (need to rename files to fit in 8.3 (remove "proto_" prefix))|
-|`kabukikl`|Far East of Eden - Kabuki Klash|32 MB|**Works**|
-|`karnovr`|Karnov's Revenge|16 MB|**Works**|
-|`kof94`|King of Fighters '94|32 MB|**Works**|
-|`kof95`|King of Fighters '95|**48 MB**|**Works**|
-|`kof96`|King of Fighters '96|**48 MB**|**Works**|
-|`kof97`|King of Fighters '97|**64 MB**|**Works**|
-|`kof98h`|King of Fighters '98|**96 MB**|**Works**|
-|`kof99ka`|King of Fighters '99|**96 MB**|**Works** (Needs decrypted C)|
-|`kof2000n`|King of Fighters 2000|**96 MB**|Broken fix layer (Needs decrypted C/M)|
-|`kof2001h`|King of Fighters 2001|**96 MB**|**Works** (Needs decrypted C/M)|
-|`kof2002`|King of Fighters 2002|**96 MB**|**Works**  (Needs decrypted C/V/M)|
-|`kotmh`|King of the Monsters|8 MB|**Works**|
-|`kotm2`|King of the Monsters 2|16 MB|**Works**|
-|`kizuna`|Kizuna Encounter|**48 MB**|**Works**|
-|`lastblad`|The Last Blade|**64 MB**|**Works**|
-|`lastbld2`|The Last Blade 2|**80 MB**|**Works**|
-|`lresort`|Last Resort|8 MB|**Works**|
-|`lbowling`|League Bowling|4 MB|**Works**|
-|`legendos`|Legend of Success Joe|8 MB|**Works**|
-|`mahretsu`|Mahjong Kyo Retsuden|8 MB|**Works**|
-|`magdrop2`|Magical Drop 2|16 MB|**Works**|
-|`magdrop3`|Magical Drop 3|24 MB|**Works**|
-|`maglord`|Magician Lord|8 MB|**Works**|
-|`matrim`|Matrimelee|**96 MB**|**Works** (Needs decrypted C/V/M)|
-|`mslug`|Metal Slug|32 MB|**Works**|
-|`mslug2`|Metal Slug 2|**48 MB**|**Works**|
-|`mslugx`|Metal Slug X|**64 MB**|**Works** (Needs patched P)|
-|`mslug3h`|Metal Slug 3|**96 MB**|Sound issues (512k M1) (Needs decrypted C)|
-|`mslug4h`|Metal Slug 4|**80 MB**|**Works** (Needs decrypted C/M)|
-|`mslug5h`|Metal Slug 5|**96 MB**|**Works** (Needs decrypted C/V/P/M)|
-|`miexchng`|Money Puzzle Exchanger|16 MB|**Works**|
-|`mutnat`|Mutation Nation|8 MB|**Works**|
-|`nam1975`|NAM-1975|8 MB|**Works**|
-|`neobombe`|Neo Bomberman|24 MB|**Works**|
-|`neodrift`|Neo Drift Out|16 MB|Graphical issues (#4)|
-|`neomrdo`|Neo Mr. Do!|8 MB|**Works**|
-|`nitd`|Nightmare in the Dark|24 MB|**Works** (Needs decrypted C)|
-|`ncombat`|Ninja Combat|8 MB|**Works**|
-|`ncommand`|Ninja Commando|8 MB|**Works**|
-|`overtop`|Over Top|32 MB|**Works**|
-|`pnyaa`|Pochi and Nyaa|24 MB|**Works** (Needs decrypted C/M)|
-|`popbounc`|Pop n' Bounce|8 MB|**Works**|
-|`preisle2`|Prehistoric Isle 2|**64 MB**|**Works** (Needs decrypted C)|
-|`pulstar`|Pulstar|**48 MB**|**Works**|
-|`pbobbl2n`|Puzzle Bobble 2|24 MB|**Works**|
-|`puzzledp`|Puzzle de Pon|4 MB|**Works**|
-|`puzzldpr`|Puzzle de Pon R|4 MB|**Works**|
-|`rotdh`|Rage of the Dragons|**96 MB**|**Works** (Needs decrypted C/M)|
-|`rbff1`|Real Bout Fatal Fury|**48 MB**|**Works**|
-|`roboarmy`|Robo Army|8 MB|**Works**|
-|`samsho`|Samurai Shodown|24 MB|**Works**|
-|`samsho2`|Samurai Shodown 2|32 MB|**Works**|
-|`samsho3h`|Samurai Shodown 3|**48 MB**|**Works**|
-|`samsho4`|Samurai Shodown 4|**48 MB**|**Works**|
-|`samsho5h`|Samurai Shodown 5|**96 MB**|**Works** (Needs decrypted C/V/M)|
-|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|**Works** (Needs decrypted C/V/M)|
-|`savagere`|Savage Reign|32 MB|**Works**|
-|`sengoku`|Sengoku|8 MB|**Works**|
-|`sengoku2`|Sengoku 2|16 MB|**Works**|
-|`sengoku3`|Sengoku 3|**80 MB**|**Works** (Needs decrypted C)|
-|`shocktro`|Shock Troopers|**48 MB**|**Works**|
-|`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|**Works**|
-|`sonicwi2`|Sonic Wings 2|16 MB|**Works**|
-|`sonicwi3`|Sonic Wings 3|24 MB|**Works**|
-|`spinmast`|Spinmaster|16 MB|Black screen (Timer IRQ)|
-|`strhoop`|Street Hoop|16 MB|**Works**|
-|`s1945p`|Strikers 1945 Plus|**96 MB**|**Works** (Needs decrypted C)|
-|`superspy`|The Super Spy|8 MB|**Works**|
-|`tophuntr`|Top Hunter - Roddy and Cathy|16 MB|**Works**|
-|`trally`|Thrash Rally|8 MB|Graphical issues|
-|`twinspri`|Twinkle Star Sprites|24 MB|**Works**|
-|`viewpoint`|Viewpoint|16 MB|**Works**|
-|`wakuwak7`|Waku Waku 7|**48 MB**|**Works**|
-|`wh1h`|World Heroes|16 MB|**Works**|
-|`wh2`|World Heroes 2|24 MB|**Works**|
-|`wh2j`|World Heroes 2 Jet|24 MB|**Works**|
-|`whp`|World Heroes Perfect|**48 MB**|**Works**|
-|`wjammers`|Windjammers|16 MB|**Works**|
-|`zedblade`|Zed Blade|16 MB|**Works**|
-|`zupapa`|Zupapa!|24 MB|**Works** (Needs decrypted C)|
+|`3countb`|3 Count Bout|16 MB|Works|
+|`aodk`|Aggressors of Dark Kombat|24 MB|Works|
+|`alpham2`|Alpha Mission 2|8 MB|Works|
+|`androdun`|Andro Dunos|8 MB|Works|
+|`aof`|Art of Fighting|16 MB|Works|
+|`aof2`|Art of Fighting 2|24 MB|Works|
+|`aof3`|Art of Fighting 3|**48 MB**|Works|
+|`bangbead`|Bang Bead|24 MB|Works (Needs decrypted C)|
+|`bstars`|Baseball Stars|8 MB|Works|
+|`bstars2`|Baseball Stars 2|8 MB|Works|
+|`blazstar`|Blazing Star|**48 MB**|Works|
+|`bjourney`|Blue's Journey|8 MB|Works|
+|`burningf`|Burning Fight|8 MB|Works|
+|`ctomaday`|Captain Tomaday|16 MB|Works|
+|`crswords`|Crossed Swords|8 MB|Works|
+|`crswd2bl`|Crossed Swords 2 (Unofficial conversion)|16 MB|Works|
+|`cyberlip`|Cyber-Lip|8 MB|Works|
+|`doubledr`|Double Dragon|24 MB|Works|
+|`eightman`|Eight Man|8 MB|Works|
+|`fatfury1`|Fatal Fury|8 MB|Works|
+|`fatfury3`|Fatal Fury|**48 MB**|Works|
+|`fatfursp`|Fatal Fury Special|24 MB|Works|
+|`fightfev`|Fight Fever|16 MB|Works|
+|`fbfrenzy`|Football Frenzy|8 MB|Works|
+|`ganryu`|Ganryu|24 MB|Works (Needs decrypted C)|
+|`gpilots`|Ghost Pilots|8 MB|Works|
+|`ironclad`|Ironclad|24 MB|Works (need to rename files to fit in 8.3 (remove "proto_" prefix))|
+|`kabukikl`|Far East of Eden - Kabuki Klash|32 MB|Works|
+|`karnovr`|Karnov's Revenge|16 MB|Works|
+|`kof94`|King of Fighters '94|32 MB|Works|
+|`kof95`|King of Fighters '95|**48 MB**|Works|
+|`kof96`|King of Fighters '96|**48 MB**|Works|
+|`kof97`|King of Fighters '97|**64 MB**|Works|
+|`kof98h`|King of Fighters '98|**96 MB**|Works|
+|`kof99ka`|King of Fighters '99|**96 MB**|Works (Needs decrypted C)|
+|`kof2000n`|King of Fighters 2000|**96 MB**|**Broken fix layer** (Needs decrypted C/M)|
+|`kof2001h`|King of Fighters 2001|**96 MB**|Works (Needs decrypted C/M)|
+|`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C/V/M)|
+|`kotmh`|King of the Monsters|8 MB|Works|
+|`kotm2`|King of the Monsters 2|16 MB|Works|
+|`kizuna`|Kizuna Encounter|**48 MB**|Works|
+|`lastblad`|The Last Blade|**64 MB**|Works|
+|`lastbld2`|The Last Blade 2|**80 MB**|Works|
+|`lresort`|Last Resort|8 MB|Works|
+|`lbowling`|League Bowling|4 MB|Works|
+|`legendos`|Legend of Success Joe|8 MB|Works|
+|`mahretsu`|Mahjong Kyo Retsuden|8 MB|Works|
+|`magdrop2`|Magical Drop 2|16 MB|Works|
+|`magdrop3`|Magical Drop 3|24 MB|Works|
+|`maglord`|Magician Lord|8 MB|Works|
+|`matrim`|Matrimelee|**96 MB**|Works (Needs decrypted C/V/M)|
+|`mslug`|Metal Slug|32 MB|Works|
+|`mslug2`|Metal Slug 2|**48 MB**|Works|
+|`mslugx`|Metal Slug X|**64 MB**|Works (Needs patched P)|
+|`mslug3h`|Metal Slug 3|**96 MB**|**Sound issues** (512k M1) (Needs decrypted C)|
+|`mslug4h`|Metal Slug 4|**80 MB**|Works (Needs decrypted C/M)|
+|`mslug5h`|Metal Slug 5|**96 MB**|Works (Needs decrypted C/V/P/M)|
+|`miexchng`|Money Puzzle Exchanger|16 MB|Works|
+|`mutnat`|Mutation Nation|8 MB|Works|
+|`nam1975`|NAM-1975|8 MB|Works|
+|`neobombe`|Neo Bomberman|24 MB|Works|
+|`neodrift`|Neo Drift Out|16 MB|**Graphical issues** (#4)|
+|`neomrdo`|Neo Mr. Do!|8 MB|Works|
+|`nitd`|Nightmare in the Dark|24 MB|Works (Needs decrypted C)|
+|`ncombat`|Ninja Combat|8 MB|Works|
+|`ncommand`|Ninja Commando|8 MB|Works|
+|`overtop`|Over Top|32 MB|Works|
+|`pnyaa`|Pochi and Nyaa|24 MB|Works (Needs decrypted C/M)|
+|`popbounc`|Pop n' Bounce|8 MB|Works|
+|`preisle2`|Prehistoric Isle 2|**64 MB**|Works (Needs decrypted C)|
+|`pulstar`|Pulstar|**48 MB**|Works|
+|`pbobbl2n`|Puzzle Bobble 2|24 MB|Works|
+|`puzzledp`|Puzzle de Pon|4 MB|Works|
+|`puzzldpr`|Puzzle de Pon R|4 MB|Works|
+|`rotdh`|Rage of the Dragons|**96 MB**|Works (Needs decrypted C/M)|
+|`rbff1`|Real Bout Fatal Fury|**48 MB**|Works|
+|`roboarmy`|Robo Army|8 MB|Works|
+|`samsho`|Samurai Shodown|24 MB|Works|
+|`samsho2`|Samurai Shodown 2|32 MB|Works|
+|`samsho3h`|Samurai Shodown 3|**48 MB**|Works|
+|`samsho4`|Samurai Shodown 4|**48 MB**|Works|
+|`samsho5h`|Samurai Shodown 5|**96 MB**|Works (Needs decrypted C/V/M)|
+|`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|Works (Needs decrypted C/V/M)|
+|`savagere`|Savage Reign|32 MB|Works|
+|`sengoku`|Sengoku|8 MB|Works|
+|`sengoku2`|Sengoku 2|16 MB|Works|
+|`sengoku3`|Sengoku 3|**80 MB**|Works (Needs decrypted C)|
+|`shocktro`|Shock Troopers|**48 MB**|Works|
+|`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|Works|
+|`sonicwi2`|Sonic Wings 2|16 MB|Works|
+|`sonicwi3`|Sonic Wings 3|24 MB|Works|
+|`spinmast`|Spinmaster|16 MB|**Black screen** (Timer IRQ)|
+|`strhoop`|Street Hoop|16 MB|Works|
+|`s1945p`|Strikers 1945 Plus|**96 MB**|Works (Needs decrypted C)|
+|`superspy`|The Super Spy|8 MB|Works|
+|`tophuntr`|Top Hunter - Roddy and Cathy|16 MB|Works|
+|`trally`|Thrash Rally|8 MB|**Graphical issues**|
+|`twinspri`|Twinkle Star Sprites|24 MB|Works|
+|`viewpoint`|Viewpoint|16 MB|Works|
+|`wakuwak7`|Waku Waku 7|**48 MB**|Works|
+|`wh1h`|World Heroes|16 MB|Works|
+|`wh2`|World Heroes 2|24 MB|Works|
+|`wh2j`|World Heroes 2 Jet|24 MB|Works|
+|`whp`|World Heroes Perfect|**48 MB**|Works|
+|`wjammers`|Windjammers|16 MB|Works|
+|`zedblade`|Zed Blade|16 MB|Works|
+|`zupapa`|Zupapa!|24 MB|Works (Needs decrypted C)|
 
 Note: RAM requirements are rounded to the next highest of 4MB, 8MB, 16MB, 24MB, 32MB, 48MB, 64MB, 80MB, 96MB
 
