@@ -133,6 +133,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`nam1975`|NAM-1975|8 MB|**Works**|
 |`neobombe`|Neo Bomberman|24 MB|**Works**|
 |`neodrift`|Neo Drift Out|16 MB|Graphical issues (#4)|
+|`neomrdo`|Neo Mr. Do!|8 MB|**Works**|
 |`nitd`|Nightmare in the Dark|24 MB|**Works** (Needs decrypted C)|
 |`ncombat`|Ninja Combat|8 MB|**Works**|
 |`ncommand`|Ninja Commando|8 MB|**Works**|
