@@ -125,7 +125,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`mslug`|Metal Slug|32 MB|Works|
 |`mslug2`|Metal Slug 2|**48 MB**|Works|
 |`mslugx`|Metal Slug X|**64 MB**|Works (Needs patched P)|
-|`mslug3h`|Metal Slug 3|**96 MB**|**Sound issues** (512k M1) (Needs decrypted C)|
+|`mslug3h`|Metal Slug 3|**96 MB**|**Sound issues** (512k M1, #8) (Needs decrypted C)|
 |`mslug4h`|Metal Slug 4|**80 MB**|Works (Needs decrypted C/M)|
 |`mslug5h`|Metal Slug 5|**96 MB**|Works (Needs decrypted C/V/P/M)|
 |`miexchng`|Money Puzzle Exchanger|16 MB|Works|
@@ -162,7 +162,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|Works|
 |`sonicwi2`|Sonic Wings 2|16 MB|Works|
 |`sonicwi3`|Sonic Wings 3|24 MB|Works|
-|`spinmast`|Spinmaster|16 MB|**Black screen** (Timer IRQ)|
+|`spinmast`|Spinmaster|16 MB|**Black screen** (Timer IRQ, #5)|
 |`strhoop`|Street Hoop|16 MB|Works|
 |`s1945p`|Strikers 1945 Plus|**96 MB**|Works (Needs decrypted C)|
 |`superspy`|The Super Spy|8 MB|Works|
