@@ -96,10 +96,16 @@ PSRAM_SYNC_DATA = false
 ### USE_PSRAM4 / USE_PSRAM8 / USE_PSRAM16 / USE_HYPER
 
 One of these defines must be enabled to select the RAM type and bus width used (and thus the number of RAM chips in parallel).
+
  USE_PSRAM4 -> single PSRAM chip
+
  USE_PSRAM8 -> dual PSRAM chips
+
  USE_PSRAM16 -> quad PSRAM chips
+
  USE_HYPER -> single HyperRAM chip
+
+**Note that HyperRAM uses separate constants to PSRAM, but they act the same.**
 
 ### PSRAM_CLK
 
@@ -120,7 +126,7 @@ PSRAM data bus base pin. This must be a multiple of 8 (or 4 if USE_PSRAM4) and t
 
 ### PSRAM_WAIT
 
-Number of data bit periods between address send and data return. **Leave this value at 5 unless you have a different type of memory chip.**
+Number of data bit periods between address send and data return. **Leave this value at 5 unless you have a different type of memory chip. (22 for HYPER_WAIT)**
 
 ### PSRAM_DELAY
 
