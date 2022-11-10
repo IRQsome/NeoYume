@@ -950,7 +950,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 
-game_kof2002 byte "kof2002",0,"King of Fighters 2002",0,"265-",0,GAME_ISSUE
+game_kof2002 byte "kof2002",0,"King of Fighters 2002",0,"265-",0,GAME_OK
 byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
 byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
 byte LOAD_CROM,"C5D",0,"C6D",0,word $100_0

@@ -108,7 +108,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`kof99ka`|King of Fighters '99|**96 MB**|Works (Needs decrypted C)|
 |`kof2000n`|King of Fighters 2000|**96 MB**|**Broken fix layer** (Needs decrypted C/M)|
 |`kof2001h`|King of Fighters 2001|**96 MB**|Works (Needs decrypted C/M)|
-|`kof2002`|King of Fighters 2002|**96 MB**|Works  (Needs decrypted C/V/M)|
+|`kof2002`|King of Fighters 2002|**96 MB**|Works (Needs decrypted C/V/M)|
 |`kotmh`|King of the Monsters|8 MB|Works|
 |`kotm2`|King of the Monsters 2|16 MB|Works|
 |`kizuna`|Kizuna Encounter|**48 MB**|Works|
