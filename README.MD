@@ -91,8 +91,8 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`doubledr`|Double Dragon|24 MB|Works|
 |`eightman`|Eight Man|8 MB|Works|
 |`fatfury1`|Fatal Fury|8 MB|Works|
-|`fatfury3`|Fatal Fury|**48 MB**|Works|
 |`fatfursp`|Fatal Fury Special|24 MB|Works|
+|`fatfury3`|Fatal Fury 3|**48 MB**|Works|
 |`fightfev`|Fight Fever|16 MB|Works|
 |`fbfrenzy`|Football Frenzy|8 MB|Works|
 |`ganryu`|Ganryu|24 MB|Works (Needs decrypted C)|
