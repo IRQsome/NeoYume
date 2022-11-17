@@ -5648,7 +5648,7 @@ zk_doreset
 CON ' OPNBCog constants
 
 
-  VOLUME_BALANCE = 0.8 ' Balance between FM/ADPCM and SSG. 1.0 is all OPN2, 0.0 is all SSG
+  VOLUME_BALANCE = 0.8 ' Balance between FM/ADPCM and SSG. 1.0 is all FM/ADPCM, 0.0 is all SSG
 
 
   OVERDRIVE = 1.0
@@ -5693,7 +5693,7 @@ CON ' OPNBCog constants
   OP_SIZE = 12    ' Size of an operator
   CH_OFFSET = 24  ' Offset from global registers to channels == Size of the global registers
   CH_SIZE   = OP_OFFSET + 4*OP_SIZE ' Total size of a channel
-  OPN_SIZE = 4*CH_SIZE + CH_OFFSET  ' Total OPN2 register count
+  OPN_SIZE = 4*CH_SIZE + CH_OFFSET  ' Total OPNB register count
 
   SSG_SIZE = 16
 
@@ -5809,7 +5809,7 @@ EG_RATE_63 = round(8.0*EG_FACTOR)
 DAT ' OPNBCog init code
               orgh
 '===========================================================
-'                Assembly OPN2 emulator
+'                Assembly OPNB emulator
 '===========================================================
 opn_init
               'debug    (udec(leftp,rightp),uhex_long(sampleRate))
@@ -6241,7 +6241,7 @@ adpa_accl               long 0
 adpa_accr               long 0
 
 
-' OPN2 internal state
+' OPNB internal state
 ' -------------------
 op_phase                long 0[4*4]
 eg_state_b              byte EG_RELEASE[4*4]
@@ -6553,7 +6553,7 @@ opn_arg2                res 1
 opn_arg3                res 1
 opn_arg4                res 1
 
-' OPN2 global/channel regs
+' OPNB global/channel regs
 ' ------------------------
 gl_unused_alev_lfo_bfreq res 1
 gl_ch3_kcodes_mode        res 1
@@ -6566,18 +6566,18 @@ ch_freq_algo_pan          res 1
 gl_keyon                  res 1
 ch_am_enable              res 1
 
-' OPN2 current operator regs
+' OPNB current operator regs
 ' --------------------------
 op_mul_tl               res 1
 
 
-' OPN2 current EG operator regs
+' OPNB current EG operator regs
 ' -----------------------------
 opn_tempValue3          res 1 ' here so it can get overwritten when the EG reads operator data
 eg_ar_dr_sr_rr          res 1
 eg_rs_sl_ssgeg          res 1
 
-' OPN2 temporary
+' OPNB temporary
 ' --------------
 op_accu                 res 1
 ch_out                  res 1
