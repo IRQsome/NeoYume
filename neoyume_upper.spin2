@@ -27,10 +27,6 @@ STATIC_LOCKS = decod VINT_LOCK
 
 PATH_MAX = 256
 
-SEEK_SET  = 0
-SEEK_CUR  = 1
-SEEK_END  = 2
-
 CON
 
 BG_NORMAL = $010101_00
@@ -56,7 +52,7 @@ long loadpos
 OBJ
 
 video : "NeoVGA"
-c : "libc.a"
+c : "libc"
 a : "fsadapter.c"
 
 
@@ -341,9 +337,9 @@ else
   f2 := 0
 
 if offset
-  c.fseek(f1,offset,SEEK_SET)
+  c.fseek(f1,offset,c.SEEK_SET)
   if f2
-    c.fseek(f2,offset,SEEK_SET)
+    c.fseek(f2,offset,c.SEEK_SET)
 
 pos := 0
 repeat while pos < size
