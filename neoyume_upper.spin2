@@ -14,7 +14,7 @@ CON ' Header
 
 VERSION_MAJOR = 1
 VERSION_MINOR = 1
-VERSION_RC    = 0
+VERSION_RC    = -1
 
 #include "config.spin2"
 
@@ -140,7 +140,6 @@ load_game(gamelist[tmp]+@gamedb_base)
 putstring(@"Load ok?",2,10,0)
 'repeat
 
-' test
 exmem_stop()
 coginit(HUBEXEC_NEW,long[$1C],0)
 coginit(HUBEXEC_NEW,long[$3C],0)

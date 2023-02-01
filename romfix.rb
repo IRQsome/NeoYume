@@ -923,6 +923,7 @@ ROMSET_TASKS = {
     ],
     "ncombat" => [],
     "ncommand" => [],
+    "neomrdo" => [],
     "overtop" => [],
     "pnyaa" => [
         DecryptM1Task["267-m1"],
