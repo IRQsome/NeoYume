@@ -659,6 +659,45 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
         return out
     end
 
+    SVCP_XOR1 = [0x3b, 0x6a, 0xf7, 0xb7, 0xe8, 0xa9, 0x20, 0x99, 0x9f, 0x39, 0x34, 0x0c, 0xc3, 0x9a, 0xa5, 0xc8, 0xb8, 0x18, 0xce, 0x56, 0x94, 0x44, 0xe3, 0x7a, 0xf7, 0xdd, 0x42, 0xf0, 0x18, 0x60, 0x92, 0x9f]
+    SVCP_XOR2 = [0x69, 0x0b, 0x60, 0xd6, 0x4f, 0x01, 0x40, 0x1a, 0x9f, 0x0b, 0xf0, 0x75, 0x58, 0x0e, 0x60, 0xb4, 0x14, 0x04, 0x20, 0xe4, 0xb9, 0x0d, 0x10, 0x89, 0xeb, 0x07, 0x30, 0x90, 0x50, 0x0e, 0x20, 0x26]
+    def decrypt_pvc_svc(rom1,rom2)
+        raise unless rom1.size == 4*1024*1024
+        raise unless rom2.size == 4*1024*1024
+        data = String.new
+        (2*1024*1024).times do |i|
+            if i < 0x4_0000
+                data << (rom1.getbyte(i*2+1) ^ SVCP_XOR1[(i*4+1)&31])
+                data << (rom1.getbyte(i*2  ) ^ SVCP_XOR1[(i*4+0)&31])
+                data << (rom2.getbyte(i*2+1) ^ SVCP_XOR1[(i*4+3)&31])
+                data << (rom2.getbyte(i*2  ) ^ SVCP_XOR1[(i*4+2)&31])
+            else
+                data << bit_reorder(rom1.getbyte(i*2+1) ^ SVCP_XOR2[(i*4+1)&31],6,7,4,5,3,2,1,0)
+                data << (rom1.getbyte(i*2  ) ^ SVCP_XOR2[(i*4+0)&31])
+                data << (rom2.getbyte(i*2+1) ^ SVCP_XOR2[(i*4+3)&31])
+                data << bit_reorder(rom2.getbyte(i*2  ) ^ SVCP_XOR2[(i*4+2)&31],7,6,5,4,2,3,0,1)
+            end
+        end
+
+        raise unless data.size == 8*1024*1024
+        out = String.new
+        16.times do |i|
+            out << data.slice(bit_reorder(i,2,3,0,1)<<16,0x10000)
+        end
+        7.times do |bank|
+            bank = 7 if bank == 0
+            256.times do |block|
+                blkoff = bit_reorder(block,4,5,6,7,1,0,3,2)<<12
+                16.times do |subblock|
+                    out << data.slice((bank<<20)+blkoff+((subblock^10)<<8),256)
+                end
+            end
+        end
+
+        raise unless out.size == 8*1024*1024
+        return out
+    end
+
     def run(basepath,cleanup)
         newpath = File.join(basepath,newname+".bin")
         oldpath1 = File.join(basepath,oldname1+".bin")
@@ -678,6 +717,9 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
             when :mslug5
                 puts "Decrypting #{oldpath1} and #{oldpath2} into #{newpath} (NEO-PVC mslug5)"
                 File.binwrite(newpath,decrypt_pvc_mslug5(data1,data2))
+            when :svc
+                puts "Decrypting #{oldpath1} and #{oldpath2} into #{newpath} (NEO-PVC svc)"
+                File.binwrite(newpath,decrypt_pvc_svc(data1,data2))
             else raise
             end
         end
@@ -973,6 +1015,12 @@ ROMSET_TASKS = {
         DecryptCTask["254-c%dd","254-c%d",4,:cmc42,0x05],
     ],
     "superspy" => [],
+    "svc" => [
+        DecryptM1Task["269-m1"],
+        DecryptVTask["269-vd",%w[269-v1 269-v2],3],
+        DecryptCTask["269-c%dd","269-c%dr",4,:cmc50,0x57],
+        DecryptPVCTask["269-pd","269-p1","269-p2",:svc],
+    ],
     "tophuntr" => [],
     "trally" => [],
     "twinspri" => [],

@@ -1,6 +1,6 @@
 DAT
 
-gamelist word
+gamelist word ' Note that these are in alphabetical order _of full title_
 wordfit @game_3countb  - @gamedb_base
 wordfit @game_aodk     - @gamedb_base
 wordfit @game_alpham2  - @gamedb_base
@@ -90,6 +90,7 @@ wordfit @game_sengoku2 - @gamedb_base
 wordfit @game_sengoku3 - @gamedb_base
 wordfit @game_shocktro - @gamedb_base
 wordfit @game_shocktr2 - @gamedb_base
+wordfit @game_svc      - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
 wordfit @game_spinmast - @gamedb_base
@@ -2222,6 +2223,24 @@ byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+' Note: Untested because I forgot I didn't have the 96MB board hooked up when adding this
+game_svc byte "svc",0,"SNK vs. Capcom - SVC Chaos",0,"269-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
+byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
+byte LOAD_CROM,"C5D",0,"C6D",0,word $100_0
+byte LOAD_CROM,"C7D",0,"C8D",0,word $100_0
+byte SET_PROG,SET_PORT+WITH_OFFSET,word $10_0,SET_BANKSWITCH_PVC_8M
+byte LOAD_RAW,"PD",0,word $80_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"VD",0,word $100_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"C7D",0,"C8D",0,word $02_0,word $07F_0
+byte SET_Z80
+byte LOAD_RAW,"M1D",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
