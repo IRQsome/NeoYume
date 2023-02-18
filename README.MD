@@ -97,7 +97,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`fatfury3`|Fatal Fury 3|**48 MB**|Works|
 |`fightfev`|Fight Fever|16 MB|Works|
 |`fbfrenzy`|Football Frenzy|8 MB|Works|
-|`galxyfg`|Galxy Fight - Universal Warriors|16 MB|Works|
+|`galxyfg`|Galxy Fight - Universal Warriors|16 MB|**Graphical Issues**|
 |`ganryu`|Ganryu|24 MB|Works (Needs decrypted C)|
 |`gpilots`|Ghost Pilots|8 MB|Works|
 |`gururin`|Gururin|8 MB|Works|

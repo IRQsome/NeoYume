@@ -2348,7 +2348,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_galaxyfg byte "galaxyfg",0,"Galaxy Fight",0,"078-",0,GAME_OK
+'' Some stages seem to float in mid air
+game_galaxyfg byte "galaxyfg",0,"Galaxy Fight",0,"078-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
 byte LOAD_CROM,"C3",0,"C4",0,word $40_0
