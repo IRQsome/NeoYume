@@ -846,7 +846,8 @@ end
 
 GENERIC_TASKS = [
     DeleteTask[/^(uni-bios|sp-|sp1|sm1|sfix|000-lo|v2\.bin|vs-bios|asia-|japan-|usa_)/], # Delete redundant BIOS files
-    RenameTask[->(md){md[1]+".bin"},/^(.+)\.(m|c|p|sp|v|s)\d$/], # Rename funny extensions to .bin
+    RenameTask[->(md){"#{md[1]}-#{md[2]}.bin"},/^(\d+)\.((m|c|p|sp|v|s)\d+)$/], # Rename funny extensions WITH MISSING NAME COMPONENTS WTF
+    RenameTask[->(md){md[1]+".bin"},/^(.+)\.(m|c|p|sp|v|s)\d+$/], # Rename funny extensions to .bin
     RenameTask[->(md){md[1]+".bin"},/^(\d+\-sma)\.\w{2}$/], # Rename SMA files to .bin
     RenameTask[->(md){md[1]+".bin"},/^(.+)\.rom$/], # Rename .rom to .bin
     RenameTask[->(md){md[1]},/^proto_(.+)$/], # Proto prefix doesn't fit in 8.3
@@ -861,9 +862,11 @@ ROMSET_TASKS = {
     "aof" => [],
     "aof2" => [],
     "aof3" => [],
+    "b2b" => [], # Usual romset of this has the evil file names
     "bangbead" => [
         DecryptCTask["259-c%dd","259-c%d",1,:cmc42,0xf8],
     ],
+    "bakatono" => [],
     "bstars" => [],
     "bstars2" => [],
     "flipshot" => [],
@@ -889,6 +892,7 @@ ROMSET_TASKS = {
         DecryptSMATask["253-pd",%w[253-sma 253-ep1 253-ep2 253-ep3 253-ep4],:garou],
         DecryptCTask["253-c%dd","253-c%d",4,:cmc42,0x06],
     ],
+    "gowcaizr" => [],
     "gpilots" => [],
     "gururin" => [],
     "ironclad" => [],
@@ -931,6 +935,7 @@ ROMSET_TASKS = {
     "magdrop2" => [],
     "magdrop3" => [],
     "maglord" => [],
+    "mosyougi" => [],
     "matrim" => [
         DecryptM1Task["266-m1"],
         DecryptVTask["266-vd",%w[266-v1 266-v2],1],
@@ -972,9 +977,11 @@ ROMSET_TASKS = {
     ],
     "ncombat" => [],
     "ncommand" => [],
+    "ninjamas" => [],
     "neomrdo" => [],
     "turfmast" => [],
     "overtop" => [],
+    "panicbom" => [],
     "pnyaa" => [
         DecryptM1Task["267-m1"],
         DecryptCTask["267-c%dd","267-c%d",1,:cmc50,0x2e],
@@ -987,6 +994,8 @@ ROMSET_TASKS = {
     "pbobbl2n" => [],
     "puzzledp" => [],
     "puzzldpr" => [],
+    "quizkof" => [],
+    "ragnagrd" => [],
     "rotdh" => [
         DecryptCTask["264-c%dd","264-c%d",4,:cmc50,0x3f],
         DecryptM1Task["264-m1"],

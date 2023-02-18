@@ -79,6 +79,8 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`aof`|Art of Fighting|16 MB|Works|
 |`aof2`|Art of Fighting 2|24 MB|Works|
 |`aof3`|Art of Fighting 3|**48 MB**|Works|
+|`bakatono`|Bakatonosama Mahjong Manyuuki|8 MB|Works|
+|`b2b`|Bang Bang Busters|8 MB|Works|
 |`bangbead`|Bang Bead|24 MB|Works (Needs decrypted C)|
 |`bstars`|Baseball Stars|8 MB|Works|
 |`bstars2`|Baseball Stars 2|8 MB|Works|
@@ -126,6 +128,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`magdrop2`|Magical Drop 2|16 MB|Works|
 |`magdrop3`|Magical Drop 3|24 MB|Works|
 |`maglord`|Magician Lord|8 MB|Works|
+|`mosyougi`|Master of Shōgi|8 MB|Works (minor gfx oddity)|
 |`matrim`|Matrimelee|**96 MB**|Works (Needs decrypted C/V/M)|
 |`mslug`|Metal Slug|32 MB|Works|
 |`mslug2`|Metal Slug 2|**48 MB**|Works|
@@ -144,7 +147,9 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`nitd`|Nightmare in the Dark|24 MB|Works (Needs decrypted C)|
 |`ncombat`|Ninja Combat|8 MB|Works|
 |`ncommand`|Ninja Commando|8 MB|Works|
+|`ninjamas`|Ninja Master's|**48 MB**|**(not tested yet)**|
 |`overtop`|Over Top|32 MB|Works|
+|`panicbom`|Panic Bomber|8 MB|Works|
 |`pnyaa`|Pochi and Nyaa|24 MB|Works (Needs decrypted C/M)|
 |`popbounc`|Pop n' Bounce|8 MB|Works|
 |`preisle2`|Prehistoric Isle 2|**64 MB**|Works (Needs decrypted C)|
@@ -152,9 +157,11 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|Works|
 |`puzzledp`|Puzzle de Pon|4 MB|Works|
 |`puzzldpr`|Puzzle de Pon R|4 MB|Works|
+|`quizkof`|Quiz King of Fighters|16 MB|Works|
 |`joyjoy`|Puzzled|4MB|Works|
 |`rotdh`|Rage of the Dragons|**96 MB**|Works (Needs decrypted C/M)|
 |`rbff1`|Real Bout Fatal Fury|**48 MB**|Works|
+|`ragnagrd`|Ragnagard|**48 MB**|**(not tested yet)**|
 |`roboarmy`|Robo Army|8 MB|Works|
 |`samsho`|Samurai Shodown|24 MB|Works|
 |`samsho2`|Samurai Shodown 2|32 MB|Works|
@@ -168,7 +175,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`sengoku3`|Sengoku 3|**80 MB**|Works (Needs decrypted C)|
 |`shocktro`|Shock Troopers|**48 MB**|Works|
 |`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|Works|
-|`svc`|SNK vs. Capcom - SVC Chaos|**96 MB**|**(not tested yet)**)
+|`svc`|SNK vs. Capcom - SVC Chaos|**96 MB**|**(not tested yet)**|
 |`socbrawl`|Soccer Brawl|8 MB|Works|
 |`sonicwi2`|Sonic Wings 2|16 MB|Works|
 |`sonicwi3`|Sonic Wings 3|24 MB|Works|
@@ -183,6 +190,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`trally`|Thrash Rally|8 MB|**Graphical issues**|
 |`twinspri`|Twinkle Star Sprites|24 MB|Works|
 |`viewpoint`|Viewpoint|16 MB|Works|
+|`gowcaizr`|Voltage Fighter - Gowcaizer|24 MB|Works|
 |`wakuwak7`|Waku Waku 7|**48 MB**|Works|
 |`wh1h`|World Heroes|16 MB|Works|
 |`wh2`|World Heroes 2|24 MB|Works|

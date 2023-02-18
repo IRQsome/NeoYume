@@ -9,6 +9,8 @@ wordfit @game_androdun - @gamedb_base
 wordfit @game_aof      - @gamedb_base
 wordfit @game_aof2     - @gamedb_base
 wordfit @game_aof3     - @gamedb_base
+wordfit @game_bakatono - @gamedb_base
+wordfit @game_b2b      - @gamedb_base
 wordfit @game_bangbead - @gamedb_base
 wordfit @game_bstars   - @gamedb_base
 wordfit @game_bstars2  - @gamedb_base
@@ -56,6 +58,7 @@ wordfit @game_mahretsu - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_magdrop3 - @gamedb_base
 wordfit @game_maglord  - @gamedb_base
+wordfit @game_mosyougi - @gamedb_base
 wordfit @game_matrim   - @gamedb_base
 wordfit @game_mslug    - @gamedb_base
 wordfit @game_mslug2   - @gamedb_base
@@ -74,7 +77,9 @@ wordfit @game_turfmast - @gamedb_base
 wordfit @game_nitd     - @gamedb_base
 wordfit @game_ncombat  - @gamedb_base
 wordfit @game_ncommand - @gamedb_base
+wordfit @game_ninjamas - @gamedb_base
 wordfit @game_overtop  - @gamedb_base
+wordfit @game_panicbom - @gamedb_base
 wordfit @game_pnyaa    - @gamedb_base
 wordfit @game_popbounc - @gamedb_base
 wordfit @game_preisle2 - @gamedb_base
@@ -82,7 +87,9 @@ wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_puzzledp - @gamedb_base
 wordfit @game_puzzldpr - @gamedb_base
+wordfit @game_quizkof  - @gamedb_base
 wordfit @game_joyjoy   - @gamedb_base ' Export name is Puzzled
+wordfit @game_ragnagrd - @gamedb_base
 wordfit @game_rotdh    - @gamedb_base
 wordfit @game_rbff1    - @gamedb_base
 wordfit @game_roboarmy - @gamedb_base
@@ -113,6 +120,7 @@ wordfit @game_tophuntr - @gamedb_base
 wordfit @game_tpgolf   - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
 wordfit @game_viewpoin - @gamedb_base
+wordfit @game_gowcaizr - @gamedb_base ' Voltage Fighter
 wordfit @game_wakuwak7 - @gamedb_base
 wordfit @game_wh1h     - @gamedb_base
 wordfit @game_wh2      - @gamedb_base
@@ -2348,7 +2356,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Some stages seem to float in mid air
+' BUG: Some stages seem to float in mid air
 game_galaxyfg byte "galaxyfg",0,"Galaxy Fight",0,"078-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
@@ -2368,7 +2376,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: Weirdly arranged NeoGeo jingle
+' Note: Weirdly arranged NeoGeo jingle
 game_janshin byte "janshin",0,"Janshin Densetsu",0,"048-",0,GAME_OK
 byte SET_CHAR,SET_TILEMASK, 14
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
@@ -2383,7 +2391,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: technically needs "socbrawlh" set, but some twatticus forgot to shorten that to 8 characters when adding the 'h'
+' Note: technically needs "socbrawlh" set, but some twatticus forgot to shorten that to 8 characters when adding the 'h'
 game_socbrawl byte "socbrawl",0,"Soccer Brawl",0,"031-",0,GAME_OK
 byte SET_CHAR,SET_TILEMASK, 14
 byte LOAD_CROM,"C1",0,"C2",0,word $20_0
@@ -2416,8 +2424,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Note: bizarro ROM names sometimes
-'' Note: Same old zooming tilemap issue
+' Note: bizarro ROM names sometimes
+' Note: Same old zooming tilemap issue
 game_tpgolf byte "tpgolf",0,"Top Player's Golf",0,"003-",0,GAME_ISSUE
 byte SET_CHAR,SET_TILEMASK, 14
 byte LOAD_CROM,"C1",0,"C2",0,word $10_0
@@ -2441,8 +2449,8 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-'' Needs timer IRQ
-'' Note: Uses SSG for music
+' Needs timer IRQ
+' Note: Uses SSG for music
 game_turfmast byte "turfmast",0,"Neo Turf Masters",0,"200-",0,GAME_ISSUE
 byte SET_CHAR,SET_TILEMASK, 15
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
@@ -2460,8 +2468,143 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+' TODO: Double-check if certain sound effects being really quiet is a game bug
+game_b2b byte "b2b",0,"Bang Bang Busters",0,"071-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
+'' TODO: Test (>32MB)
+game_ninjamas byte "ninjamas",0,"Ninja Master's",0,"217-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_2M
+byte LOAD_BSWAP,"P2",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
+' TODO: Test (>32MB)
+game_ragnagrd byte "ragnagrd",0,"Ragnagard",0,"218-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+' Is it Shougi, Shogi, Shōgi or Shyougi? Romanization is a funny subject...
+' BUG: Title screen mildy messed up (cycle timed raster effect?)
+game_mosyougi byte "mosyougi",0,"Master of Shõgi",0,"203-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,14
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_panicbom byte "panicbom",0,"Panic Bomber",0,"073-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,13
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_bakatono byte "bakatono",0,"Bakatonosama Mahjong Manyuuki",0,"036-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_quizkof byte "quizkof",0,"Quiz King of Fighters",0,"080-",0,GAME_BROKEN
+byte SET_CHAR,SET_TILEMASK,15
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_gowcaizr byte "gowcaizr",0,"Voltage Fighter - Gowcaizer",0,"094-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 
