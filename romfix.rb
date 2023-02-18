@@ -853,6 +853,7 @@ GENERIC_TASKS = [
 ]
 
 ROMSET_TASKS = {
+    "2020bb" => [],
     "3countb" => [],
     "aodk" => [],
     "alpham2" => [],
@@ -865,6 +866,7 @@ ROMSET_TASKS = {
     ],
     "bstars" => [],
     "bstars2" => [],
+    "flipshot" => [],
     "blazstar" => [],
     "bjourney" => [],
     "burningf" => [],
@@ -879,6 +881,7 @@ ROMSET_TASKS = {
     "fatfury3" => [],
     "fightfev" => [],
     "fbfrenzy" => [],
+    "galaxyfg" => [],
     "ganryu" => [
         DecryptCTask["252-c%dd","252-c%d",1,:cmc42,0x07],
     ],
@@ -887,7 +890,10 @@ ROMSET_TASKS = {
         DecryptCTask["253-c%dd","253-c%d",4,:cmc42,0x06],
     ],
     "gpilots" => [],
+    "gururin" => [],
     "ironclad" => [],
+    "janshin" => [],
+    "joyjoy" => [],
     "kabukikl" => [],
     "karnovr" => [],
     "kof94" => [],
@@ -959,6 +965,7 @@ ROMSET_TASKS = {
     "mutnat" => [],
     "nam1975" => [],
     "neobombe" => [],
+    "neocup98" => [],
     "neodrift" => [],
     "nitd" => [
         DecryptCTask["260-c%dd","260-c%d",1,:cmc42,0xff],
@@ -966,6 +973,7 @@ ROMSET_TASKS = {
     "ncombat" => [],
     "ncommand" => [],
     "neomrdo" => [],
+    "turfmast" => [],
     "overtop" => [],
     "pnyaa" => [
         DecryptM1Task["267-m1"],
@@ -1007,9 +1015,12 @@ ROMSET_TASKS = {
     ],
     "shocktro" => [],
     "shocktr2" => [],
+    "socbrawl" => [],
     "sonicwi2" => [],
     "sonicwi3" => [],
     "spinmast" => [],
+    "stakwin" => [],
+    "stakwin2" => [],
     "strhoop" => [],
     "s1945p" => [
         DecryptCTask["254-c%dd","254-c%d",4,:cmc42,0x05],
@@ -1022,6 +1033,10 @@ ROMSET_TASKS = {
         DecryptPVCTask["269-pd","269-p1","269-p2",:svc],
     ],
     "tophuntr" => [],
+    "tpgolf" => [
+        RenameTask["003-v11.bin","003-v1.bin"],
+        RenameTask["003-v21.bin","003-v2.bin"],
+    ],
     "trally" => [],
     "twinspri" => [],
     "viewpoin" => [],

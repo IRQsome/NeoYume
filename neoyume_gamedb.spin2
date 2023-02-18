@@ -1,6 +1,7 @@
 DAT
 
 gamelist word ' Note that these are in alphabetical order _of full title_
+wordfit @game_2020bb   - @gamedb_base
 wordfit @game_3countb  - @gamedb_base
 wordfit @game_aodk     - @gamedb_base
 wordfit @game_alpham2  - @gamedb_base
@@ -11,6 +12,7 @@ wordfit @game_aof3     - @gamedb_base
 wordfit @game_bangbead - @gamedb_base
 wordfit @game_bstars   - @gamedb_base
 wordfit @game_bstars2  - @gamedb_base
+wordfit @game_flipshot - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
 wordfit @game_bjourney - @gamedb_base
 wordfit @game_burningf - @gamedb_base
@@ -25,9 +27,12 @@ wordfit @game_fatfursp - @gamedb_base
 wordfit @game_fatfury3 - @gamedb_base
 wordfit @game_fightfev - @gamedb_base
 wordfit @game_fbfrenzy - @gamedb_base
+wordfit @game_galaxyfg - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
 wordfit @game_gpilots  - @gamedb_base
+wordfit @game_gururin  - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
+wordfit @game_janshin  - @gamedb_base
 wordfit @game_kabukikl - @gamedb_base
 wordfit @game_karnovr  - @gamedb_base
 wordfit @game_kof94    - @gamedb_base
@@ -63,7 +68,9 @@ wordfit @game_mutnat   - @gamedb_base
 wordfit @game_nam1975  - @gamedb_base
 wordfit @game_neobombe - @gamedb_base
 wordfit @game_neodrift - @gamedb_base
+wordfit @game_neocup98 - @gamedb_base
 wordfit @game_neomrdo  - @gamedb_base
+wordfit @game_turfmast - @gamedb_base
 wordfit @game_nitd     - @gamedb_base
 wordfit @game_ncombat  - @gamedb_base
 wordfit @game_ncommand - @gamedb_base
@@ -75,6 +82,7 @@ wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_puzzledp - @gamedb_base
 wordfit @game_puzzldpr - @gamedb_base
+wordfit @game_joyjoy   - @gamedb_base ' Export name is Puzzled
 wordfit @game_rotdh    - @gamedb_base
 wordfit @game_rbff1    - @gamedb_base
 wordfit @game_roboarmy - @gamedb_base
@@ -91,14 +99,18 @@ wordfit @game_sengoku3 - @gamedb_base
 wordfit @game_shocktro - @gamedb_base
 wordfit @game_shocktr2 - @gamedb_base
 wordfit @game_svc      - @gamedb_base
+wordfit @game_socbrawl - @gamedb_base
 wordfit @game_sonicwi2 - @gamedb_base
 wordfit @game_sonicwi3 - @gamedb_base
 wordfit @game_spinmast - @gamedb_base
+wordfit @game_stakwin  - @gamedb_base
+wordfit @game_stakwin2 - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
 wordfit @game_s1945p   - @gamedb_base
 wordfit @game_superspy - @gamedb_base
-wordfit @game_tophuntr - @gamedb_base
 wordfit @game_trally   - @gamedb_base
+wordfit @game_tophuntr - @gamedb_base
+wordfit @game_tpgolf   - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
 wordfit @game_viewpoin - @gamedb_base
 wordfit @game_wakuwak7 - @gamedb_base
@@ -2243,6 +2255,214 @@ byte SET_Z80
 byte LOAD_RAW,"M1D",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+
+game_joyjoy byte "joyjoy",0,"Puzzled",0,"021-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 12
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' NOTE: Busted graphics
+game_neocup98 byte "neocup98",0,"Neo-Geo Cup '98",0,"244-",0,GAME_ISSUE
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_flipshot byte "flipshot",0,"Battle Flip Shot",0,"247-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_stakwin byte "stakwin",0,"Stakes Winner",0,"088-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_stakwin2 byte "stakwin2",0,"Stakes Winner 2",0,"227-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_gururin byte "gururin",0,"Gururin",0,"067-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_galaxyfg byte "galaxyfg",0,"Galaxy Fight",0,"078-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte LOAD_CROM,"C7",0,"C8",0,word $20_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Note: Weirdly arranged NeoGeo jingle
+game_janshin byte "janshin",0,"Janshin Densetsu",0,"048-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Note: technically needs "socbrawlh" set, but some twatticus forgot to shorten that to 8 characters when adding the 'h'
+game_socbrawl byte "socbrawl",0,"Soccer Brawl",0,"031-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"PG1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_2020bb byte "2020bb",0,"2020 Super Baseball",0,"030-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Note: bizarro ROM names sometimes
+'' Note: Same old zooming tilemap issue
+game_tpgolf byte "tpgolf",0,"Top Player's Golf",0,"003-",0,GAME_ISSUE
+byte SET_CHAR,SET_TILEMASK, 14
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte LOAD_CROM,"C5",0,"C6",0,word $10_0
+byte LOAD_CROM,"C7",0,"C8",0,word $10_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte LOAD_RAW,"V22",0,word $08_0
+byte LOAD_RAW,"V23",0,word $08_0
+byte LOAD_RAW,"V24",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' Needs timer IRQ
+'' Note: Uses SSG for music
+game_turfmast byte "turfmast",0,"Neo Turf Masters",0,"200-",0,GAME_ISSUE
+byte SET_CHAR,SET_TILEMASK, 15
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte LOAD_RAW,"V4",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+
+
+
 
 
 

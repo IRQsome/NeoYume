@@ -71,6 +71,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
+|`2020bb`|2020 Super Baseball|8 MB|Works|
 |`3countb`|3 Count Bout|16 MB|Works|
 |`aodk`|Aggressors of Dark Kombat|24 MB|Works|
 |`alpham2`|Alpha Mission 2|8 MB|Works|
@@ -81,6 +82,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`bangbead`|Bang Bead|24 MB|Works (Needs decrypted C)|
 |`bstars`|Baseball Stars|8 MB|Works|
 |`bstars2`|Baseball Stars 2|8 MB|Works|
+|`flipshot`|Battle Flip Shot|8 MB|Works|
 |`blazstar`|Blazing Star|**48 MB**|Works|
 |`bjourney`|Blue's Journey|8 MB|Works|
 |`burningf`|Burning Fight|8 MB|Works|
@@ -95,9 +97,12 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`fatfury3`|Fatal Fury 3|**48 MB**|Works|
 |`fightfev`|Fight Fever|16 MB|Works|
 |`fbfrenzy`|Football Frenzy|8 MB|Works|
+|`galxyfg`|Galxy Fight - Universal Warriors|16 MB|Works|
 |`ganryu`|Ganryu|24 MB|Works (Needs decrypted C)|
 |`gpilots`|Ghost Pilots|8 MB|Works|
+|`gururin`|Gururin|8 MB|Works|
 |`ironclad`|Ironclad|24 MB|Works (need to rename files to fit in 8.3 (remove "proto_" prefix))|
+|`janshin`|Janshin Densetsu - Quest of the Jongmaster|8 MB|Works|
 |`kabukikl`|Far East of Eden - Kabuki Klash|32 MB|Works|
 |`karnovr`|Karnov's Revenge|16 MB|Works|
 |`kof94`|King of Fighters '94|32 MB|Works|
@@ -133,7 +138,9 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`nam1975`|NAM-1975|8 MB|Works|
 |`neobombe`|Neo Bomberman|24 MB|Works|
 |`neodrift`|Neo Drift Out|16 MB|**Graphical issues** (#4)|
+|`neocup98`|Neo-Geo Cup '98 - The Road to the Victory|32 MB|**Graphical issues** (#4 (???))|
 |`neomrdo`|Neo Mr. Do!|8 MB|Works|
+|`turfmast`|Neo Turf Masters|24 MB|**Graphical issues** (Needs Timer IRQ)|
 |`nitd`|Nightmare in the Dark|24 MB|Works (Needs decrypted C)|
 |`ncombat`|Ninja Combat|8 MB|Works|
 |`ncommand`|Ninja Commando|8 MB|Works|
@@ -145,6 +152,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|Works|
 |`puzzledp`|Puzzle de Pon|4 MB|Works|
 |`puzzldpr`|Puzzle de Pon R|4 MB|Works|
+|`joyjoy`|Puzzled|4MB|Works|
 |`rotdh`|Rage of the Dragons|**96 MB**|Works (Needs decrypted C/M)|
 |`rbff1`|Real Bout Fatal Fury|**48 MB**|Works|
 |`roboarmy`|Robo Army|8 MB|Works|
@@ -160,13 +168,18 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`sengoku3`|Sengoku 3|**80 MB**|Works (Needs decrypted C)|
 |`shocktro`|Shock Troopers|**48 MB**|Works|
 |`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|Works|
+|`svc`|SNK vs. Capcom - SVC Chaos|**96 MB**|**(not tested yet)**)
+|`socbrawl`|Soccer Brawl|8 MB|Works|
 |`sonicwi2`|Sonic Wings 2|16 MB|Works|
 |`sonicwi3`|Sonic Wings 3|24 MB|Works|
 |`spinmast`|Spinmaster|16 MB|**Black screen** (Timer IRQ, #5)|
+|`stakwin`|Stakes Winner|16 MB|Works|
+|`stakwin2`|Stakes Winner 2|24 MB|Works|
 |`strhoop`|Street Hoop|16 MB|Works|
 |`s1945p`|Strikers 1945 Plus|**96 MB**|Works (Needs decrypted C)|
 |`superspy`|The Super Spy|8 MB|Works|
 |`tophuntr`|Top Hunter - Roddy and Cathy|16 MB|Works|
+|`tpgolf`|Top Player's Golf|8 MB|**Graphical Issues** (Also may need romfix)|
 |`trally`|Thrash Rally|8 MB|**Graphical issues**|
 |`twinspri`|Twinkle Star Sprites|24 MB|Works|
 |`viewpoint`|Viewpoint|16 MB|Works|
