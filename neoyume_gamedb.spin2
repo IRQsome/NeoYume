@@ -2570,7 +2570,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-game_quizkof byte "quizkof",0,"Quiz King of Fighters",0,"080-",0,GAME_BROKEN
+game_quizkof byte "quizkof",0,"Quiz King of Fighters",0,"080-",0,GAME_OK
 byte SET_CHAR,SET_TILEMASK,15
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
 byte LOAD_CROM,"C3",0,"C4",0,word $40_0
