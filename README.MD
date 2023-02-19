@@ -87,6 +87,8 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`flipshot`|Battle Flip Shot|8 MB|Works|
 |`blazstar`|Blazing Star|**48 MB**|Works|
 |`bjourney`|Blue's Journey|8 MB|Works|
+|`breakers`|Breakers|32 MB|Works|
+|`breakrev`|Breakers Revenge|**48 MB**|**(not tested yet)**|
 |`burningf`|Burning Fight|8 MB|Works|
 |`ctomaday`|Captain Tomaday|16 MB|Works|
 |`crswords`|Crossed Swords|8 MB|Works|
@@ -102,6 +104,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`fbfrenzy`|Football Frenzy|8 MB|Works|
 |`galxyfg`|Galxy Fight - Universal Warriors|16 MB|**Graphical Issues**|
 |`ganryu`|Ganryu|24 MB|Works (Needs decrypted C)|
+|`ghostlop`|Ghostlop|16 MB|Works|
 |`gpilots`|Ghost Pilots|8 MB|Works|
 |`goalx3`|Goal! Goal! Goal!|16 MB|Works|
 |`gururin`|Gururin|8 MB|Works|
@@ -130,6 +133,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`magdrop2`|Magical Drop 2|16 MB|Works|
 |`magdrop3`|Magical Drop 3|24 MB|Works|
 |`maglord`|Magician Lord|8 MB|Works|
+|`marukodq`|Chibi Maruko-chan: Maruko Deluxe Quiz|16 MB|Works|
 |`mosyougi`|Master of Shōgi|8 MB|Works (minor gfx oddity)|
 |`matrim`|Matrimelee|**96 MB**|Works (Needs decrypted C/V/M)|
 |`mslug`|Metal Slug|32 MB|Works|
@@ -138,6 +142,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`mslug3h`|Metal Slug 3|**96 MB**|**Sound issues** (512k M1, #8) (Needs decrypted C)|
 |`mslug4h`|Metal Slug 4|**80 MB**|Works (Needs decrypted C/M)|
 |`mslug5h`|Metal Slug 5|**96 MB**|Works (Needs decrypted C/V/P/M)|
+|`minasan`|Minasan no Okagesamadesu!|8 MB|Works|
 |`miexchng`|Money Puzzle Exchanger|16 MB|Works|
 |`mutnat`|Mutation Nation|8 MB|Works|
 |`nam1975`|NAM-1975|8 MB|Works|
@@ -155,16 +160,22 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`pgoal`|Pleasure Goal|24 MB|Works|
 |`pnyaa`|Pochi and Nyaa|24 MB|Works (Needs decrypted C/M)|
 |`popbounc`|Pop n' Bounce|8 MB|Works|
+|`pspikes2`|Power Spikes 2|16 MB|Works|
 |`preisle2`|Prehistoric Isle 2|**64 MB**|Works (Needs decrypted C)|
 |`pulstar`|Pulstar|**48 MB**|Works|
 |`pbobbl2n`|Puzzle Bobble 2|24 MB|Works|
 |`puzzledp`|Puzzle de Pon|4 MB|Works|
 |`puzzldpr`|Puzzle de Pon R|4 MB|Works|
+|`quizdais`|Quiz Daisousa Sen - The Last Count Down|8 MB|Works|
+|`quizdai2`|Quiz Meitantei Neo & Geo - Quiz Daisousa Sen Part 2|8 MB|Works|
 |`quizkof`|Quiz King of Fighters|16 MB|Works|
 |`joyjoy`|Puzzled|4MB|Works|
 |`rotdh`|Rage of the Dragons|**96 MB**|Works (Needs decrypted C/M)|
 |`rbff1`|Real Bout Fatal Fury|**48 MB**|Works|
+|`rbff1`|Real Bout Fatal Fury Special|**64 MB**|**(not tested yet)**|
+|`rbff1`|Real Bout Fatal Fury 2|**80 MB**|**(not tested yet)**|
 |`ragnagrd`|Ragnagard|**48 MB**|**(not tested yet)**|
+|`ridhero`|Riding Hero|8 MB|**Graphical issues**|
 |`roboarmy`|Robo Army|8 MB|Works|
 |`samsho`|Samurai Shodown|24 MB|Works|
 |`samsho2`|Samurai Shodown 2|32 MB|Works|

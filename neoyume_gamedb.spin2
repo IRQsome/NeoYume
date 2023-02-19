@@ -17,6 +17,8 @@ wordfit @game_bstars2  - @gamedb_base
 wordfit @game_flipshot - @gamedb_base
 wordfit @game_blazstar - @gamedb_base
 wordfit @game_bjourney - @gamedb_base
+wordfit @game_breakers - @gamedb_base
+wordfit @game_breakrev - @gamedb_base
 wordfit @game_burningf - @gamedb_base
 wordfit @game_ctomaday - @gamedb_base
 wordfit @game_crsword  - @gamedb_base
@@ -32,6 +34,7 @@ wordfit @game_fightfev - @gamedb_base
 wordfit @game_fbfrenzy - @gamedb_base
 wordfit @game_galaxyfg - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
+wordfit @game_ghostlop - @gamedb_base
 wordfit @game_gpilots  - @gamedb_base
 wordfit @game_goalx3   - @gamedb_base
 wordfit @game_gururin  - @gamedb_base
@@ -60,6 +63,7 @@ wordfit @game_mahretsu - @gamedb_base
 wordfit @game_magdrop2 - @gamedb_base
 wordfit @game_magdrop3 - @gamedb_base
 wordfit @game_maglord  - @gamedb_base
+wordfit @game_marukodq - @gamedb_base
 wordfit @game_mosyougi - @gamedb_base
 wordfit @game_matrim   - @gamedb_base
 wordfit @game_mslug    - @gamedb_base
@@ -68,6 +72,7 @@ wordfit @game_mslugx   - @gamedb_base
 wordfit @game_mslug3h  - @gamedb_base
 wordfit @game_mslug4h  - @gamedb_base
 wordfit @game_mslug5h  - @gamedb_base
+wordfit @game_minasan  - @gamedb_base
 wordfit @game_miexchng - @gamedb_base
 wordfit @game_mutnat   - @gamedb_base
 wordfit @game_nam1975  - @gamedb_base
@@ -85,16 +90,22 @@ wordfit @game_panicbom - @gamedb_base
 wordfit @game_pgoal    - @gamedb_base
 wordfit @game_pnyaa    - @gamedb_base
 wordfit @game_popbounc - @gamedb_base
+wordfit @game_pspikes2 - @gamedb_base
 wordfit @game_preisle2 - @gamedb_base
 wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_puzzledp - @gamedb_base
 wordfit @game_puzzldpr - @gamedb_base
+wordfit @game_quizdais - @gamedb_base
+wordfit @game_quizdai2 - @gamedb_base
 wordfit @game_quizkof  - @gamedb_base
 wordfit @game_joyjoy   - @gamedb_base ' Export name is Puzzled
 wordfit @game_ragnagrd - @gamedb_base
 wordfit @game_rotdh    - @gamedb_base
 wordfit @game_rbff1    - @gamedb_base
+wordfit @game_rbffspec - @gamedb_base
+wordfit @game_rbff2    - @gamedb_base
+wordfit @game_ridhero  - @gamedb_base
 wordfit @game_roboarmy - @gamedb_base
 wordfit @game_samsho   - @gamedb_base
 wordfit @game_samsho2  - @gamedb_base
@@ -714,7 +725,48 @@ byte LOAD_RAW,"095-M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+game_rbffspec byte "rbffspec",0,"Real Bout Fatal Fury Special",0,"223-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte LOAD_CROM,"C7",0,"C8",0,word $80_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"095-S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"095-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
+
+game_rbff2 byte "rbff2",0,"Real Bout Fatal Fury 2",0,"240-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $100_0
+byte LOAD_CROM,"C3",0,"C4",0,word $100_0
+byte LOAD_CROM,"C5",0,"C6",0,word $100_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_PORT,SET_BANKSWITCH_4M
+byte LOAD_BSWAP,"P2",0,word $40_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte LOAD_RAW,"V3",0,word $40_0
+byte LOAD_RAW,"V4",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"095-S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"095-M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 game_crsword byte "crsword",0,"Crossed Swords",0,"037-",0,GAME_OK
 byte SET_CHAR
@@ -2770,6 +2822,160 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_breakers byte "breakers",0,"Breakers",0,"230-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' TODO: Test (>32MB)
+game_breakrev byte "breakrev",0,"Breakers Revenge",0,"245-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $80_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+' Needs timer IRQ
+game_ridhero byte "ridhero",0,"Riding Hero",0,"006-",0,GAME_ISSUE
+byte SET_CHAR,SET_TILEMASK,13
+byte LOAD_CROM,"C1",0,"C2",0,word $10_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $08_0
+byte LOAD_RAW,"V12",0,word $08_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $08_0
+byte LOAD_RAW,"V22",0,word $08_0
+byte LOAD_RAW,"V23",0,word $08_0
+byte LOAD_RAW,"V24",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_pspikes2 byte "pspikes2",0,"Power Spikes 2",0,"068-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte LOAD_CROM,"C5",0,"C6",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"PG1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte LOAD_RAW,"V3",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"SG1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"MG1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_ghostlop byte "ghostlop",0,"Ghostlop",0,"228-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,15
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_quizdais byte "quizdais",0,"Quiz Daisousa Sen",0,"023-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,13
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_quizdai2 byte "quizdai2",0,"Quiz Meitantei Neo & Geo",0,"042-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $10_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $10_0
+byte LOAD_RAW,"V2",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_minasan byte "minasan",0,"Minasan no Okagesamadesu!",0,"027-",0,GAME_OK
+byte SET_CHAR,SET_TILEMASK,14
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte SET_ADPCM_A
+byte LOAD_RAW,"V11",0,word $10_0
+byte SET_ADPCM_B
+byte LOAD_RAW,"V21",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_marukodq byte "marukodq",0,"Maruko Deluxe Quiz",0,"206-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+
 
 
 
