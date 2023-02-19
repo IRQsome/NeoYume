@@ -103,6 +103,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`galxyfg`|Galxy Fight - Universal Warriors|16 MB|**Graphical Issues**|
 |`ganryu`|Ganryu|24 MB|Works (Needs decrypted C)|
 |`gpilots`|Ghost Pilots|8 MB|Works|
+|`goalx3`|Goal! Goal! Goal!|16 MB|Works|
 |`gururin`|Gururin|8 MB|Works|
 |`ironclad`|Ironclad|24 MB|Works (need to rename files to fit in 8.3 (remove "proto_" prefix))|
 |`janshin`|Janshin Densetsu - Quest of the Jongmaster|8 MB|Works|
@@ -151,6 +152,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`ninjamas`|Ninja Master's|**48 MB**|**(not tested yet)**|
 |`overtop`|Over Top|32 MB|Works|
 |`panicbom`|Panic Bomber|8 MB|Works|
+|`pgoal`|Pleasure Goal|24 MB|Works|
 |`pnyaa`|Pochi and Nyaa|24 MB|Works (Needs decrypted C/M)|
 |`popbounc`|Pop n' Bounce|8 MB|Works|
 |`preisle2`|Prehistoric Isle 2|**64 MB**|Works (Needs decrypted C)|
@@ -185,10 +187,12 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`stakwin2`|Stakes Winner 2|24 MB|Works|
 |`strhoop`|Street Hoop|16 MB|Works|
 |`s1945p`|Strikers 1945 Plus|**96 MB**|Works (Needs decrypted C)|
+|`sdodgeb`|Super Dodge Ball|24 MB|Works|
 |`ssideki`|Super Sidekicks|16 MB|**Unemulated copy protection (#11)**|
 |`ssideki2`|Super Sidekicks 2|16 MB|**Graphical issues**|
 |`ssideki2`|Super Sidekicks 3|24 MB|**Graphical issues**|
 |`superspy`|The Super Spy|8 MB|Works|
+|`tws96`|Tecmo World Soccer '96|16 MB|Works|
 |`tophuntr`|Top Hunter - Roddy and Cathy|16 MB|Works|
 |`tpgolf`|Top Player's Golf|8 MB|**Graphical Issues** (Also may need romfix)|
 |`trally`|Thrash Rally|8 MB|**Graphical issues**|

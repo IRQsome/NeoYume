@@ -893,6 +893,7 @@ ROMSET_TASKS = {
         DecryptSMATask["253-pd",%w[253-sma 253-ep1 253-ep2 253-ep3 253-ep4],:garou],
         DecryptCTask["253-c%dd","253-c%d",4,:cmc42,0x06],
     ],
+    "goalx3" => [],
     "gowcaizr" => [],
     "gpilots" => [],
     "gururin" => [],
@@ -983,6 +984,7 @@ ROMSET_TASKS = {
     "turfmast" => [],
     "overtop" => [],
     "panicbom" => [],
+    "pgoal" => [],
     "pnyaa" => [
         DecryptM1Task["267-m1"],
         DecryptCTask["267-c%dd","267-c%d",1,:cmc50,0x2e],
@@ -1035,6 +1037,7 @@ ROMSET_TASKS = {
     "s1945p" => [
         DecryptCTask["254-c%dd","254-c%d",4,:cmc42,0x05],
     ],
+    "sdodgeb" => [],
     "ssideki" => [],
     "ssideki2" => [
         RenameTask[->(md){md[1]+".bin"},/^(061-c\d)-16\./],
@@ -1048,6 +1051,7 @@ ROMSET_TASKS = {
         DecryptCTask["269-c%dd","269-c%dr",4,:cmc50,0x57],
         DecryptPVCTask["269-pd","269-p1","269-p2",:svc],
     ],
+    "tws96" => [],
     "tophuntr" => [],
     "tpgolf" => [
         RenameTask["003-v11.bin","003-v1.bin"],

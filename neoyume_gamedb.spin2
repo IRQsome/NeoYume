@@ -33,6 +33,7 @@ wordfit @game_fbfrenzy - @gamedb_base
 wordfit @game_galaxyfg - @gamedb_base
 wordfit @game_ganryu   - @gamedb_base
 wordfit @game_gpilots  - @gamedb_base
+wordfit @game_goalx3   - @gamedb_base
 wordfit @game_gururin  - @gamedb_base
 wordfit @game_ironclad - @gamedb_base
 wordfit @game_janshin  - @gamedb_base
@@ -81,6 +82,7 @@ wordfit @game_ncommand - @gamedb_base
 wordfit @game_ninjamas - @gamedb_base
 wordfit @game_overtop  - @gamedb_base
 wordfit @game_panicbom - @gamedb_base
+wordfit @game_pgoal    - @gamedb_base
 wordfit @game_pnyaa    - @gamedb_base
 wordfit @game_popbounc - @gamedb_base
 wordfit @game_preisle2 - @gamedb_base
@@ -115,10 +117,12 @@ wordfit @game_stakwin  - @gamedb_base
 wordfit @game_stakwin2 - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
 wordfit @game_s1945p   - @gamedb_base
+wordfit @game_sdodgeb  - @gamedb_base
 wordfit @game_ssideki  - @gamedb_base
 wordfit @game_ssideki2 - @gamedb_base
 wordfit @game_ssideki3 - @gamedb_base
 wordfit @game_superspy - @gamedb_base
+wordfit @game_tws96    - @gamedb_base
 wordfit @game_trally   - @gamedb_base
 wordfit @game_tophuntr - @gamedb_base
 wordfit @game_tpgolf   - @gamedb_base
@@ -2705,6 +2709,71 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_pgoal byte "pgoal",0,"Pleasure Goal",0,"219-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_tws96 byte "tws96",0,"Tecmo World Soccer '96",0,"086-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_goalx3 byte "goalx3",0,"Goal! Goal! Goal!",0,"209-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+game_sdodgeb byte "sdodgeb",0,"Super Dodge Ball",0,"208-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+
+
 
 
 

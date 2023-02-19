@@ -310,6 +310,10 @@ repeat
 if exmem_size>exptr
   exmem_fill(exptr,$DB,exmem_size-exptr,false) ' fill remaining memory with pattern
 
+PRI check_filesize(fptr) : r
+c.fseek(fptr,0,c.SEEK_END)
+r := c.ftell(fptr)
+c.fseek(fptr,0,c.SEEK_SET)
 
 PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,tmp2,i,j,k,l,tmpstr,pushed,memo1
 settiles(0,39,22,27," ")
@@ -320,13 +324,13 @@ putstring(path1,3,24,0)
 if path2
   putstring(path2,3,25,0)
 
-
 f1 := c.fopen(path1,@"rb")
 ifnot f1
   putstring(@"file1: ",2,26,0)
   putstring(c.strerror(errno),2+7,26,0)
   repeat
 if is_dualfile(type)
+  tmp := size/2 + offset
   f2 := c.fopen(path2,@"rb")
   ifnot f2
     putstring(@"file2: ",2,26,0)
@@ -334,6 +338,16 @@ if is_dualfile(type)
     repeat
 else
   f2 := 0
+  tmp := size + offset
+
+if (tmp2:=check_filesize(f1)) < tmp
+  c.sprintf(tmpstr,@"file1 too short: %d < %d",tmp2,tmp)
+  putstring(tmpstr,2,26,0)
+  repeat
+if f2 __andthen__ (tmp2:=check_filesize(f2)) < tmp
+  c.sprintf(tmpstr,@"file2 too short: %d < %d",tmp2,tmp)
+  putstring(tmpstr,2,26,0)
+  repeat
 
 if offset
   c.fseek(f1,offset,c.SEEK_SET)
