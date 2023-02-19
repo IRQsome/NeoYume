@@ -95,6 +95,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`doubledr`|Double Dragon|24 MB|Works|
 |`eightman`|Eight Man|8 MB|Works|
 |`fatfury1`|Fatal Fury|8 MB|Works|
+|`fatfury2`|Fatal Fury|16 MB|**Broken(???) + Unemulated copy protection (#11)**|
 |`fatfursp`|Fatal Fury Special|24 MB|Works|
 |`fatfury3`|Fatal Fury 3|**48 MB**|Works|
 |`fightfev`|Fight Fever|16 MB|Works|
@@ -184,11 +185,15 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`stakwin2`|Stakes Winner 2|24 MB|Works|
 |`strhoop`|Street Hoop|16 MB|Works|
 |`s1945p`|Strikers 1945 Plus|**96 MB**|Works (Needs decrypted C)|
+|`ssideki`|Super Sidekicks|16 MB|**Unemulated copy protection (#11)**|
+|`ssideki2`|Super Sidekicks 2|16 MB|**Graphical issues**|
+|`ssideki2`|Super Sidekicks 3|24 MB|**Graphical issues**|
 |`superspy`|The Super Spy|8 MB|Works|
 |`tophuntr`|Top Hunter - Roddy and Cathy|16 MB|Works|
 |`tpgolf`|Top Player's Golf|8 MB|**Graphical Issues** (Also may need romfix)|
 |`trally`|Thrash Rally|8 MB|**Graphical issues**|
 |`twinspri`|Twinkle Star Sprites|24 MB|Works|
+|`ssideki4`|The Ultimate 11|32 MB|**Graphical issues**|
 |`viewpoint`|Viewpoint|16 MB|Works|
 |`gowcaizr`|Voltage Fighter - Gowcaizer|24 MB|Works|
 |`wakuwak7`|Waku Waku 7|**48 MB**|Works|

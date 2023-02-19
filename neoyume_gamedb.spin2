@@ -25,6 +25,7 @@ wordfit @game_cyberlip - @gamedb_base
 wordfit @game_doubledr - @gamedb_base
 wordfit @game_eightman - @gamedb_base
 wordfit @game_fatfury1 - @gamedb_base
+wordfit @game_fatfury2 - @gamedb_base
 wordfit @game_fatfursp - @gamedb_base
 wordfit @game_fatfury3 - @gamedb_base
 wordfit @game_fightfev - @gamedb_base
@@ -114,11 +115,15 @@ wordfit @game_stakwin  - @gamedb_base
 wordfit @game_stakwin2 - @gamedb_base
 wordfit @game_strhoop  - @gamedb_base
 wordfit @game_s1945p   - @gamedb_base
+wordfit @game_ssideki  - @gamedb_base
+wordfit @game_ssideki2 - @gamedb_base
+wordfit @game_ssideki3 - @gamedb_base
 wordfit @game_superspy - @gamedb_base
 wordfit @game_trally   - @gamedb_base
 wordfit @game_tophuntr - @gamedb_base
 wordfit @game_tpgolf   - @gamedb_base
 wordfit @game_twinspri - @gamedb_base
+wordfit @game_ssideki4 - @gamedb_base ' The Ultimate 11
 wordfit @game_viewpoin - @gamedb_base
 wordfit @game_gowcaizr - @gamedb_base ' Voltage Fighter
 wordfit @game_wakuwak7 - @gamedb_base
@@ -619,6 +624,28 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+' WARNING: UNEMULATED COPY PROTECTION - WILL GLITCH AFTER A WHILE
+' also crashes for reasons unknown
+game_fatfury2 byte "fatfury2",0,"Fatal Fury 2",0,"047-",0,GAME_BROKEN
+byte SET_CHAR
+byte SET_TILEMASK,15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_CROM,"C3",0,"C4",0,word $20_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
+byte LOAD_CROM+WITH_OFFSET,"C3",0,"C4",0,word $20_0,word $10_0
+byte SET_PROG, SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 game_fatfursp byte "fatfursp",0,"Fatal Fury Special",0,"058-",0,GAME_OK
 byte SET_CHAR
@@ -2599,6 +2626,79 @@ byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"V1",0,word $20_0
 byte LOAD_RAW,"V2",0,word $20_0
 byte LOAD_RAW,"V3",0,word $10_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+
+' WARNING: UNEMULATED COPY PROTECTION - WILL GLITCH AFTER A WHILE
+game_ssideki byte "ssideki",0,"Super Sidekicks",0,"052-",0,GAME_BROKEN
+byte SET_CHAR,SET_TILEMASK,15
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte LOAD_FILLER,255,word $20_0
+byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
+byte LOAD_FILLER,255,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+' BUG: Probably needs timer IRQ
+game_ssideki2 byte "ssideki2",0,"Super Sidekicks 2",0,"061-",0,GAME_ISSUE
+byte SET_CHAR,SET_TILEMASK,15
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' NOTE: Busted graphics (this is literally the same as neocup98)
+game_ssideki3 byte "ssideki3",0,"Super Sidekicks 3",0,"081-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $40_0
+byte LOAD_CROM,"C3",0,"C4",0,word $40_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $20_0
+byte LOAD_RAW,"V2",0,word $20_0
+byte LOAD_RAW,"V3",0,word $20_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+'' NOTE: Busted graphics
+game_ssideki4 byte "ssideki4",0,"Ultimate 11, The",0,"215-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $80_0
+byte LOAD_CROM,"C3",0,"C4",0,word $80_0
+byte LOAD_CROM,"C5",0,"C6",0,word $40_0
+byte SET_PROG+WITH_OFFSET,word $10_0,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $20_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $40_0
+byte LOAD_RAW,"V2",0,word $20_0
 byte SET_FIX
 byte LOAD_SROM,"S1",0,word $02_0
 byte SET_Z80

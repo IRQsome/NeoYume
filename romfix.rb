@@ -880,6 +880,7 @@ ROMSET_TASKS = {
     "doubledr" => [],
     "eightman" => [],
     "fatfury1" => [],
+    "fatfury2" => [],
     "fatfursp" => [],
     "fatfury3" => [],
     "fightfev" => [],
@@ -1034,6 +1035,12 @@ ROMSET_TASKS = {
     "s1945p" => [
         DecryptCTask["254-c%dd","254-c%d",4,:cmc42,0x05],
     ],
+    "ssideki" => [],
+    "ssideki2" => [
+        RenameTask[->(md){md[1]+".bin"},/^(061-c\d)-16\./],
+    ],
+    "ssideki3" => [],
+    "ssideki4" => [],
     "superspy" => [],
     "svc" => [
         DecryptM1Task["269-m1"],
