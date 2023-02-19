@@ -2670,7 +2670,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Busted graphics (this is literally the same as neocup98)
-game_ssideki3 byte "ssideki3",0,"Super Sidekicks 3",0,"081-",0,GAME_BROKEN
+game_ssideki3 byte "ssideki3",0,"Super Sidekicks 3",0,"081-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $40_0
 byte LOAD_CROM,"C3",0,"C4",0,word $40_0
@@ -2689,7 +2689,7 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 '' NOTE: Busted graphics
-game_ssideki4 byte "ssideki4",0,"Ultimate 11, The",0,"215-",0,GAME_BROKEN
+game_ssideki4 byte "ssideki4",0,"Ultimate 11, The",0,"215-",0,GAME_ISSUE
 byte SET_CHAR
 byte LOAD_CROM,"C1",0,"C2",0,word $80_0
 byte LOAD_CROM,"C3",0,"C4",0,word $80_0
