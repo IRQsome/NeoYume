@@ -172,8 +172,8 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`joyjoy`|Puzzled|4MB|Works|
 |`rotdh`|Rage of the Dragons|**96 MB**|Works (Needs decrypted C/M)|
 |`rbff1`|Real Bout Fatal Fury|**48 MB**|Works|
-|`rbff1`|Real Bout Fatal Fury Special|**64 MB**|**(not tested yet)**|
-|`rbff1`|Real Bout Fatal Fury 2|**80 MB**|**(not tested yet)**|
+|`rbffspec`|Real Bout Fatal Fury Special|**64 MB**|**(not tested yet)**|
+|`rbff2`|Real Bout Fatal Fury 2|**80 MB**|**(not tested yet)**|
 |`ragnagrd`|Ragnagard|**48 MB**|**(not tested yet)**|
 |`ridhero`|Riding Hero|8 MB|**Graphical issues**|
 |`roboarmy`|Robo Army|8 MB|Works|
