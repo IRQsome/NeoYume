@@ -88,7 +88,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`blazstar`|Blazing Star|**48 MB**|Works|
 |`bjourney`|Blue's Journey|8 MB|Works|
 |`breakers`|Breakers|32 MB|Works|
-|`breakrev`|Breakers Revenge|**48 MB**|**(not tested yet)**|
+|`breakrev`|Breakers Revenge|**48 MB**|Works|
 |`burningf`|Burning Fight|8 MB|Works|
 |`ctomaday`|Captain Tomaday|16 MB|Works|
 |`crswords`|Crossed Swords|8 MB|Works|
@@ -154,7 +154,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`nitd`|Nightmare in the Dark|24 MB|Works (Needs decrypted C)|
 |`ncombat`|Ninja Combat|8 MB|Works|
 |`ncommand`|Ninja Commando|8 MB|Works|
-|`ninjamas`|Ninja Master's|**48 MB**|**(not tested yet)**|
+|`ninjamas`|Ninja Master's|**48 MB**|Works|
 |`overtop`|Over Top|32 MB|Works|
 |`panicbom`|Panic Bomber|8 MB|Works|
 |`pgoal`|Pleasure Goal|24 MB|Works|
@@ -172,9 +172,9 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`joyjoy`|Puzzled|4MB|Works|
 |`rotdh`|Rage of the Dragons|**96 MB**|Works (Needs decrypted C/M)|
 |`rbff1`|Real Bout Fatal Fury|**48 MB**|Works|
-|`rbffspec`|Real Bout Fatal Fury Special|**64 MB**|**(not tested yet)**|
-|`rbff2`|Real Bout Fatal Fury 2|**80 MB**|**(not tested yet)**|
-|`ragnagrd`|Ragnagard|**48 MB**|**(not tested yet)**|
+|`rbffspec`|Real Bout Fatal Fury Special|**64 MB**|Works|
+|`rbff2`|Real Bout Fatal Fury 2|**80 MB**|Works|
+|`ragnagrd`|Ragnagard|**48 MB**|Works|
 |`ridhero`|Riding Hero|8 MB|**Graphical issues**|
 |`roboarmy`|Robo Army|8 MB|Works|
 |`samsho`|Samurai Shodown|24 MB|Works|
@@ -189,7 +189,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`sengoku3`|Sengoku 3|**80 MB**|Works (Needs decrypted C)|
 |`shocktro`|Shock Troopers|**48 MB**|Works|
 |`shocktr2`|Shock Troopers 2nd Squad|**64 MB**|Works|
-|`svc`|SNK vs. Capcom - SVC Chaos|**96 MB**|**(not tested yet)**|
+|`svc`|SNK vs. Capcom - SVC Chaos|**96 MB**|**Black screen**|
 |`socbrawl`|Soccer Brawl|8 MB|Works|
 |`sonicwi2`|Sonic Wings 2|16 MB|Works|
 |`sonicwi3`|Sonic Wings 3|24 MB|Works|
