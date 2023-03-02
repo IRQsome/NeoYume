@@ -97,7 +97,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`doubledr`|Double Dragon|24 MB|Works|
 |`eightman`|Eight Man|8 MB|Works|
 |`fatfury1`|Fatal Fury|8 MB|Works|
-|`fatfury2`|Fatal Fury 2|16 MB|**Broken(???) + Unemulated copy protection (#11)**|
+|`fatfury2`|Fatal Fury 2|16 MB|**Unemulated copy protection (#11)**|
 |`fatfursp`|Fatal Fury Special|24 MB|Works|
 |`fatfury3`|Fatal Fury 3|**48 MB**|Works|
 |`fightfev`|Fight Fever|16 MB|Works|

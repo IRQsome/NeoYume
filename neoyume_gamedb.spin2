@@ -641,7 +641,6 @@ byte SET_BIOS,LOAD_BIOS
 byte 0
 
 ' WARNING: UNEMULATED COPY PROTECTION - WILL GLITCH AFTER A WHILE
-' also crashes for reasons unknown
 game_fatfury2 byte "fatfury2",0,"Fatal Fury 2",0,"047-",0,GAME_BROKEN
 byte SET_CHAR
 byte SET_TILEMASK,15
@@ -650,7 +649,8 @@ byte LOAD_CROM,"C3",0,"C4",0,word $20_0
 byte LOAD_CROM+WITH_OFFSET,"C1",0,"C2",0,word $20_0,word $10_0
 byte LOAD_CROM+WITH_OFFSET,"C3",0,"C4",0,word $20_0,word $10_0
 byte SET_PROG, SET_PORT
-byte LOAD_BSWAP,"P1",0,word $10_0
+byte LOAD_BSWAP,"P1",0,word $08_0
+byte LOAD_BSWAP,"P2",0,word $08_0
 byte SET_ADPCM_A,SET_ADPCM_B
 byte LOAD_RAW,"V1",0,word $20_0
 byte LOAD_RAW,"V2",0,word $20_0
