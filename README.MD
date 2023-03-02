@@ -17,6 +17,8 @@ Features include:
   - USB input (Keyboard and select gamepads, see below) or direct hookup to discrete switches.
   - Bugs. But not _that_ many.
 
+Forum thread, chronicalling development and other interesting info: https://forums.parallax.com/discussion/comment/1538689/#Comment_1538689
+
 ## Usage
 
 ### SD Setup
