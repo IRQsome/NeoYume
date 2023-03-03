@@ -96,10 +96,10 @@ wordfit @game_pulstar  - @gamedb_base
 wordfit @game_pbobbl2n - @gamedb_base
 wordfit @game_puzzledp - @gamedb_base
 wordfit @game_puzzldpr - @gamedb_base
+wordfit @game_joyjoy   - @gamedb_base ' Export name is Puzzled
 wordfit @game_quizdais - @gamedb_base
 wordfit @game_quizdai2 - @gamedb_base
 wordfit @game_quizkof  - @gamedb_base
-wordfit @game_joyjoy   - @gamedb_base ' Export name is Puzzled
 wordfit @game_ragnagrd - @gamedb_base
 wordfit @game_rotdh    - @gamedb_base
 wordfit @game_rbff1    - @gamedb_base

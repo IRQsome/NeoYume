@@ -171,7 +171,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`quizdais`|Quiz Daisousa Sen - The Last Count Down|8 MB|Works|
 |`quizdai2`|Quiz Meitantei Neo & Geo - Quiz Daisousa Sen Part 2|8 MB|Works|
 |`quizkof`|Quiz King of Fighters|16 MB|Works|
-|`joyjoy`|Puzzled|4MB|Works|
+|`joyjoy`|Puzzled|4 MB|Works|
 |`rotdh`|Rage of the Dragons|**96 MB**|Works (Needs decrypted C/M)|
 |`rbff1`|Real Bout Fatal Fury|**48 MB**|Works|
 |`rbffspec`|Real Bout Fatal Fury Special|**64 MB**|Works|
