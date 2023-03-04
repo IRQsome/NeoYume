@@ -133,8 +133,28 @@ repeat
 #ifdef DIRECT_BOOT
 load_game(@DIRECT_BOOT)
 #else
-tmp := do_gamechoose()
-load_game(gamelist[tmp]+@gamedb_base)
+if USE_ARGV && long[$FC000] == ("A" + "R"<<8 + "G"<<16 + "v"<<24) && word[$FC004] <> 0
+  tmp := $FC004 + 1 + strsize($FC004)
+  if byte[tmp] <> 0
+    ifnot c.strcasecmp(tmp,@"japan")
+      jpbios := true
+    elseifnot c.strcasecmp(tmp,@"export")
+      jpbios := false
+    else
+      putstring(@"ARGv invalid BIOS",2,10,0)
+      repeat
+    
+  repeat tmp from 0 to ((@gamelist_end - @gamelist)/2)-1
+    ifnot c.strcasecmp($FC004,gamelist[tmp]+@gamedb_base)
+      load_game(gamelist[tmp]+@gamedb_base)
+      quit
+  if tmp == ((@gamelist_end - @gamelist)/2)
+    putstring(@"ARGv invalid",2,10,0)
+    repeat
+    
+else
+  tmp := do_gamechoose()
+  load_game(gamelist[tmp]+@gamedb_base)
 #endif
 
 putstring(@"Load ok?",2,10,0)
