@@ -2940,7 +2940,7 @@ ma_entry
               wrpin ##(HYPER_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO),#HYPER_BASE addpins 7
 
               modc HYPER_RESET < 0 ? _clr : _set wc
-        if_c  drvh #HYPER_RESET
+        if_c  drvh #HYPER_RESET&511
 #endif
 
               setxfrq ma_nco_slow
