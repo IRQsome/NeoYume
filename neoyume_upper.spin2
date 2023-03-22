@@ -335,7 +335,7 @@ c.fseek(fptr,0,c.SEEK_END)
 r := c.ftell(fptr)
 c.fseek(fptr,0,c.SEEK_SET)
 
-PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,tmp2,i,j,k,l,tmpstr,pushed,memo1
+PRI load_romdata(target,size,offset,type,path1,path2) | f1,f2,pos,tmp,tmp2,tmp3,i,j,k,l,tmpstr,pushed,memo1
 settiles(0,39,22,27," ")
 tmpstr := __builtin_alloca(64)
 c.sprintf(tmpstr,@"Loading %d bytes, type %d",size,type)
@@ -404,25 +404,24 @@ repeat while pos < size
           rdlong k,ptrb[$00/4]
           rdlong l,ptrb[$20/4]
 
-          getword tmp2,l,#0
-          rolword tmp2,j,#0
-          mergeb tmp2
-          wflong tmp2
-
-          getword tmp2,k,#0
-          rolword tmp2,i,#0
-          mergeb tmp2
-          wflong tmp2
-
           getword tmp2,l,#1
           rolword tmp2,j,#1
           mergeb tmp2
-          wflong tmp2
+          
+          getword tmp3,k,#1
+          rolword tmp3,i,#1
+          mergeb tmp3
 
-          getword tmp2,k,#1
-          rolword tmp2,i,#1
-          mergeb tmp2
+          rolword l,j,#0
+          mergeb l
+
+          rolword k,i,#0
+          mergeb k
+
+          wflong l
+          wflong k
           wflong tmp2
+          wflong tmp3
 
           sub ptrb,##$4000 - 4
       .loop2
