@@ -755,7 +755,7 @@ exmem_size := 16*1024*1024 * HYPER_BANKS
 sizelen := encod(exmem_size-1)+1
 repeat i from 0 to HYPER_BANKS-1
   long[banks][0+i] := 256<<16 + (HYPER_DELAY-7)<<13 + (HYPER_SYNC_DATA?0:1)<<12 + sizelen
-  long[banks][16+i] := HYPER_SELECT+i + HYPER_CLK<<8 + HYPER_RWDS<<16 + 6<<25 ' Latency????
+  long[banks][16+i] := HYPER_SELECT+i + HYPER_CLK<<8 + HYPER_RWDS<<16 + HYPER_LATENCY<<25 ' Latency????
 #endif
 
 exmem_mailbox[0] := -1
