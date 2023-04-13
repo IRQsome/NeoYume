@@ -279,7 +279,9 @@ Keymap:
 |C or X|C|
 |Y or Z|D|
 |Start|Start|
-|Mode (MD only)|Select|
+|Mode|Select|
+
+Note that on variants of this controller that lack a Mode/Select button, Start + X can be pressed instead (this is a feature of the controller firmware. Actually, they forgot to remove it even in the one that does have a Mode button)
 
 ## About
 
