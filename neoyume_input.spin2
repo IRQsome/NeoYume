@@ -15,11 +15,13 @@ CON ' Header
 
 OBJ
 #ifdef INPUT_USE_USB
-usb : "1CogKbM_neoyume.spin2"
+'usb : "1CogKbM_neoyume.spin2"
+usb: "usbnew" | EMUPAD_MAX_DEV = 2, EMUPAD_BT4_BIT = 12, EMUPAD_BT5_BIT = 13, EMUPAD_BT8_BIT = 9, EMUPAD_BT9_BIT = 8 
 #endif
 
 PUB main() | i,p,data,tmp
 #ifdef INPUT_USE_USB
+{
 usb.start(USB0_BASEPIN, USB0_BASEPIN + ENABLE_PIN, USB0_BASEPIN + DM_PIN, 0, $60,%11,%1100,%11<<16,%1100<<16)
 usb.setEmuPadMapping( 0,usb.KEY_UP)             ' Up
 usb.setEmuPadMapping( 1,usb.KEY_DOWN)           ' Down
@@ -31,6 +33,9 @@ usb.setEmuPadMapping( 6,usb.KEY_C)              ' C
 usb.setEmuPadMapping( 7,usb.KEY_V)              ' D
 usb.setEmuPadMapping( 8,usb.KEY_ENTER)          ' Start
 usb.setEmuPadMapping( 9,usb.KEY_BKSPACE)        ' Select
+'}
+usb.set_emupad_ptr($60)
+usb.start()
 cogstop(cogid)
 #endif
 
@@ -47,7 +52,8 @@ repeat
     if (p:=pin_table[i]) +< 64
       data.[i] := pinr(p)
       'pinw(p-4,data.[i])
-  long[$60] := data
+  long[$60] := data.word[0]
+  long[$64] := data.word[1]
 
 #endif
 
@@ -74,7 +80,8 @@ repeat
   data.word[0] := snes_buttonmap(tmp.word[0])
   data.word[1] := snes_buttonmap(tmp.word[1])
 
-  long[$60] := data
+  long[$60] := data.word[0]
+  long[$64] := data.word[1]
   waitms(1) ' idle time
 
 #endif

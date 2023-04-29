@@ -61,8 +61,8 @@ _lspc_animctr byte 0
 
               orgh $60
               ' control bit format is %ET_DCBA_RLDU (E=sElect,T=sTart)
-io_pl1_padw   word 0 ' < $60 (populated by USB code)
-io_pl2_padw   word 0 ' < $62 (populated by USB code)
+io_pl1_padw   long 0 ' < $60 (populated by USB code)
+io_pl2_padw   long 0 ' < $64 (populated by USB code)
 
               orgh $80
               ' Stuff set by upcode
