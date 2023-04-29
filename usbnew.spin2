@@ -2752,13 +2752,13 @@ hpad_translate
         if_01 bith      retval,#EMUPAD_RIGHT_BIT
 
               ' Buttons (TODO)
-              testb     hidr_buttons,#0         wc
+              testb     hidr_buttons,#2         wc
         if_c  bith      retval,#EMUPAD_BT0_BIT
               testb     hidr_buttons,#1         wc
         if_c  bith      retval,#EMUPAD_BT1_BIT
-              testb     hidr_buttons,#2         wc
-        if_c  bith      retval,#EMUPAD_BT2_BIT
               testb     hidr_buttons,#3         wc
+        if_c  bith      retval,#EMUPAD_BT2_BIT
+              testb     hidr_buttons,#0         wc
         if_c  bith      retval,#EMUPAD_BT3_BIT
               testb     hidr_buttons,#4         wc
         if_c  bith      retval,#EMUPAD_BT4_BIT
