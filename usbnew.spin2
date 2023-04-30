@@ -2189,9 +2189,9 @@ hkbd_translate
         if_z    bitnc   hkbd_emupad_buffer+0,#EMUPAD_BT2_BIT
                 cmp     hpar1,#$19 wz ' V
         if_z    bitnc   hkbd_emupad_buffer+0,#EMUPAD_BT3_BIT
-                cmp     hpar1,#$28 wz ' Enter
-        if_z    bitnc   hkbd_emupad_buffer+0,#EMUPAD_BT8_BIT
                 cmp     hpar1,#$2A wz ' Backspace
+        if_z    bitnc   hkbd_emupad_buffer+0,#EMUPAD_BT8_BIT
+                cmp     hpar1,#$28 wz ' Enter
         if_z    bitnc   hkbd_emupad_buffer+0,#EMUPAD_BT9_BIT
 
         end
