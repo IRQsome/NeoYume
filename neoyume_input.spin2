@@ -16,7 +16,11 @@ CON ' Header
 OBJ
 #ifdef INPUT_USE_USB
 'usb : "1CogKbM_neoyume.spin2"
-usb: "usbnew" | EMUPAD_MAX_DEV = 2, EMUPAD_BT4_BIT = 12, EMUPAD_BT5_BIT = 13, EMUPAD_BT8_BIT = 9, EMUPAD_BT9_BIT = 8 
+
+'' We try to positionally match the NeoGeo mini controller (NESW is CDBA)
+usb: "usbnew" | EMUPAD_MAX_DEV = 2, EMUPAD_BT0_BIT = 6, EMUPAD_BT1_BIT = 7, EMUPAD_BT2_BIT = 5, EMUPAD_BT3_BIT = 4,  ...
+                EMUPAD_BT4_BIT = -1, EMUPAD_BT5_BIT = -1, EMUPAD_BT6_BIT = 6, EMUPAD_BT7_BIT = 7,  ...
+                EMUPAD_BT8_BIT = 9, EMUPAD_BT9_BIT = 8 
 #endif
 
 PUB main() | i,p,data,tmp
@@ -34,6 +38,9 @@ usb.setEmuPadMapping( 7,usb.KEY_V)              ' D
 usb.setEmuPadMapping( 8,usb.KEY_ENTER)          ' Start
 usb.setEmuPadMapping( 9,usb.KEY_BKSPACE)        ' Select
 '}
+long[$6C] := usb.EMUPAD_MAX_RULES
+long[$68] := usb.get_emupad_rules()
+repeat while long[$68]
 usb.set_emupad_ptr($60)
 usb.start()
 cogstop(cogid)

@@ -54,6 +54,7 @@ OBJ
 video : "NeoVGA"
 c : "libc"
 a : "fsadapter.c"
+padmap: "padmap_parser"
 
 
 #ifdef USE_PSRAM16
@@ -92,7 +93,7 @@ video.start($F8,0,long[$20],VIDEO_MODE,VGA_BASEPIN,VGA_VSYNC,VIDEO_SUBMODE) '
 
 lspc_cog := coginit(COGEXEC_NEW,long[$34],0)
 blt_cog := coginit(COGEXEC_NEW,long[$38],0)
-coginit(COGEXEC_NEW,long[$44],0)
+coginit(COGEXEC_NEW,long[$44],0) ' Input cog
 
 'longmove(long[$24],@menu_palette,16)
 gen_gradient_palette(long[$24]+0*16*4,BG_NORMAL,FG_NORMAL)
@@ -109,6 +110,15 @@ putgfx(256,5,1,30,4)
 
 _mount(@"/sd",c._vfs_open_sdcard())
 exmem_start()
+
+#ifdef INPUT_USE_USB
+repeat until long[$68]
+tmp := c.fopen(@"/sd/PADMAP.TXT",@"r")
+if tmp
+  padmap.parse(long[$68],long[$6C],@c.fgetc,tmp,@"neoyume")
+  c.fclose(tmp)
+long[$68] := 0
+#endif
 
 tmp := c.malloc(64)
 c.sprintf(tmp,@"MAX %d MEGA",exmem_size+/$20000)
