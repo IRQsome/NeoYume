@@ -46,9 +46,9 @@ CON
     EMUPAD_KB_LEFT  = KEY_LEFT
     EMUPAD_KB_RIGHT = KEY_RIGHT
     EMUPAD_KB_BT0   = KEY_D
-    EMUPAD_KB_BT1   = KEY_X
+    EMUPAD_KB_BT1   = KEY_V
     EMUPAD_KB_BT2   = KEY_C
-    EMUPAD_KB_BT3   = KEY_V
+    EMUPAD_KB_BT3   = KEY_X
     EMUPAD_KB_BT4   = KEY_F
     EMUPAD_KB_BT5   = KEY_G
     EMUPAD_KB_BT6   = KEY_T
@@ -67,6 +67,22 @@ PUB test_main()
 
 PUB start() : r
   return coginit(COGEXEC_NEW,@usb_host_start,0)
+
+PUB set_basepin(pin)
+  usb_event_pin := pin
+  dm := pin+2
+  dp := pin+3
+
+PUB keystate(key) : r | tmp
+  if key >= $E0 && key < $E8
+    return not not (hkbd_report.byte[0] >> (key-$E0))
+  else
+    tmp := @hkbd_report + 2
+    repeat 6
+      if byte[tmp++] == key
+        return true
+    return false
+
 
 PUB set_emupad_ptr(ptr) ' Call before starting!
   if EMUPAD_MAX_DEV > 0
@@ -2084,11 +2100,8 @@ hget_kbd_in_report
                 setword hpar3, kb_in_max_pkt, #1        ' Always ask for max report size
                 call    #do_int_in
                 cmp     retval, #PID_ACK        wz
-        if_z    jmp     #.data
-                cmp     retval, #PID_NAK        wz
-        if_nz   jmp     #host_error                     ' Something other than ACK/NAK, so likely fatal
-                ret                                     ' No auto-repeat action
-.data
+        if_nz   ret                                     ' No ACK, ignore
+
                 cmp     hpar3, #0               wz
         if_z    ret                                     ' Ignore an empty DATAx packet
 
@@ -2300,11 +2313,8 @@ hget_gp_in_report
                 setword hpar3, #255, #1                 ' Always ask for max report size
                 call    #do_int_in
                 cmp     retval, #PID_ACK        wz
-        if_z    jmp     #.data
-                cmp     retval, #PID_NAK        wz
-        if_nz   jmp     #host_error                     ' Something other than ACK/NAK, so likely fatal
-                ret
-.data
+        if_nz   ret                                     ' No ACK, ignore
+
                 cmp     hpar3, #0               wz
         if_z    ret                                     ' Ignore an empty DATAx packet
 

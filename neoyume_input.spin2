@@ -50,6 +50,7 @@ long[$6C] := usb.EMUPAD_MAX_RULES
 long[$68] := usb.get_emupad_rules()
 repeat while long[$68]
 usb.set_emupad_ptr($60)
+usb.set_basepin(USB0_BASEPIN)
 usb.start()
 cogstop(cogid)
 #endif
