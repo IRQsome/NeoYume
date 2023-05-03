@@ -112,12 +112,12 @@ _mount(@"/sd",c._vfs_open_sdcard())
 exmem_start()
 
 #ifdef INPUT_USE_USB
-repeat until long[$68]
+repeat until long[$70]
 tmp := c.fopen(@"/sd/PADMAP.TXT",@"r")
 if tmp
-  padmap.parse(long[$68],long[$6C],@c.fgetc,tmp,@"neoyume")
+  padmap.parse(long[$70],long[$74],@c.fgetc,tmp,@"neoyume")
   c.fclose(tmp)
-long[$68] := 0
+long[$70] := 0
 #endif
 
 tmp := c.malloc(64)
@@ -273,6 +273,7 @@ c.strncat(common,gameptr,PATH_MAX-1) ' catenate prefix
 gameptr += strsize(gameptr)+1+1 ' advance to script
 long[$88] := 0 ' default to no bankswitch
 long[$A4] := 31 ' default to no tile masking
+byte[$79] := 0 ' default to 2 player mode
 ' Interpret load script
 repeat 
   case cmd := byte[gameptr++]
@@ -329,6 +330,8 @@ repeat
       long[$88] := 22 + negx
     SET_TILEMASK:
       long[$A4] := byte[gameptr++]
+    SET_4PLAYER:
+      byte[$79] := 1
     other:
       c.sprintf(fn1,@"bad script: %d !",cmd)
       putstring(fn1,2,25,0)
@@ -688,7 +691,7 @@ LOAD_BIOS
 LOAD_FILLER
 SET_PROG,SET_PORT,SET_UNUSED,SET_BIOS,SET_ADPCM_A,SET_ADPCM_B,SET_CHAR,SET_FIX,SET_Z80
 SET_BANKSWITCH_2M,SET_BANKSWITCH_4M,SET_BANKSWITCH_8M,SET_BANKSWITCH_PVC_8M
-SET_TILEMASK
+SET_TILEMASK,SET_4PLAYER
 
 LOADCMD_FIRST = LOAD_RAW
 LOADCMD_LAST = LOAD_BIOS-1 ' Note: LOAD_BIOS doesn't count

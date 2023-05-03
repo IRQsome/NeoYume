@@ -63,9 +63,13 @@ _lspc_animctr byte 0
               ' control bit format is %ET_DCBA_RLDU (E=sElect,T=sTart)
 io_pl1_padw   long 0 ' < $60 (populated by USB code)
 io_pl2_padw   long 0 ' < $64 (populated by USB code)
+io_pl3_padw   long 0 ' < $68 (populated by USB code)
+io_pl4_padw   long 0 ' < $6C (populated by USB code)
               
-              long 0 ' < $68 stupid hack to pass down pointer from USB code
-              long 0 ' < $6C
+              long 0 ' < $70 stupid hack to pass down pointer from USB code
+              long 0 ' < $74
+io_outputs    byte 0
+io_4pmode     byte 0 ' < $79 4 player board flag
 
               orgh $80
               ' Stuff set by upcode
@@ -358,7 +362,7 @@ mk_wr16_io
               jmp #iog_z80port_wr16             ' C2_xxxx (Z80 command)
               jmp #.undecoded                   ' C4_xxxx (nothing?)
               jmp #.undecoded                   ' C6_xxxx (nothing?)
-              jmp #.undecoded                   ' C8_xxxx (nothing?)
+              jmp #iog_outputs_wr16             ' C8_xxxx (nothing?)
               jmp #iog_latch_wr16               ' CA_xxxx (latches)
               jmp #iog_lspc_wr16                ' CC_xxxx (LSPC)
               'jmp #.undecoded                  ' CE_xxxx (nothing?)
@@ -377,7 +381,7 @@ mk_wr8_io
               jmp #iog_z80port_wr8              ' C2_xxxx (Z80 command)
               jmp #.undecoded                   ' C4_xxxx (nothing?)
               jmp #.undecoded                   ' C6_xxxx (nothing?)
-              jmp #.undecoded                   ' C8_xxxx (nothing?)
+              jmp #iog_outputs_wr8              ' C8_xxxx (nothing?)
               jmp #iog_latch_wr8                ' CA_xxxx (latches)
               jmp #iog_lspc_wr8                 ' CC_xxxx (LSPC)
               'jmp #.undecoded                  ' CE_xxxx (nothing?)
@@ -3380,17 +3384,32 @@ iog_status_b_rd16
               rczr pa wcz
               modcz _nc,_nz wcz
               rczl mk_memvalue
+              'bith mk_memvalue,#7
               rolbyte mk_memvalue,#0,#0
               ret wcz
 
 iog_p1stuff_rd16
-              rdbyte mk_memvalue,#io_pl1_padw
+              rdword mk_memtmp0,#io_outputs ' io_4pmode in top byte
+              testb  mk_memtmp0,#8 wc
+              testb mk_memtmp0,#0 wz ' OUT1 banks players
+    if_not_11 rdbyte mk_memvalue,#io_pl1_padw
+        if_11 rdbyte mk_memvalue,#io_pl3_padw
+              testb mk_memtmp0,#2 andc ' OUT3 is detect
+        if_10 bith   mk_memvalue,#4 ' Force A down
+        if_11 bith   mk_memvalue,#5 ' Force B down
               xor mk_memvalue,#$FF
               rolbyte mk_memvalue,#0,#0 ' DIPSW or SYSTYPE (again, does AES have these?)
               ret wcz
 
 iog_p2stuff_rd16
-              rdbyte mk_memvalue,#io_pl2_padw
+              rdword mk_memtmp0,#io_outputs ' io_4pmode in top byte
+              testb  mk_memtmp0,#8 wc
+              testb mk_memtmp0,#0 wz ' OUT1 banks players
+    if_not_11 rdbyte mk_memvalue,#io_pl2_padw
+        if_11 rdbyte mk_memvalue,#io_pl4_padw
+              testb mk_memtmp0,#2 andc ' OUT3 is detect
+        if_10 bith   mk_memvalue,#4 ' Force A down
+        if_11 bith   mk_memvalue,#5 ' Force B down
               xor mk_memvalue,#$FF
               rolbyte mk_memvalue,#0,#0 ' ????
               ret wcz
@@ -3411,6 +3430,18 @@ iog_latch_wr16
         if_11 loc pa,#palette32 + 0
         if_x1 wrlong pa,#curpalette_base_l
               ret wcz
+
+iog_outputs_wr8
+              testb mk_eacache,#0 wc
+        if_nc ret wcz
+iog_outputs_wr16
+              debug("outputs ",uhex_long(mk_eacache,mk_memvalue))
+              test mk_eacache,#%111_0000 wz ' Z = Is controller outputs
+      if_z    and mk_memvalue,#%111111
+      if_z    wrbyte mk_memvalue,#io_outputs
+              ret wcz
+            
+
 
 
 iog_lspc_wr8

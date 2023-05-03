@@ -1335,6 +1335,7 @@ byte LOAD_RAW,"059-V1",0,word $20_0
 byte LOAD_RAW,"216-V2",0,word $20_0
 byte LOAD_RAW,"059-V3",0,word $20_0
 byte LOAD_RAW,"216-V4",0,word $20_0
+byte SET_4PLAYER
 byte 0
 
 '' Note: Black screen
