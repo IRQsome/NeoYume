@@ -2252,14 +2252,14 @@ init_kbdm_data
                 wrbyte  #0, ptra++
                 cmp     ptra, pa                wcz
         if_b    jmp     #.loop
-
-                mov     pa, #hdev_init_start        ' Clear device data registers
-.regloop
-
+        
         if EMUPAD_MAX_DEV > 0
                 call #emupad_reset
         end
 
+
+                mov     pa, #hdev_init_start        ' Clear device data registers
+.regloop
                 altd    pa
                 mov     0-0, #0
                 add     pa, #1
@@ -3932,11 +3932,6 @@ CON ' USB Host constants
 '   BYTE_TGLF    = decod(BYTE_TGLB)         ' Same bit position as the USB rx RDPIN status constants defined above
     DWNSTRM_HUBF = decod(DWNSTRM_HUBB)      ' NYI: downstream hub(s) connected
     SUSPENDF     = decod(SUSPENDB)          ' NYI: command the host to signal a global suspend
-'------------------------------------------------------------------------------
-' P2 silicon revision detection:
-'------------------------------------------------------------------------------
-    #1, P2RevA, P2RevB
-'------------------------------------------------------------------------------
 
 CON ' USB Descriptor Definitions
 '------------------------------------------------------------------------------
