@@ -224,64 +224,41 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 
 Note: RAM requirements are rounded to the next highest of 4MB, 8MB, 16MB, 24MB, 32MB, 48MB, 64MB, 80MB, 96MB
 
-## USB Controller compatibility
+## USB Controllers
 
-Currently four types of USB controller are supported, see below sections.
+The default input map is as follows:
 
-Currently only one USB port is supported, so no 2 player mode (yes, no 2 player in a neo geo emu. complain that the USB driver is less than ideal.)
+|NeoGeo button|Keyboard (QWERTY)|Generic Gamepad|XInput / PS3       |RetroBit 6-button|
+|------------:|:----------------|:--------------|:------------------|:----------------|
+|Directions   |Arrow Keys       |X/Y axes or Hat|Left stick or D-Pad|D-Pad            |
+|A            |Z                |Button 4       |X / Square         |A                |
+|B            |X                |Button 3       |A / Cross          |B                |
+|C            |C                |Button 1       |Y / Triangle       |C                |
+|D            |V                |Button 2       |B / Circle         |Z                |
+|C (secondary)|                 |Button 7       |LT / L2            |X                |
+|D (secondary)|                 |Button 8       |RT / R2            |Y                |
+|Start        |Enter            |Button 10      |Start / Start      |Start            |
+|Select       |Backspace        |Button 9       |Select / Select    |Mode (or Start+X)|
 
-### Keyboard
+Gamepad maps can be user configured through a `PADMAP.TXT` file placed in the SD card root.
 
-Boot protocol / 6KRO mode only!
+Each line may have the following format:
+```
+neoyume <VID and PID> <C> <D> <B> <A> <ignored> <ignored> <also C> <also D> <Select> <Start> # <Comment>
+```
 
-Keymap (assuming QWERTY):
-|Keyboard|NeoGeo|
-|:-:|:-:|
-|<kbd>Arrow Keys</kbd>|Joystick|
-|<kbd>Z</kbd>|A|
-|<kbd>X</kbd>|B|
-|<kbd>C</kbd>|C|
-|<kbd>V</kbd>|D|
-|<kbd>Enter</kbd>|Start|
-|<kbd>Backspace</kbd>|Select|
+For example:
+```
+neoyume 20D6A713   4  3  2  1  5  6  7  8  9  10 # PowerA Switch controller
+```
 
-### Generic XInput gamepad
+Mappings for the NeoGeo mini controller (ID 0E6F1112) and RetroBit USB controllers (ID 0F0D00C1) are built-in to NeoYume. The mappings for the former should be obvious and for the latter are included in the table above.
 
-Not sure to what extent it works with actual XBox controllers, but it sure works with cheapo pads and the semi-secret XInput mode on an 8bitdo Retro Reciever.
+For more information, see [the usbnew documentation](https://github.com/Wuerfel21/usbnew/wiki/PADMAP.TXT-Format-and-the-reference-gamepad).
 
-Keymap emulates layout of a NeoGeo mini controller, thus:
-|XInput|NeoGeo|
-|:-:|:-:|
-|D-Pad or Left Analog|Joystick|
-|X|A|
-|A|B|
-|Y|C|
-|B|D|
-|Start|Start|
-|Back|Select|
+Keyboard controls can currently not be reconfigured (except by editing the source code). The keyboard always controls Player 1, independently of any connected game controllers.
 
-### NeoGeo mini controller
-
-Detected by PID 0x1112 VID 0x0E6F.
-
-Keymap should be obvious.
-
-### RetroBit SEGA Saturn/Megadrive controller
-
-Detected by PID 0x0011 VID 0x0079.
-
-Keymap:
-|SEGA|NeoGeo|
-|:-:|:-:|
-|D-Pad|Joystick|
-|A|A|
-|B|B|
-|C or X|C|
-|Y or Z|D|
-|Start|Start|
-|Mode|Select|
-
-Note that on variants of this controller that lack a Mode/Select button, Start + X can be pressed instead (this is a feature of the controller firmware. Actually, they forgot to remove it even in the one that does have a Mode button)
+NeoYume uses usbnew for usb input support, see [the usbnew wiki](https://github.com/Wuerfel21/usbnew/wiki) for info on further information on device compatibility.
 
 ## About
 
