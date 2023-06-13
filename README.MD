@@ -226,19 +226,21 @@ Note: RAM requirements are rounded to the next highest of 4MB, 8MB, 16MB, 24MB, 
 
 ## USB Controllers
 
+Many different kinds of USB controller are supported. For multiplayer, **a USB Hub must be used**.
+
 The default input map is as follows:
 
-|NeoGeo button|Keyboard (QWERTY)|Generic Gamepad|XInput / PS3       |RetroBit 6-button|
-|------------:|:----------------|:--------------|:------------------|:----------------|
-|Directions   |Arrow Keys       |X/Y axes or Hat|Left stick or D-Pad|D-Pad            |
-|A            |Z                |Button 4       |X / Square         |A                |
-|B            |X                |Button 3       |A / Cross          |B                |
-|C            |C                |Button 1       |Y / Triangle       |C                |
-|D            |V                |Button 2       |B / Circle         |Z                |
-|C (secondary)|                 |Button 7       |LT / L2            |X                |
-|D (secondary)|                 |Button 8       |RT / R2            |Y                |
-|Start        |Enter            |Button 10      |Start / Start      |Start            |
-|Select       |Backspace        |Button 9       |Select / Select    |Mode (or Start+X)|
+|NeoGeo button|Keyboard (QWERTY)|Generic Gamepad|XInput / PS3       |RetroBit 6-button|Neo Geo mini     |
+|------------:|:----------------|:--------------|:------------------|:----------------|:----------------|
+|Directions   |Arrow Keys       |X/Y axes or Hat|Left stick or D-Pad|D-Pad            |D-Pad            |
+|A            |Z                |Button 4       |X / Square         |A                |A                |
+|B            |X                |Button 3       |A / Cross          |B                |B                |
+|C            |C                |Button 1       |Y / Triangle       |C                |C                |
+|D            |V                |Button 2       |B / Circle         |Z                |D                |
+|C (secondary)|                 |Button 7       |LT / L2            |X                |                 |
+|D (secondary)|                 |Button 8       |RT / R2            |Y                |                 |
+|Start        |Enter            |Button 10      |Start / Start      |Start            |Start            |
+|Select       |Backspace        |Button 9       |Select / Select    |Mode (or Start+X)|Slect            |
 
 Gamepad maps can be user configured through a `PADMAP.TXT` file placed in the SD card root.
 
@@ -252,7 +254,7 @@ For example:
 neoyume 20D6A713   4  3  2  1  5  6  7  8  9  10 # PowerA Switch controller
 ```
 
-Mappings for the NeoGeo mini controller (ID 0E6F1112) and RetroBit USB controllers (ID 0F0D00C1) are built-in to NeoYume. The mappings for the former should be obvious and for the latter are included in the table above.
+Mappings for the NeoGeo mini controller (ID 0E6F1112) and RetroBit USB controllers (ID 0F0D00C1) are built-in to NeoYume, but can still be overridden using a PADMAP.TXT rule.
 
 For more information, see [the usbnew documentation](https://github.com/Wuerfel21/usbnew/wiki/PADMAP.TXT-Format-and-the-reference-gamepad).
 
