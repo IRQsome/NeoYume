@@ -63,6 +63,18 @@ Also note that I have not tested every single available game, YMMV
 - Run `build.sh`
 - Load the resulting `neoyume_lower.binary`
 
+### The game menu
+
+After loading, a menu will show a list of all detected games. The entries are colored:
+
+ - White entries are normal.
+ - Gray entries require more memory than is avaliable
+ - Red entries are games known to be broken
+ - Yellow entries are games known to have issues.
+
+You can select a game using Player 1's virtual controller. Pressing A or Start launches the selected game, pressing B toggles the BIOS region and pressing D brings up the credit/info screen.
+
+
 ## Game Compatibility
 
 Due to the nature of NeoGeo ROM dumps, the emulator requires prior knowledge of all games. Thus games not listed here (or rather, `neoyume_gamedb.spin2`) just will not even try to load.
