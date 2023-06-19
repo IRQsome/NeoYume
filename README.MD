@@ -14,7 +14,7 @@ Features include:
   - Low latency framebuffer-less high-level emulation
   - Pretty good audio
   - Video output over VGA, HDMI, YPbPr, S-video, Composite or 6bit RGB bus (ILI9342 LCD)
-  - USB input (Keyboard and select gamepads, see below) or direct hookup to discrete switches.
+  - Low-latency USB input (Keyboard and select gamepads, see below) or direct hookup to discrete switches.
   - Bugs. But not _that_ many.
 
 Forum thread, chronicalling development and other interesting info: https://forums.parallax.com/discussion/comment/1538689/#Comment_1538689
