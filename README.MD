@@ -59,7 +59,7 @@ Also note that I have not tested every single available game, YMMV
 - Configure video, audio, input and RAM in `config.spin2`
   - The comments hopefully explain the settings
   - See [RAMCONFIG.MD](RAMCONFIG.MD) for details on the RAM configuration
-- Make sure you have [flexspin](https://github.com/totalspectrum/spin2cpp) 6.1.6 or higher installed
+- Make sure you have [flexspin](https://github.com/totalspectrum/spin2cpp) 6.1.5 installed (WARNING: Version 6.1.6 and higher are currently broken!)
 - Run `build.sh`
 - Load the resulting `neoyume_lower.binary`
 
