@@ -2982,13 +2982,16 @@ ma_lineloop
               testb ma_curline,#1 wc
         if_c  add ptrb,##96*4*4*2
 
-.slotlp
-              rdlong ma_mtmp1,ptrb[2] wc
+              rdlong ma_mtmp1,ptrb[2] wc ' Read first address
         if_c  jmp #ma_lineloop ' got sentinel
-
 #ifdef USE_PSRAM_EITHER
               shl     ma_mtmp1,#MA_CHAR_ASHIFT ' sprite lines are 2 longs
+#endif
               add     ma_mtmp1,ma_char_base
+.slotlp
+
+#ifdef USE_PSRAM_EITHER
+
 #ifndef USE_PSRAM_NOBANKS
               mov ma_mtmp3,ma_mtmp1
               shr ma_mtmp3,#MA_BANKSHIFT
@@ -3020,6 +3023,10 @@ ma_lineloop
               fltl ma_psram_pinfield
               setq ma_nco_slow
               xcont ma_psram_readspr_cmd,#0
+              rdlong  ma_mtmp1,ptrb[2+4] wc ' Read address for next slot ( C = got sentinel )
+              add     ptrb,#4*4
+              shl     ma_mtmp1,#MA_CHAR_ASHIFT ' sprite lines are 2 longs
+              add     ma_mtmp1,ma_char_base
               waitxfi
               drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
 #ifdef USE_PSRAM_SLOW
@@ -3047,14 +3054,15 @@ ma_lineloop
               fltl #HYPER_BASE addpins 7
               setq ma_nco_slow
               xcont ma_hyper_readspr_cmd,#0
+              rdlong  ma_mtmp1,ptrb[2+4] wc ' Read address for next slot ( C = got sentinel )
+              add     ptrb,#4*4
+              add     ma_mtmp1,ma_char_base
               waitxfi
               drvl #HYPER_SELECT addpins (HYPER_BANKS-1)
               fltl #HYPER_CLK
 .irqshield
 #endif
-              add ptrb,#4*4
-              djnz ma_slotleft,#.slotlp
-              'debug("canary alive. Lorem ipsum dolor sit amet. Take it easy!")
+      if_nc   djnz ma_slotleft,#.slotlp ' fall through if sentinel got
               jmp #ma_lineloop
 
 
