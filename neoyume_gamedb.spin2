@@ -2,6 +2,7 @@ DAT
 
 gamelist word ' Note that these are in alphabetical order _of full title_
 wordfit @game_2020bb   - @gamedb_base
+wordfit @game_240ptest - @gamedb_base
 wordfit @game_3countb  - @gamedb_base
 wordfit @game_aodk     - @gamedb_base
 wordfit @game_alpham2  - @gamedb_base
@@ -2970,6 +2971,21 @@ byte SET_Z80
 byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
+
+game_240ptest byte "240ptest",0,"240p Test Suite",0,"2501-",0,GAME_OK
+byte SET_CHAR
+byte LOAD_CROM,"C1",0,"C2",0,word $20_0
+byte SET_PROG,SET_PORT
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1",0,word $08_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $01_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
 
 
 

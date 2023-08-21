@@ -86,6 +86,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |ROMset name|Title|RAM Required|Compatibility|
 |-|-|-:|-|
 |`2020bb`|2020 Super Baseball|8 MB|Works|
+|`240ptest`|[240p Test Suite](https://artemiourbina.itch.io/240p-test-suite)|4 MB|Audio Sync Test hangs, works otherwise|
 |`3countb`|3 Count Bout|16 MB|Works|
 |`aodk`|Aggressors of Dark Kombat|24 MB|Works|
 |`alpham2`|Alpha Mission 2|8 MB|Works|
