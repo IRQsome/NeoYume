@@ -855,6 +855,7 @@ GENERIC_TASKS = [
 
 ROMSET_TASKS = {
     "2020bb" => [],
+    "240ptest" => [],
     "3countb" => [],
     "aodk" => [],
     "alpham2" => [],
