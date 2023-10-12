@@ -13,7 +13,7 @@ CON ' Header
 ''
 
 VERSION_MAJOR = 1
-VERSION_MINOR = 2
+VERSION_MINOR = 3
 VERSION_RC    = -1
 
 #include "config.spin2"
@@ -37,6 +37,10 @@ FG_ISSUE  = $B0C040_00
 FG_BROKEN = $C04040_00
 FG_GREY   = $606060_00
 
+#0,BIOS_EXPORT,BIOS_JAPAN,BIOS_UNIBIOS,BIOS_MAXNUM
+
+DEFAULT_BIOS = USE_UNIBIOS ? BIOS_UNIBIOS : (USE_JP_BIOS ? BIOS_JAPAN : BIOS_EXPORT)
+
 VAR
 
 long exmem_mailbox[8*3]
@@ -45,7 +49,7 @@ long exmem_size
 
 byte lspc_cog,blt_cog,exmem_cog
 
-byte jpbios
+byte bios_type
 
 long loadpos
 
@@ -69,7 +73,7 @@ exmem : "hyperdrv.spin2"
 
 PUB main() | tmp,tmp2
 
-jpbios := USE_JP_BIOS
+bios_type := DEFAULT_BIOS
 
 org
               ' allocate all the locks like some sort of maniac    
@@ -147,9 +151,11 @@ if USE_ARGV && long[$FC000] == ("A" + "R"<<8 + "G"<<16 + "v"<<24) && word[$FC004
   tmp := $FC004 + 1 + strsize($FC004)
   if byte[tmp] <> 0
     ifnot c.strcasecmp(tmp,@"japan")
-      jpbios := true
+      bios_type := BIOS_JAPAN
     elseifnot c.strcasecmp(tmp,@"export")
-      jpbios := false
+      bios_type := BIOS_EXPORT
+    elseifnot c.strcasecmp(tmp,@"unibios")
+      bios_type := BIOS_UNIBIOS
     else
       putstring(@"ARGv invalid BIOS",2,10,0)
       repeat
@@ -301,10 +307,10 @@ repeat
       exptr += len
     LOAD_BIOS:
       c.strcpy(fn1,@"/sd/NEOYUME/NEOGEO/")
-      if jpbios
-        c.strncat(fn1,@"NEO-PO.BIN",PATH_MAX-1)
-      else
-        c.strncat(fn1,@"NEO-EPO.BIN",PATH_MAX-1)
+      case bios_type
+        BIOS_EXPORT:  c.strncat(fn1,@"NEO-EPO.BIN",PATH_MAX-1)
+        BIOS_JAPAN:   c.strncat(fn1,@"NEO-PO.BIN",PATH_MAX-1)
+        BIOS_UNIBIOS: c.strncat(fn1,@"UNI-BIOS.BIN",PATH_MAX-1)
       load_romdata(exptr,$2_0000,0,LOAD_BSWAP,fn1,0)
       exptr += $2_0000
     LOAD_FILLER:
@@ -580,7 +586,11 @@ repeat
   settiles(GAMECHOOSE_X,GAMECHOOSE_X+GAMECHOOSE_WIDTH-1,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2," ")
   c.sprintf(tmpstr,@"Got: %3d/%d",got_count,max_count)
   putstring(tmpstr,GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+1,3<<12)
-  putstring(jpbios?@"Using japanese BIOS":@"Using international BIOS",GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,0<<12)
+  case bios_type
+    BIOS_EXPORT:  tmp := @"Using international BIOS"
+    BIOS_JAPAN:   tmp := @"Using japanese BIOS"
+    BIOS_UNIBIOS: tmp := @"Using UniBIOS"
+  putstring(tmp,GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,0<<12)
   putstring(@"Hit D for credits!",GAMECHOOSE_X,27,0<<12)
 
   repeat
@@ -607,8 +617,11 @@ repeat
       if selected == drawlast and drawlast < maxgot
         repeat until byte[games_got][++drawtop]
       quit
-    if tmp.[5]
-      not jpbios
+    if tmp.[5] && ALLOW_BIOS_CHANGE
+      if bios_type == BIOS_MAXNUM-1
+        bios_type := 0
+      else
+        bios_type++
       quit
     if tmp.[7]
       settiles(0,39,GAMECHOOSE_Y,27," ")

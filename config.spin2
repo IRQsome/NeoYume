@@ -4,13 +4,21 @@ CON
 '' This can be defined to skip game selection
 '#define DIRECT_BOOT game_mslug
 
-'' Allow $FC000 parameter passing.
+'' Allow $FC000 parameter passing. (See README for more info)
 USE_ARGV = true
+
+'' Wether to use UniBIOS (uni-bios.bin).
+'' Version 4.0 is recommended.
+USE_UNIBIOS = false
 
 '' Wether to use japanese AES BIOS (neo-po.bin) or export AES BIOS (neo-epo.bin)
 '' This affects text language and regional censorship.
 '' (choose between red blood and being able to read the text, lol)
+'' This is ignored if USE_UNIBIOS is set.
 USE_JP_BIOS = false
+
+'' Wether to allow changing BIOS by pressing B in the game selection
+ALLOW_BIOS_CHANGE = true
 
 ' Enable one of these to select the exmem type to use
 #define USE_PSRAM16

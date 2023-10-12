@@ -27,7 +27,11 @@ Note: all filenames and paths are case-insensitive. The FAT driver without LFN a
 
 - Make sure your card is formatted to FAT32
 - Create a `NEOYUME` directory on the root of the card
-- Place your `neo-epo.bin` (or `neo-po.bin` for the Japanese BIOS) into `/NEOYUME/NEOGEO/` (i.e. `/NEOYUME/NEOGEO/NEO-EPO.BIN`)
+- Place at least one supported BIOS into `/NEOYUME/NEOGEO/`
+  - `neo-epo.bin` for the international AES BIOS
+  - `neo-po.bin` for the japanese AES BIOS
+  - `uni-bios.bin` for UniBIOS (can be downloaded at http://unibios.free.fr/download.html - don't forget to change file extension to .bin)
+  - The BIOS you want to use can be set in the config. You can also change it by pressing B on the game selection screen.
 - Unzip your MAME-style game ROMs into the `NEOYUME` directory, such that the paths look like this: `/NEOYUME/MSLUG/201-C1.BIN`. **All files must have a .bin extension, rename them if they have .c1,.v1,etc kinda extensions!**
 - Some games have multiple romset variations. You will need the one matching the game list entry.
 - Some games (noted in the compatibility list) require decryption/patching. To do this, use the romfix tool (see below)
@@ -42,7 +46,7 @@ To use it:
 #### Notes on acquiring ROMs legally
 
 As an alternative to illicit acquisition of game ROMs, you may also:
- - Purchase any SNK NeoGeo game rerelease on gog.com
+ - Purchase any\* SNK NeoGeo game rerelease on gog.com
  - Download the MacOS X version, which is a ZIP file
  - Unzip it
  - Find the ROMset inside (for Metal Slug, it is at `MetalSlug.app/Contents/Resources/mslug.zip`, for Last Blade it is `LastBlade.app/Contents/Resources/lastblad.zip`, etc)
@@ -50,7 +54,7 @@ As an alternative to illicit acquisition of game ROMs, you may also:
 
 Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere. don't feel bad. Their BIOS zip appears to originate from a pirate torrent (check the ZIP comment: `TORRENTZIPPED-347ABA77` lmao.) and contains unibios in violation of its license.
 
-Also note that I have not tested every single available game, YMMV
+\*Also note that I have not tested every single available game, YMMV
 
 ### Compiling
 
@@ -72,6 +76,13 @@ After loading, a menu will show a list of all detected games. The entries are co
 
 You can select a game using Player 1's virtual controller. Pressing A or Start launches the selected game, pressing B toggles the BIOS region and pressing D brings up the credit/info screen.
 
+### Command-line options
+
+Certain options can be passed using the $FC000 "ARGv" convention. This can, for example, be done using the -a switch of loadp2.
+
+To start directly into a particular game, skipping the menu, a game ID can be passed. Ex: `loadp2 neoyume_lower.binary -a mslug`
+
+You can also force the BIOS by passing a second parameter of `export`, `japan` or `unibios`. Ex: `loadp2 neoyume_lower.binary -a mslug japan`
 
 ## Game Compatibility
 

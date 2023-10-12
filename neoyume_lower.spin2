@@ -3375,7 +3375,7 @@ iog_z80port_wr8
 
 iog_status_a_rd16
               rdbyte mk_memvalue,#z80_reply_b
-              rolbyte mk_memvalue,#$1F,#0 ' Does a real AES _have_ a STATUS_A, anyways?
+              rolbyte mk_memvalue,#$07,#0 ' Coin 3/4 being always low is a weird way of detecting AES hardware used by unibios.
               ret wcz
 
 iog_status_b_rd16
