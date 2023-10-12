@@ -45,12 +45,10 @@ As an alternative to illicit acquisition of game ROMs, you may also:
  - Purchase any SNK NeoGeo game rerelease on gog.com
  - Download the MacOS X version, which is a ZIP file
  - Unzip it
- - Find the ROMset inside (for Metal Slug, it is at `MetalSlug.app/Contents/Resources/mslug.zip`)
- - Proceed as usual (don't foget to change file extensions to .bin).
+ - Find the ROMset inside (for Metal Slug, it is at `MetalSlug.app/Contents/Resources/mslug.zip`, for Last Blade it is `LastBlade.app/Contents/Resources/lastblad.zip`, etc)
+ - Proceed as usual (don't foget to run romfix.rb or change file extensions to .bin manually).
 
-Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere (don't feel bad, for they did for some reason (read: they probably just got a BIOS romset from a shady site themselves) include unibios, which is against its terms of use (then again, unibios itself exists in violation of copyright)).
-
-tl;dr; No sane soul gives a singular shart about BIOS copyrights, just download it. Be gay do crime.
+Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere. don't feel bad. Their BIOS zip appears to originate from a pirate torrent (check the ZIP comment: `TORRENTZIPPED-347ABA77` lmao.) and contains unibios in violation of its license.
 
 Also note that I have not tested every single available game, YMMV
 
