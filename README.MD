@@ -61,7 +61,7 @@ Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find
 - Configure video, audio, input and RAM in `config.spin2`
   - The comments hopefully explain the settings
   - See [RAMCONFIG.MD](RAMCONFIG.MD) for details on the RAM configuration
-- Make sure you have [flexspin](https://github.com/totalspectrum/spin2cpp) 6.1.5 installed (WARNING: Version 6.1.6 and higher are currently broken!)
+- Make sure you have [flexspin](https://github.com/totalspectrum/spin2cpp) 6.4.1 or newer installed
 - Run `build.sh`
 - Load the resulting `neoyume_lower.binary`
 
