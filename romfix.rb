@@ -618,7 +618,7 @@ class DecryptVTask < Struct.new(:newname,:srcfiles,:type)
     end
 end
 
-class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
+class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:oldname3,:type)
 
     MS5P_XOR1 = [0xc2, 0x4b, 0x74, 0xfd, 0x0b, 0x34, 0xeb, 0xd7, 0x10, 0x6d, 0xf9, 0xce, 0x5d, 0xd5, 0x61, 0x29, 0xf5, 0xbe, 0x0d, 0x82, 0x72, 0x45, 0x0f, 0x24, 0xb3, 0x34, 0x1b, 0x99, 0xea, 0x09, 0xf3, 0x03]
     MS5P_XOR2 = [0x36, 0x09, 0xb0, 0x64, 0x95, 0x0f, 0x90, 0x42, 0x6e, 0x0f, 0x30, 0xf6, 0xe5, 0x08, 0x30, 0x64, 0x08, 0x04, 0x00, 0x2f, 0x72, 0x09, 0xa0, 0x13, 0xc9, 0x0b, 0xa0, 0x3e, 0xc2, 0x00, 0x40, 0x2b]
@@ -665,6 +665,7 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
         raise unless rom1.size == 4*1024*1024
         raise unless rom2.size == 4*1024*1024
         data = String.new
+        puts "Warning: svc decrypt is unverified"
         (2*1024*1024).times do |i|
             if i < 0x4_0000
                 data << (rom1.getbyte(i*2+1) ^ SVCP_XOR1[(i*4+1)&31])
@@ -698,10 +699,57 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
         return out
     end
 
+    KOF2003HP_XOR1 = [0xc2, 0x4b, 0x74, 0xfd, 0x0b, 0x34, 0xeb, 0xd7, 0x10, 0x6d, 0xf9, 0xce, 0x5d, 0xd5, 0x61, 0x29, 0xf5, 0xbe, 0x0d, 0x82, 0x72, 0x45, 0x0f, 0x24, 0xb3, 0x34, 0x1b, 0x99, 0xea, 0x09, 0xf3, 0x03]
+    KOF2003HP_XOR2 = [0x2b, 0x09, 0xd0, 0x7f, 0x51, 0x0b, 0x10, 0x4c, 0x5b, 0x07, 0x70, 0x9d, 0x3e, 0x0b, 0xb0, 0xb6, 0x54, 0x09, 0xe0, 0xcc, 0x3d, 0x0d, 0x80, 0x99, 0x87, 0x03, 0x90, 0x82, 0xfe, 0x04, 0x20, 0x18]
+    def decrypt_pvc_kof2003h(rom1,rom2,rom3)
+        raise unless rom1.size == 4*1024*1024
+        raise unless rom2.size == 4*1024*1024
+        raise unless rom3.size == 1*1024*1024
+        data = String.new
+        puts "Warning: kof2003h decrypt is unverified"
+        (2*1024*1024).times do |i|
+            if i < 0x4_0000
+                data << (rom1.getbyte(i*2+1) ^ KOF2003HP_XOR1[(i*4+1)&31])
+                data << (rom1.getbyte(i*2  ) ^ KOF2003HP_XOR1[(i*4+0)&31])
+                data << (rom2.getbyte(i*2+1) ^ KOF2003HP_XOR1[(i*4+3)&31])
+                data << (rom2.getbyte(i*2  ) ^ KOF2003HP_XOR1[(i*4+2)&31])
+            else
+                data << bit_reorder(rom1.getbyte(i*2+1) ^ KOF2003HP_XOR2[(i*4+1)&31],6,7,4,5,3,2,1,0)
+                data << (rom1.getbyte(i*2  ) ^ KOF2003HP_XOR2[(i*4+0)&31])
+                data << (rom2.getbyte(i*2+1) ^ KOF2003HP_XOR2[(i*4+3)&31])
+                data << bit_reorder(rom2.getbyte(i*2  ) ^ KOF2003HP_XOR2[(i*4+2)&31],7,6,5,4,2,3,0,1)
+            end
+        end
+        (512*1024).times do |i|
+            ## TODO: Check
+            data << (rom3.getbyte(i*2+1) ^ rom2.getbyte(bit_reorder(i*2+1+0x100002,20,19,18,17,16,17,15,14,13,12,11,10,9,8,7,6,5,4,3,2,0)))
+            data << (rom3.getbyte(i*2  ) ^ rom2.getbyte(bit_reorder(i*2  +0x100002,20,19,18,17,16,17,15,14,13,12,11,10,9,8,7,6,5,4,3,2,0)))
+        end
+
+        raise unless data.size == 9*1024*1024
+        out = String.new
+        16.times do |i|
+            out << data.slice(bit_reorder(i,1,0,3,2)<<16,0x10000)
+        end
+        8.times do |bank|
+            bank = 8 if bank == 0
+            256.times do |block|
+                blkoff = bit_reorder(block,6,7,4,5,0,1,2,3)<<12
+                16.times do |subblock|
+                    out << data.slice((bank<<20)+blkoff+((subblock^4)<<8),256)
+                end
+            end
+        end
+
+        raise unless out.size == 9*1024*1024
+        return out
+    end
+
     def run(basepath,cleanup)
         newpath = File.join(basepath,newname+".bin")
         oldpath1 = File.join(basepath,oldname1+".bin")
         oldpath2 = File.join(basepath,oldname2+".bin")
+        oldpath3 = File.join(basepath,oldname3+".bin") if oldname3
         unless File.exist? newpath
             unless File.exist? oldpath1
                 puts "Missing file #{oldpath1} (for decryption to #{newpath})"
@@ -713,6 +761,13 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
             end
             data1 = File.binread(oldpath1)
             data2 = File.binread(oldpath2)
+            if oldname3
+                unless File.exist? oldpath3
+                    puts "Missing file #{oldpath3} (for decryption to #{newpath})"
+                    return false
+                end
+                data3 = File.binread(oldpath3)
+            end
             case type
             when :mslug5
                 puts "Decrypting #{oldpath1} and #{oldpath2} into #{newpath} (NEO-PVC mslug5)"
@@ -720,6 +775,9 @@ class DecryptPVCTask < Struct.new(:newname,:oldname1,:oldname2,:type)
             when :svc
                 puts "Decrypting #{oldpath1} and #{oldpath2} into #{newpath} (NEO-PVC svc)"
                 File.binwrite(newpath,decrypt_pvc_svc(data1,data2))
+            when :kof2003h
+                puts "Decrypting #{oldpath1}, #{oldpath2} and #{oldpath3} into #{newpath} (NEO-PVC kof2003h)"
+                File.binwrite(newpath,decrypt_pvc_kof2003h(data1,data2,data3))
             else raise
             end
         end
@@ -930,6 +988,12 @@ ROMSET_TASKS = {
         DecryptCTask["265-c%dd","265-c%d",4,:cmc50,0xec],
         DecryptVTask["265-vd",%w[265-v1 265-v2],0],
     ],
+    "kof2003h" => [
+        DecryptM1Task["271-m1k"],
+        DecryptCTask["271-c%dd","271-c%dk",4,:cmc50,0x9d],
+        DecryptVTask["271-vd",%w[271-v1c 271-v2c],5],
+        DecryptPVCTask["271-pd","271-p1k","271-p2k","271-p3k",:kof2003h],
+    ],
     "kotmh" => [],
     "kotm2" => [],
     "kizuna" => [],
@@ -971,7 +1035,7 @@ ROMSET_TASKS = {
     "mslug5h" => [
         DecryptM1Task["268-m1"],
         DecryptVTask["268-vd",%w[268-v1c 268-v2c],2],
-        DecryptPVCTask["268-pd","268-p1c","268-p2c",:mslug5],
+        DecryptPVCTask["268-pd","268-p1c","268-p2c",nil,:mslug5],
         DecryptCTask["268-c%dd","268-c%dc",4,:cmc50,0x19],
     ],
     "miexchng" => [],
@@ -1062,7 +1126,7 @@ ROMSET_TASKS = {
         DecryptM1Task["269-m1"],
         DecryptVTask["269-vd",%w[269-v1 269-v2],3],
         DecryptCTask["269-c%dd","269-c%dr",4,:cmc50,0x57],
-        DecryptPVCTask["269-pd","269-p1","269-p2",:svc],
+        DecryptPVCTask["269-pd","269-p1","269-p2",nil,:svc],
     ],
     "tws96" => [],
     "tophuntr" => [],

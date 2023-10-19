@@ -52,6 +52,7 @@ wordfit @game_kof99ka  - @gamedb_base
 wordfit @game_kof2000n - @gamedb_base
 wordfit @game_kof2001h - @gamedb_base
 wordfit @game_kof2002  - @gamedb_base
+wordfit @game_kof2003h - @gamedb_base
 wordfit @game_kotmh    - @gamedb_base
 wordfit @game_kotm2    - @gamedb_base
 wordfit @game_kizuna   - @gamedb_base
@@ -1082,6 +1083,23 @@ byte LOAD_RAW,"M1D",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
+' Broken
+game_kof2003h byte "kof2003h",0,"King of Fighters 2003",0,"271-",0,GAME_BROKEN
+byte SET_CHAR
+byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
+byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
+byte LOAD_CROM,"C5D",0,"C6D",0,word $100_0
+byte LOAD_CROM,"C7D",0,"C8D",0,word $100_0
+byte SET_PROG,SET_PORT+WITH_OFFSET,word $10_0,SET_BANKSWITCH_PVC_8M
+byte LOAD_RAW,"PD",0,word $90_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"VD",0,word $100_0
+byte SET_FIX
+byte LOAD_SROM_CMC+WITH_OFFSET,"C7D",0,"C8D",0,word $02_0,word $07F_0
+byte SET_Z80
+byte LOAD_RAW,"M1KD",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
 
 
 game_wh1h byte "wh1h",0,"World Heroes",0,"053-",0,GAME_OK
@@ -2330,7 +2348,7 @@ byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 
-' Note: Untested because I forgot I didn't have the 96MB board hooked up when adding this
+' Hangs after eyecatcher
 game_svc byte "svc",0,"SNK vs. Capcom - SVC Chaos",0,"269-",0,GAME_BROKEN
 byte SET_CHAR
 byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
