@@ -647,7 +647,7 @@ after_vsync
 
               cmp extra_pillar,#0 wz
         if_nz setq pixelnco_sync
-        if_nz xcont extra_pillar,#0
+        if_nz xcont extra_pillar,##$010101_00 ' Hack: funny little screens will misdetect video size if this is actually black
 
               testb vdp_mode,#0 wc' H40 flag
         if_c  call #vislineH40
@@ -655,7 +655,7 @@ after_vsync
 
               cmp extra_pillar,#0 wz
         if_nz setq pixelnco_sync
-        if_nz xcont extra_pillar,#0
+        if_nz xcont extra_pillar,##$010101_00 ' Hack: funny little screens will misdetect video size if this is actually black
 
               incmod subline,line_multiplier wc
         if_nc jmp #.active_vline
