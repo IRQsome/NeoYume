@@ -234,7 +234,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`trally`|Thrash Rally|8 MB|**Graphical issues**|
 |`twinspri`|Twinkle Star Sprites|24 MB|Works|
 |`ssideki4`|The Ultimate 11|32 MB|**Graphical issues**|
-|`viewpoint`|Viewpoint|16 MB|Works|
+|`viewpoin`|Viewpoint|16 MB|Works|
 |`gowcaizr`|Voltage Fighter - Gowcaizer|24 MB|Works|
 |`wakuwak7`|Waku Waku 7|**48 MB**|Works|
 |`wh1h`|World Heroes|16 MB|Works|
