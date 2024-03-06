@@ -6218,7 +6218,7 @@ opn_leftp               long 0
 opn_rightp              long 0
 
 opn_sampleRate          long 0
-opn_lpf_scas            long $1000 ' lower values lead to more muffled sound. $4000 is unfiltered
+opn_lpf_scas            long $1800 ' lower values lead to more muffled sound. $4000 is unfiltered
 ' Constants
 ' ---------
 opn_dac_center          long $7F80
