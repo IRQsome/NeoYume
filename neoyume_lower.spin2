@@ -787,7 +787,7 @@ mk_thelogicop and mk_memvalue,mk_optmp1 wz
 mk_getop_ram
               mov mk_memtmp0,mk_virtualpc
               add mk_virtualpc,#2
-              setword mk_memtmp0,#1,#1 ' main_ram!
+              setword mk_memtmp0,#@main_ram>>16,#1
               rdword mk_opword,mk_memtmp0
         _ret_ movbyts mk_opword,#%%3201
 
@@ -6217,9 +6217,8 @@ opn_muteChannels        long 0'%11_11
 opn_leftp               long 0
 opn_rightp              long 0
 
-              'long 0[10] ' The elder gods ask for this to be here.
 opn_sampleRate          long 0
-opn_lpf_scas            long $1000
+opn_lpf_scas            long $1000 ' lower values lead to more muffled sound. $4000 is unfiltered
 ' Constants
 ' ---------
 opn_dac_center          long $7F80
