@@ -13,8 +13,8 @@ CON ' Header
 ''
 
 VERSION_MAJOR = 1
-VERSION_MINOR = 3
-VERSION_RC    = -1
+VERSION_MINOR = 4
+VERSION_RC    = 0
 
 #include "config.spin2"
 

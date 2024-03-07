@@ -6772,7 +6772,7 @@ do_output
               add       opn_arg1,opn_outl
               add       opn_arg2,opn_outr
 
-              ' apply low-pass filter and mix PSG
+              ' apply low-pass filter
               scas      opn_arg1,opn_lpf_scas
               add       opn_filter_left,0-0
 
