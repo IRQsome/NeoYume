@@ -205,7 +205,7 @@ if x2 >= x1 and y2 >= y1
 PRI settile(x,y,tile) | i
 word[long[$28]+$E004+(x<<5+y)<<1] := tile
 
-PRI is_dualfile(cmd)
+PRI is_dualfile(cmd) : r
   return cmd == LOAD_CROM || cmd == LOAD_CROM+WITH_OFFSET || cmd == LOAD_SROM_CMC || cmd == LOAD_SROM_CMC+WITH_OFFSET
 
 PRI count_romsize(gameptr,count_all) : size | cmd
@@ -400,8 +400,17 @@ repeat while pos < size
       pushed:=tmp
     LOAD_BSWAP:
       c.fread(MKRAM_BASE,1,$10000,f1)
-      repeat i from MKRAM_BASE to MKRAM_BASE+$FFFC step 4
-        long[i] := __builtin_movbyts(long[i],%%2301)
+      'repeat i from MKRAM_BASE to MKRAM_BASE+$FFFC step 4
+      '  long[i] := __builtin_movbyts(long[i],%%2301)
+      org
+          loc ptrb,#\MKRAM_BASE
+          rdfast #0,ptrb
+          rep @.swaplp,##$10000/4
+          rflong i
+          movbyts i,#%%2301
+          wrlong i,ptrb++
+      .swaplp
+      end
       exmem_write(target+pos,MKRAM_BASE,$1_0000,false)
       pushed:=$10000
     LOAD_CROM:
