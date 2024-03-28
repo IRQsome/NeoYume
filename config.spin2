@@ -65,7 +65,7 @@ SDCARD_DI = 59
 SDCARD_DO = 58
 
 ' \/ Uncomment for fast ROM loading
-'#define _SDHC_45MHZ
+#define _SDHC_45MHZ
 
 
 '{
