@@ -64,6 +64,9 @@ SDCARD_SELECT = 60
 SDCARD_DI = 59
 SDCARD_DO = 58
 
+' \/ Uncomment for fast ROM loading
+'#define _SDHC_45MHZ
+
 
 '{
 VIDEO_MODE = vconst.MODE_VGA3X
@@ -159,6 +162,9 @@ SNES_PLAYER2 = 19
 '#define SNES_LAYOUT_COLORS
 
 '' Ignore stuff below
+#ifdef _SDHC_45MHZ
+#pragma exportdef _SDHC_45MHZ
+#endif
 
 #ifdef USE_PSRAM4
 #define USE_PSRAM_EITHER
