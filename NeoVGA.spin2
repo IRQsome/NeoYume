@@ -114,11 +114,11 @@ case mode
     wrpin(basepin+0,P_DAC_124R_3V|P_CHANNEL|(cogn<<8))
     wrpin((basepin+1) addpins 2,P_DAC_75R_2V|P_CHANNEL|(cogn<<8))
   MODE_COMPOSITE:
-    wrpin(basepin addpins 0,P_DAC_75R_2V|P_CHANNEL|(cogn<<8))
+    wrpin(basepin addpins 0,P_DAC_124R_3V|P_CHANNEL|(cogn<<8))
   MODE_SVIDEO:
-    wrpin(basepin addpins 1,P_DAC_75R_2V|P_CHANNEL|(cogn<<8))
+    wrpin(basepin addpins 1,P_DAC_124R_3V|P_CHANNEL|(cogn<<8))
   MODE_SVID_AND_COMP:
-    wrpin(basepin addpins 2,P_DAC_75R_2V|P_CHANNEL|(cogn<<8))
+    wrpin(basepin addpins 2,P_DAC_124R_3V|P_CHANNEL|(cogn<<8))
   MODE_YPBPR:
     wrpin((basepin+1) addpins 2,P_DAC_75R_2V|P_CHANNEL|(cogn<<8))
   MODE_LCD6:
