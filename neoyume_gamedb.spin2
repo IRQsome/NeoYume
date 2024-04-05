@@ -115,6 +115,7 @@ wordfit @game_samsho3h - @gamedb_base
 wordfit @game_samsho4  - @gamedb_base
 wordfit @game_samsho5h - @gamedb_base
 wordfit @game_samsh5sp - @gamedb_base
+wordfit @game_samsh5pf - @gamedb_base
 wordfit @game_savagere - @gamedb_base
 wordfit @game_sengoku  - @gamedb_base
 wordfit @game_sengoku2 - @gamedb_base
@@ -331,6 +332,26 @@ byte SET_FIX
 byte LOAD_SROM_CMC+WITH_OFFSET,"C7D",0,"C8D",0,word $02_0,word $07F_0
 byte SET_Z80
 byte LOAD_RAW,"M1D",0,word $02_0
+byte SET_BIOS,LOAD_BIOS
+byte 0
+
+' Aftermarket, dump should be decrypted to begin with
+game_samsh5pf byte "samsh5pf",0,"Samurai Shodown 5 Perfect",0,"273-",0,GAME_OK
+byte LOAD_CROM,"C1D",0,"C2D",0,word $100_0
+byte LOAD_CROM,"C3D",0,"C4D",0,word $100_0
+byte LOAD_CROM,"C5D",0,"C6D",0,word $100_0
+byte LOAD_CROM,"C7D",0,"C8D",0,word $100_0
+byte SET_PORT,SET_BANKSWITCH_8M
+byte LOAD_BSWAP+WITH_OFFSET,"P1",0,word $70_0, word $10_0
+byte SET_PROG
+byte LOAD_BSWAP,"P1",0,word $10_0
+byte SET_ADPCM_A,SET_ADPCM_B
+byte LOAD_RAW,"V1D",0,word $80_0
+byte LOAD_RAW,"V2D",0,word $80_0
+byte SET_FIX
+byte LOAD_SROM,"S1",0,word $02_0
+byte SET_Z80
+byte LOAD_RAW,"M1",0,word $02_0
 byte SET_BIOS,LOAD_BIOS
 byte 0
 

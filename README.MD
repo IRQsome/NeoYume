@@ -208,6 +208,7 @@ Note 2: I sometimes gloss over very minor issues that don't significantly impact
 |`samsho4`|Samurai Shodown 4|**48 MB**|Works|
 |`samsho5h`|Samurai Shodown 5|**96 MB**|Works (Needs decrypted C/V/M)|
 |`samsh5sp`|Samurai Shodown 5 Special|**96 MB**|Works (Needs decrypted C/V/M)|
+|`samsh5pf`|Samurai Shodown 5 Perfect|**96 MB**|Works (Needs pre-decrypted set)|
 |`savagere`|Savage Reign|32 MB|Works|
 |`sengoku`|Sengoku|8 MB|Works|
 |`sengoku2`|Sengoku 2|16 MB|Works|
