@@ -162,9 +162,6 @@ SNES_PLAYER2 = 19
 '#define SNES_LAYOUT_COLORS
 
 '' Ignore stuff below
-#ifdef _SDHC_45MHZ
-#pragma exportdef _SDHC_45MHZ
-#endif
 
 #ifdef USE_PSRAM4
 #define USE_PSRAM_EITHER

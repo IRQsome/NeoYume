@@ -18,6 +18,10 @@ VERSION_RC    = 0
 
 #include "config.spin2"
 
+#ifdef _SDHC_45MHZ
+#pragma exportdef _SDHC_45MHZ
+#endif
+
 MKRAM_BASE = $1_0000
 
 HEAPSIZE = 1024*8
