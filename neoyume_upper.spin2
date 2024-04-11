@@ -638,12 +638,7 @@ repeat
       quit
     if tmp.[7]
       settiles(0,39,GAMECHOOSE_Y,27," ")
-      i := GAMECHOOSE_Y
-      ent := @credits_text
-      repeat while byte[ent] <> 127
-        tmp2 := byte[ent++]
-        putstring(ent,2,i++,tmp2<<12)
-        ent += strsize(ent)+1
+      i := print_info(@credits_text,GAMECHOOSE_Y)
 #ifdef USE_PSRAM_EITHER
       i++
       ' A kingdom for compile time stringify
@@ -664,15 +659,35 @@ repeat
       c.sprintf(tmpstr,@"RWDS=%2d RESET=%2d(+%d)",HYPER_RWDS,HYPER_RESET&63,HYPER_RESET>>6)
       putstring(tmpstr,2,i++,3<<12)
 #endif
-      repeat
-        previnput := input
-        input := long[$60]
-        tmp := input & !previnput
-      until tmp & %1_1001_0000
+      input,previnput := anykey(input)
+
+      settiles(0,39,GAMECHOOSE_Y,27," ")
+      i := print_info(@license_text1,GAMECHOOSE_Y)
+      input,previnput := anykey(input)
+
+      settiles(0,39,GAMECHOOSE_Y,27," ")
+      i := print_info(@license_text2,GAMECHOOSE_Y)
+      input,previnput := anykey(input)
+
       settiles(0,39,GAMECHOOSE_Y,27," ")
       quit
     if tmp.[4] or tmp.[8]
       return
+
+PRI print_info(text,y) : i | color
+  i := y
+  repeat while byte[text] <> 127
+    color := byte[text++]
+    putstring(text,2,i++,color<<12)
+    text += strsize(text)+1
+
+PRI anykey(previnput) : r,s | input,tmp
+  repeat
+    input := long[$60]
+    tmp := input & !previnput
+    if tmp & %1_1001_0000
+      return input,previnput
+    previnput := input
 
 DAT
 
@@ -688,9 +703,48 @@ byte 0,"   Garry Jordan &",0
 byte 0," Marco Maccaferri: USB driver ",0
 byte 0,"        Roger Loh: exmem drivers",0
 byte 0,"",0
-byte 3,"This program is free software under.",0
-byte 3,"the MIT License and is provided",0
-byte 3,34,"as is",34,",without warranty of any kind.",0
+byte 0,"This program is free software under.",0
+byte 0,"the IESL v1. Press any key to view",0
+byte 0,"license terms.",0
+byte 127
+
+license_text1
+byte 1,"IRQsome Ethical Source License (v1)",0
+byte 3,"-----------------------------------",0
+byte 0,"Permission is granted to any person",0 
+byte 0,"obtaining a copy of this software",0
+byte 0,"(and related materials) to use the",0
+byte 0,"software freely in any way the heart",0
+byte 0,"desires, under the condition that:",0
+byte 0,0
+byte 0,"1. This copyleft notice must be",0
+byte 0," included with any copy of a sub-",0
+byte 0," stantial portion of the software.",0
+byte 0,0
+byte 0,"2. Modified versions of the software",0
+byte 0,"must be marked as such and recipents",0
+byte 0,"must also receive the modified",0
+byte 0,"source code.",0
+byte 0,0
+byte 0,"[continued on next page]",0
+byte 127
+
+license_text2
+byte 0,"3. The software must be used for",0
+byte 0,"Good, not Evil. Evil may include any",0
+byte 0,"usage contributing or otherwise rel-",0
+byte 0,"ating to the development or impleme-",0
+byte 0,"ntation of: lethal weaponry or other",0
+byte 0,"means of murder, automated behaviour",0
+byte 0,"tracking and surveillance systems,",0
+byte 0,"'AI' systems designed to unconsen-",0
+byte 0,"sually exploit labor and/or produce",0
+byte 0,"fake media of any kind.",0
+byte 0,0
+byte 0,"4. The author(s) of the software",0
+byte 0,"must not be held responsible for any",0
+byte 0,"damages arising from use of the",0
+byte 0,"software.",0
 byte 127
 
 PRI gen_gradient_palette(ptr,bg,fg) | i
