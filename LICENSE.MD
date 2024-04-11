@@ -6,7 +6,7 @@ Permission is granted to any person obtaining a copy of this software (and relat
 
 1. This copyleft notice must be included with any copy of a substantial portion of the software.
 
-2. Modified versions of the software must be marked as such and recipents must also receive the modified source code.
+2. Modified versions of the software must be marked as such and recipients must also receive the modified source code.
 
 3. The software must be used for Good, not Evil. Evil may include any usage contributing or otherwise relating to the development or implementation of: lethal weaponry or other means of murder, automated behaviour tracking and surveillance systems, "AI" systems designed to unconsensually exploit labor and/or produce fake media of any kind.
 

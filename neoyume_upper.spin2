@@ -722,9 +722,9 @@ byte 0," included with any copy of a sub-",0
 byte 0," stantial portion of the software.",0
 byte 0,0
 byte 0,"2. Modified versions of the software",0
-byte 0,"must be marked as such and recipents",0
-byte 0,"must also receive the modified",0
-byte 0,"source code.",0
+byte 0,"must be marked as such and",0
+byte 0,"recipients must also receive the",0
+byte 0,"modified source code.",0
 byte 0,0
 byte 0,"[continued on next page]",0
 byte 127
