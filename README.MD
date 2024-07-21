@@ -53,7 +53,7 @@ For DotEmu releases:
  - Find the ROMset inside (for Metal Slug, it is at `MetalSlug.app/Contents/Resources/mslug.zip`, for Last Blade it is `LastBlade.app/Contents/Resources/lastblad.zip`, for Twinkle Star Sprites it is `TwinkleStarSprites.app/Contents/twinspri.zip` etc)
  - Proceed as usual (don't foget to run romfix.rb or change file extensions to .bin manually).
 
-For CodeMythics releases:
+For CodeMystics releases:
  - Currently only _The Last Blade 2_ is supported
  - Install the game or use the `innoextract` package to unpack the installer
  - Copy the game files from `Data/rom` into your NEOYUME directory
