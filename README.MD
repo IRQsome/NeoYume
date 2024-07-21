@@ -39,22 +39,29 @@ Note: all filenames and paths are case-insensitive. The FAT driver without LFN a
 #### Using the romfix tool
 `romfix.rb` is a Ruby script that automatically decrypts/patches ROMs that need it. As a bonus, it also takes care of any renaming that may be neccessary.
 To use it:
- - Make sure you have a Ruby interpreter installed (On Windows, you can use [RubyInstaller](https://rubyinstaller.org))
+ - Make sure you have a recent Ruby interpreter installed (On Windows, you can use [RubyInstaller](https://rubyinstaller.org))
  - Copy `romfix.rb` into your NEOYUME directory.
  - Open a command prompt there and run `ruby ./romfix.rb`. You may also use `ruby ./romfix.rb --cleanup` to have it automatically delete unneeded files.
 
 #### Notes on acquiring ROMs legally
 
-As an alternative to illicit acquisition of game ROMs, you may also:
- - Purchase any\* SNK NeoGeo game rerelease on gog.com
+As an alternative to illicit acquisition of game ROMs, you may also purchase a PC release on a store such as gog.com and copy out the files.
+
+For DotEmu releases:
  - Download the MacOS X version, which is a ZIP file
  - Unzip it
- - Find the ROMset inside (for Metal Slug, it is at `MetalSlug.app/Contents/Resources/mslug.zip`, for Last Blade it is `LastBlade.app/Contents/Resources/lastblad.zip`, etc)
+ - Find the ROMset inside (for Metal Slug, it is at `MetalSlug.app/Contents/Resources/mslug.zip`, for Last Blade it is `LastBlade.app/Contents/Resources/lastblad.zip`, for Twinkle Star Sprites it is `TwinkleStarSprites.app/Contents/twinspri.zip` etc)
  - Proceed as usual (don't foget to run romfix.rb or change file extensions to .bin manually).
 
-Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere. don't feel bad. Their BIOS zip appears to originate from a pirate torrent (check the ZIP comment: `TORRENTZIPPED-347ABA77` lmao.) and contains unibios in violation of its license.
+For CodeMythics releases:
+ - Currently only _The Last Blade 2_ is supported
+ - Install the game or use the `innoextract` package to unpack the installer
+ - Copy the game files from `Data/rom` into your NEOYUME directory
+ - Run romfix.rb (see above) to convert the files to MAME format
 
-\*Also note that I have not tested every single available game, YMMV
+Note that the AES BIOS ROM (neo-epo.bin) is not included, so you'll have to find it elsewhere. don't feel bad. DotEmu's BIOS zip appears to originate from a pirate torrent (check the ZIP comment: `TORRENTZIPPED-347ABA77` lmao.) and contains unibios in violation of _its_ license.
+
+(Also note that I have not tested every single available game, YMMV)
 
 ### Compiling
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # encoding: utf-8
 # frozen_string_literal: true
 
@@ -902,6 +903,77 @@ class DeleteTask < Struct.new(:oldname)
     end
 end
 
+class SplitTask < Struct.new(:oldname,:splits)
+    def run(basepath,cleanup)
+        oldpath = File.join(basepath,oldname+".bin")
+        unless splits.all?{File.exist? File.join(basepath,_1[0]+".bin")}
+            if File.exist?(oldpath)
+                data = File.binread(oldpath)
+                splits.each do |(newname,range)|
+                    newpath = File.join(basepath,newname+".bin")
+                    puts "Splitting #{range} from #{oldpath} to #{newpath}"
+                    File.binwrite(newpath,data[range])
+                end
+            else
+                puts "Missing file #{oldpath} (for splitting into #{splits.map{_1[0]}.join(?,)}) - IGNORE if not using a PC port ROM!"
+            end
+        end
+        try_delete oldpath if cleanup
+        return true
+    end
+end
+
+class ReinterleaveTask < Struct.new(:basename,:oldname,:parts,:partsize)
+    def run(basepath,cleanup)
+        oldpath = File.join(basepath,oldname+".bin")
+        newpaths = Array.new(parts){File.join(basepath,(basename%[_1+1])+".bin")}
+        unless newpaths.all?{File.exist? _1}
+            if File.exist?(oldpath)
+                puts "Reinterleaving #{oldpath} (into #{parts} parts of #{partsize} bytes)"
+                data = File.binread(oldpath)
+                odd = String.new
+                even = String.new
+                (data.size/4).times do |byte|
+                    b0 = 0
+                    b1 = 0
+                    b2 = 0
+                    b3 = 0
+                    tile = byte>>5
+                    4.times do |bitpair|
+                        b0 <<= 2
+                        b1 <<= 2
+                        b2 <<= 2
+                        b3 <<= 2
+                        x = 6 - bitpair*2 + 8 - ((byte&16) >> 1)
+                        y = byte&15
+                        chrbyte = data[(x>>1)+y*8+tile*128].ord
+                        b0 |= chrbyte[0]
+                        b0 |= chrbyte[4] << 1
+                        b1 |= chrbyte[1]
+                        b1 |= chrbyte[5] << 1
+                        b2 |= chrbyte[2]
+                        b2 |= chrbyte[6] << 1
+                        b3 |= chrbyte[3]
+                        b3 |= chrbyte[7] << 1
+                    end
+                    odd << b0
+                    odd << b1
+                    even << b2
+                    even << b3
+                end
+                (parts/2).times do |i|
+                    File.binwrite(newpaths[i*2],odd[i*partsize,partsize])
+                    File.binwrite(newpaths[i*2+1],even[i*partsize,partsize])
+                end
+            else
+                puts "Missing file #{oldpath} (for reinterleaving) - IGNORE if not using a PC port ROM!"
+            end
+        end
+        try_delete oldpath if cleanup
+        return true
+    end
+end
+
 GENERIC_TASKS = [
     DeleteTask[/^(uni-bios|sp-|sp1|sm1|sfix|000-lo|v2\.bin|vs-bios|asia-|japan-|usa_)/], # Delete redundant BIOS files
     RenameTask[->(md){"#{md[1]}-#{md[2]}.bin"},/^(\d+)\.((m|c|p|sp|v|s)\d+)$/], # Rename funny extensions WITH MISSING NAME COMPONENTS WTF
@@ -998,7 +1070,23 @@ ROMSET_TASKS = {
     "kotm2" => [],
     "kizuna" => [],
     "lastblad" => [],
-    "lastbld2" => [],
+    "lastbld2" => [
+        # Tasks for CodeMystics GoG release only
+        SplitTask["v1",[
+            ["243-v1",0x00_0000..0x3F_FFFF],
+            ["243-v2",0x40_0000..0x7F_FFFF],
+            ["243-v3",0x80_0000..0xBF_FFFF],
+            ["243-v4",0xC0_0000..0xFF_FFFF],
+        ]],
+        SplitTask["p1",[
+            ["243-pg1",0x00_0000..0x0F_FFFF],
+            ["243-pg2",0x10_0000..0x4F_FFFF],
+        ]],
+        ReinterleaveTask["243-c%d","c1",6,0x80_0000],
+        RenameTask["243-m1.bin","m1.bin"],
+        RenameTask["243-s1.bin","s1.bin"],
+        DeleteTask[/sp_4[js].bin/],
+    ],
     "lresort" => [],
     "lbowling" => [],
     "legendos" => [],
