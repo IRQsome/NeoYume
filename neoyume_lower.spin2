@@ -5843,8 +5843,9 @@ opn_init
               'getqx opn_sampleRate
               mov opn_sampleRate,##CLK_MULTIPLIER*3*4*6*6
               test opn_sampleRate,#255 wz
-        if_z  mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_PWM
-        if_nz mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_RND
+        'if_z  mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_PWM
+        'if_nz mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_RND
+              mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_PWM
 
 
               fltl     opn_leftp
@@ -7913,11 +7914,11 @@ opn_frqhi   byte 0[4+3]
 DAT ' MEMORY
               orgh
 alignl
-mk_romque_area
-              word 0[MK_ROMQUE_SIZE]
-              byte 0[4] ' padding
 mk_romio_area
               byte 0[16]
+              byte 0[4] ' padding
+mk_romque_area
+              word 0[MK_ROMQUE_SIZE]
               byte 0[4] ' padding
 
 adpcm_buffers
