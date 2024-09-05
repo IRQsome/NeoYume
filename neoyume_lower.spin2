@@ -3499,7 +3499,7 @@ iog_lspc_rd16
               orgh .lspcrd_base + 2*8*4 ' Read LSPC status
               rdbyte mk_memvalue,#_lspc_animctr
               rdlong mk_memtmp0,#video_line_ctr
-              add mk_memtmp0,#$100
+              add mk_memtmp0,#$100 ' TODO: I want to say this is all very wrong?
               shl mk_memtmp0,#7
               setword mk_memtmp0,#0,#1
               or mk_memvalue,mk_memtmp0
@@ -3849,6 +3849,7 @@ blt_linelp
               mov blt_tmp1,blt_colorptr
               add blt_tmp1,##(256*16-2)*4
               rdlong blt_tmp1,blt_tmp1
+              'mov blt_tmp1,##$FF00FF000 ' DEBUG: FORCE PINK BACKDROP
               setd .thewr,blt_tmp1
               ror blt_tmp1,#9
               setq blt_augd_mask
@@ -5663,7 +5664,7 @@ CON ' OPNBCog constants
   VOLUME_BALANCE = 0.8 ' Balance between FM/ADPCM and SSG. 1.0 is all FM/ADPCM, 0.0 is all SSG
 
 
-  OVERDRIVE = 1.0
+  OVERDRIVE = 1.2
 
   OPN_VOLUME_MUL = trunc((float($7F7F)*float(1<<14)*VOLUME_BALANCE)/float(4096*4+3840*6+16320)*OVERDRIVE)
 
@@ -5838,24 +5839,22 @@ opn_init
 
               'rdlong opn_arg2,#_clkf
               'qdiv opn_arg2,##OPN_SAMPLE_RATE
-              mov opn_leftp,#AUDIO_LEFT
-              mov opn_rightp,#AUDIO_RIGHT
               'getqx opn_sampleRate
               mov opn_sampleRate,##CLK_MULTIPLIER*3*4*6*6
-              test opn_sampleRate,#255 wz
+              'test opn_sampleRate,#255 wz
         'if_z  mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_PWM
         'if_nz mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_RND
               mov opn_arg1,##P_DAC_75R_2V|P_OE|P_DAC_DITHER_PWM
 
 
-              fltl     opn_leftp
-              fltl     opn_rightp
-              wrpin    opn_arg1,opn_leftp
-              wrpin    opn_arg1,opn_rightp
-              wxpin    opn_sampleRate,opn_leftp
-              wxpin    opn_sampleRate,opn_rightp
-              wypin    opn_dac_center,opn_leftp
-              wypin    opn_dac_center,opn_rightp
+              fltl     #AUDIO_LEFT
+              fltl     #AUDIO_RIGHT
+              wrpin    opn_arg1,#AUDIO_LEFT
+              wrpin    opn_arg1,#AUDIO_RIGHT
+              wxpin    opn_sampleRate,#AUDIO_LEFT
+              wxpin    opn_sampleRate,#AUDIO_RIGHT
+              wypin    opn_dac_center,#AUDIO_LEFT
+              wypin    opn_dac_center,#AUDIO_RIGHT
 
               'debug(` TERM EGterm pos 10 10 title 'Envelope Parameters' SIZE 50 26 TEXTSIZE 15 UPDATE)
               'debug(` TERM OPterm pos 600 10 title 'Operator Parameters' SIZE 32 26 TEXTSIZE 15 UPDATE)
@@ -5872,8 +5871,8 @@ opn_init
 
               'drvl #38 addpins 1 ' DEBUG LED
 
-              drvh     opn_leftp
-              drvh     opn_rightp
+              drvh     #AUDIO_LEFT
+              drvh     #AUDIO_RIGHT
 
               jmp #\opn_mainLoop
 
@@ -6215,8 +6214,9 @@ opn_eval_freq
 ' Parameters
 ' ----------
 opn_muteChannels        long 0'%11_11
-opn_leftp               long 0
-opn_rightp              long 0
+'opn_leftp               long 0
+'opn_rightp              long 0
+'opn_mailpin             long -1
 
 opn_sampleRate          long 0
 opn_lpf_scas            long $1800 ' lower values lead to more muffled sound. $4000 is unfiltered
@@ -6792,10 +6792,18 @@ do_output
               '}
 
               ' wait for DAC cycle
-              testp    opn_rightp wc
+              testp    #AUDIO_LEFT wc
   if_nc       jmp #$-1
-              wypin      opn_arg1,opn_leftp
-       _ret_  wypin      opn_arg2,opn_rightp
+              wypin      opn_arg1,#AUDIO_LEFT
+              wypin      opn_arg2,#AUDIO_RIGHT
+              setword    opn_arg1,opn_filter_left,#0
+              setword    opn_arg1,opn_filter_right,#1
+  if DIGITAL_BASEPIN >=0
+        _ret_ wxpin      opn_arg1,#DIGITAL_BASEPIN
+  else
+              ret
+  end
+
 
 
 '===========================================================

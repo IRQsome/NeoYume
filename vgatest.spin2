@@ -1,0 +1,18 @@
+
+#include "config.spin2"
+
+_CLKFREQ = video.VIDEO_CLKFREQ
+DEBUG_TIMESTAMP = True
+
+VAR
+long scanbuffer[(320+16)*2]
+long vdpmode
+long linect,framect
+
+OBJ
+video: "NeoVGA"
+
+PUB main()
+scanbuffer[0] := $FF000000
+scanbuffer[320+16] := $0000FF00
+video.start(ANALOG_BASEPIN&63 + (DIGITAL_BASEPIN&63)<<8 + (DIGITAL_REVERSED?64<<8:0),VSYNC_PIN&63,VIDEO_MODE,VIDEO_SUBMODE,@scanbuffer,16*4,2,@linect,@vdpmode,video.CLK_MULTIPLIER*3*4*6*6)
