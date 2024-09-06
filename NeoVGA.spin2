@@ -1157,7 +1157,7 @@ init_hdmi ' HDMI (=DVI + audio)
             qfrac temp1,audio_period
             getqx resample_ratio_frac
             mov resample_dejitter_period,audio_period
-            sub resample_dejitter_phase,#1
+            sub resample_dejitter_period,#1
 
             ' Setup audio clock packet
             mov packet_header,#$00_00_00_01 ' Clock packet
