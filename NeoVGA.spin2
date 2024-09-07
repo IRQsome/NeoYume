@@ -47,6 +47,10 @@ case mode
     timing := @timing_line2x
     'timing := @timing_owieouch
     'timing := @timing_tmds_640x480
+  MODE_RGBS:
+    cmode := @cmode_rgbs
+    initf := @init_rgbs
+    timing := @timing_line2x
   MODE_DVI:
     cmode := @cmode_rgbhv_tmds
     initf := @init_dvi
@@ -94,6 +98,18 @@ long $00_5A_00_00   ' CI
 long $00_00_5A_00   ' CQ
 long 0              ' CQ XOR value (NTSC/PAL only)
 
+cmode_rgbs ' RGB + CSync mode
+long $00_00_00_00   ' DAC blanking value
+long $00_00_00_00   ' Blanking color
+long $00_00_00_01   ' HSync color
+long $00_00_00_01   ' VSync color
+long $00_00_00_00   ' HSync+VSync color
+long 0              ' Color burst color (NTSC/PAL only)
+long 0              ' Color burst frequency  (NTSC/PAL only)
+long $5A_00_00_00   ' CY
+long $00_5A_00_00   ' CI
+long $00_00_5A_00   ' CQ
+long 0              ' CQ XOR value (NTSC/PAL only)
 
 DAT ' Timings
 
