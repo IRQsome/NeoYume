@@ -343,6 +343,7 @@ altres_pillar long (WIDTH - WIDTH_ALT)/2
 linecmd       long WIDTH
 linecmd_alt   long WIDTH_ALT
 bitbangcmd    long 1
+packetblank   long 32
 bit31         long 1<<31
 min31         long $C000_0000
 max31         long $3FFF_FFFF
@@ -369,8 +370,9 @@ audio_poll_repo
 
 
 '' HDMI-related small functions
-island_tx_h
-              mov pa,##TMDS_GUARDDAT_H
+
+'island_tx_h
+              'mov pa,##TMDS_GUARDDAT_H
 island_tx
               ' guard character in PA, length in PB, data at PTRA
               xcont hsync_guardband,pa
@@ -380,14 +382,42 @@ island_tx
 .loop
         _ret_ xcont hsync_guardband,pa
 
+audio_island_tx_hv
+              mov pa,##TMDS_GUARDDAT_HV
+              mov temp1,hvsync_color
+              loc ptrb,#\packet_aclk_v
+              jmp #audio_island_tx
+audio_island_tx_h
+              mov pa,##TMDS_GUARDDAT_H
+              mov temp1,hsync_color
+              loc ptra,#\packet_audio
+              loc ptrb,#\packet_aclk
+audio_island_tx
+              cmpsub hdmi_regen_counter,hdmi_regen_period wc
+              loc ptra,#\packet_audio
+              xcont hsync_guardband,pa
+              rep @.loop,#32
+              rdlut pb,ptra++
+              xcont bitbangcmd,pb
+.loop
+        if_nc jmp #.no2nd
+              rep @.loop2,#32 ' PB is latched, we can clobber it
+              rdlut pb,ptrb++
+              xcont bitbangcmd,pb
+.loop2
+        _ret_ xcont hsync_guardband,pa
+.no2nd
+              xcont hsync_guardband,pa
+        _ret_ xcont packetblank,temp1
+
+
 hsync_hdmi_vbi ' Hsync during V blanking
               call audio_poll_func
               xzero hsync_tip,hsync_color ' this is the data preamble
               tjs vsync_pin,#.no_v
               drvh vsync_pin ' should only be 4 cycles late
 .no_v         
-              loc ptra,#\$340
-              callpb #32,#island_tx_h
+              call #audio_island_tx_h
               xcont hsync_bp,blank_color
               call audio_poll_func
               jmp #vline_update
@@ -395,8 +425,7 @@ hsync_hdmi_vbi ' Hsync during V blanking
 hsync_hdmi_previd ' Hsync during active video
               call audio_poll_func
               xzero hsync_tip,hsync_color
-              loc ptra,#\$340
-              callpb #32,#island_tx_h
+              call #audio_island_tx_h
               xcont hsync_bpshort,##TMDS_PREVID
               call audio_poll_func
               xcont hsync_guardband,##TMDS_GUARDVID ' take note that this is a mere 20 cycles
@@ -408,9 +437,7 @@ vsync_hdmi
               tjs vsync_pin,#.no_v
               drvl vsync_pin ' should only be 4 cycles late
 .no_v         
-              loc ptra,#\$340
-              mov pb,#32
-              callpa ##TMDS_GUARDDAT_HV,#island_tx
+              call #audio_island_tx_hv
               cmp lines_left,sync_lines wz
         if_nz jmp #.no_infopkt
               ' send extra data on first line of Vsync (arbitrary convenient time)
@@ -418,7 +445,7 @@ vsync_hdmi
               call audio_poll_func
               call #vline_update ' update client on time
               mov pb,#INFO_PACKETS*32
-              loc ptra,#\$300
+              loc ptrb,#\packet_aviinfo
               callpa ##TMDS_GUARDDAT_V,#island_tx
               xcont blankline_packets,vsync_color ' Shortened
 .vsyn_task    mov scanfunc,#dummy_func
@@ -524,8 +551,10 @@ resample_phase_frac res 1
 resample_phase_int  res 1
 resample_dejitter_phase res 1
 spdif_phase res 1
+hdmi_regen_counter res 1
 audio_clear_end
 
+hdmi_regen_period res 1
 resample_ratio_frac res 1
 resample_ratio_int res 1
 resample_dejitter_period res 1
@@ -542,8 +571,8 @@ serch2        res 1
 packet_extra  res 1 ' can't be in overlay because common code writes it
 
 
-              fit $0C0
-              org $0C0
+              fit $0D0
+              org $0D0
 video_ovl_area              
 
 
@@ -552,7 +581,13 @@ DAT ' LUT resident code
               ' 200 to 2FF is reserved for palette (not used here)
               ' 300 to 35F is used as buffer space (3 encoded HDMI packets fit)
               ' so code starts at 360, space for 160 instructions
-              org $360
+              org $300
+packet_aviinfo res 32
+packet_audio   res 32
+packet_aclk    res 32
+packet_aclk_v  res 32
+              fit $380
+              org $380
 video_lut_code
 video_entry
               'xinit blankline,blank_color
@@ -738,7 +773,7 @@ build_audio
               sub scantimecomp,#2
               call scanfunc
               mov packet_header,#$02
-              loc ptrb,#\$340 ' Where we will put thy hallowed packet
+              loc ptrb,#\packet_audio ' Where we will put thy hallowed packet
 
               mov temp3,#0
 .sploop
@@ -879,6 +914,8 @@ build_audio
               rolbyte temp1,spright,#2
               altr temp2,#packet_data0+1
               rolbyte temp1,spright,#1
+
+              add hdmi_regen_counter,#1
 
               incmod temp3,#2-1 wc ' This limits it to encoding 2 samples per scanline, which ought to be enough
               call scanfunc
@@ -1178,7 +1215,7 @@ init_hdmi ' HDMI (=DVI + audio)
             ' and the remaining cycles will be the preamble
             mov hsync_color,##TMDS_PREDAT_H ' Override the HSync color
             mov hvsync_color,##TMDS_PREDAT_HV ' Override the HVSync color
-            sub hsync_tip,#32+4 ' 32 data, 2*2 guard
+            sub hsync_tip,#64+4 ' 32 data, 2*2 guard
 
             ' Set bpshort to accomodate guard band
             mov hsync_bpshort,hsync_bp
@@ -1192,7 +1229,6 @@ init_hdmi ' HDMI (=DVI + audio)
             setq #9-1
             rdlong packet_header,##$80000 ' read from unmapped memory to get zeroes
 
-            loc ptrb,#\$300 ' Where to store them
 
             ' Setup AVI InfoFrame
             mov packet_header,##$0D_02_82 ' AVI InfoFrame version 2
@@ -1213,6 +1249,7 @@ init_hdmi ' HDMI (=DVI + audio)
             setbyte packet_data0,temp2,#0
 
             mov packet_extra,##$FE_FF_00 ' Will send this during VSync as first packet
+            loc ptrb,#\packet_aviinfo
             call #terc_encode ' There shouldn't be a scanfunc set now
             
             ' Setup resampling rate
@@ -1240,8 +1277,11 @@ init_hdmi ' HDMI (=DVI + audio)
             getqx temp2 ' gives multiplier that shifts 1280/period into optimal range
 
             mul temp1,temp2 ' CTS value
+            mov hdmi_regen_period,temp2
+            mul hdmi_regen_period,#10
             mul temp2,##1280 ' N value
             debug("N: ",udec_(temp2)," CTS: ",udec_(temp1))
+            debug(udec(hdmi_regen_period))
 
             ' Pack them into the clown car, honk honk
             setr temp3,#packet_data0
@@ -1251,15 +1291,21 @@ init_hdmi ' HDMI (=DVI + audio)
             alti temp3,#%111_000_000
             movbyts temp2,#%%3012
 .nctspck
-            setbyte packet_extra,#$FF,#2 ' Second packet, no start bit
+            mov packet_extra,##$FF_00_FF ' No start bit, hsync
+            loc ptrb,#\packet_aclk
             call #terc_encode
+            setbyte packet_extra,#$FF,#1 ' VSync version
+            loc ptrb,#\packet_aclk_v
+            call #terc_encode
+
+
 
             mov packet_extra,##$FE_00_FF ' Prepare for real-time audio (during HSync!)
             
             ' encode a null packet (DEBUG DEBUG?)
             setq #9-1
             rdlong packet_header,##$80000 ' read from unmapped memory to get zeroes
-            loc ptrb,#\$340 ' Where to store it
+            loc ptrb,#\packet_audio ' Where to store it
             call #terc_encode
 
             call #util_tmdscommon
@@ -1350,6 +1396,7 @@ util_setsyncs
               or hsync_tip,pa
               or hsync_bp,pa
               or bitbangcmd,pa
+              or packetblank,pa
               or blankline_packets,pa
         _ret_ or blankline,pa
 
@@ -1558,4 +1605,4 @@ CON  ' TMDS definitions
     'TMDS_DRIVE_MODE = P_DAC_124R_3V|P_BITDAC|($F7)<<8
 
     PACKET_CRC = $83 ' Error-correcting polynomial for HDMI auxillary data
-    INFO_PACKETS = 2 ' How many once-per-frame info packets
+    INFO_PACKETS = 1 ' How many once-per-frame info packets
