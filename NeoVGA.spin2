@@ -51,6 +51,11 @@ case mode
     cmode := @cmode_rgbs
     initf := @init_rgbs
     timing := @timing_line2x
+  MODE_SoG:
+    cmode := @cmode_sync_on_green
+    initf := @init_soggy
+    timing := @timing_line2x
+
   MODE_DVI:
     cmode := @cmode_rgbhv_tmds
     initf := @init_dvi
@@ -109,6 +114,19 @@ long 0              ' Color burst frequency  (NTSC/PAL only)
 long $5A_00_00_00   ' CY
 long $00_5A_00_00   ' CI
 long $00_00_5A_00   ' CQ
+long 0              ' CQ XOR value (NTSC/PAL only)
+
+cmode_sync_on_green ' RGB SoG mode
+long $00_00_00_00   ' DAC blanking value
+long Y_BLANK        ' Blanking color
+long Y_SYNC         ' HSync color
+long Y_SYNC         ' VSync color
+long Y_BLANK        ' HSync+VSync color
+long 0              ' Color burst color (NTSC/PAL only)
+long 0              ' Color burst frequency  (NTSC/PAL only)
+long $5A_00_00<<8 + BLANK_LEVEL   ' CY
+long $00_5A_00<<8 + BLANK_LEVEL   ' CI
+long $00_00_5A<<8 + BLANK_LEVEL   ' CQ
 long 0              ' CQ XOR value (NTSC/PAL only)
 
 DAT ' Timings
@@ -1057,7 +1075,7 @@ init_rgbs ' Combined sync RGB
 
 
 init_soggy ' Sync-on-Green or YPbPr
-              setcmod #%0_01_1_010_1 ' Normal mode + DAC0 to green + invert sync
+              setcmod #%0_01_1_010_0 ' Normal mode + DAC0 to green
               mov pa,##X_DACS_X_X_X_0|X_IMM_1X32_4DAC8
               call #util_setsyncs
               call #util_setactive
