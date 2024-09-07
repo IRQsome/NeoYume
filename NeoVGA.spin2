@@ -55,6 +55,11 @@ case mode
     cmode := @cmode_sync_on_green
     initf := @init_soggy
     timing := @timing_line2x
+  MODE_YPBPR:
+    'cmode := @cmode_ypbpr601
+    cmode := @cmode_ypbpr709
+    initf := @init_soggy
+    timing := @timing_line2x
 
   MODE_DVI:
     cmode := @cmode_rgbhv_tmds
@@ -128,6 +133,33 @@ long $5A_00_00<<8 + BLANK_LEVEL   ' CY
 long $00_5A_00<<8 + BLANK_LEVEL   ' CI
 long $00_00_5A<<8 + BLANK_LEVEL   ' CQ
 long 0              ' CQ XOR value (NTSC/PAL only)
+
+cmode_ypbpr601 ' YPbPr (with Rec. 601 matrix for SDTV)
+long $00_00_00_00   ' DAC blanking value
+long Y_BLANK        ' Blanking color
+long Y_SYNC         ' HSync color
+long Y_SYNC         ' VSync color
+long Y_BLANK        ' HSync+VSync color
+long 0              ' Color burst color (NTSC/PAL only)
+long 0              ' Color burst frequency  (NTSC/PAL only)
+long ( 45&$FF) << 24 + (-38&$FF) << 16 + ( -7&$FF) << 8 + 128   ' CY
+long ( 27&$FF) << 24 + ( 53&$FF) << 16 + ( 10&$FF) << 8 + BLANK_LEVEL   ' CI
+long (-15&$FF) << 24 + (-30&$FF) << 16 + ( 45&$FF) << 8 + 128   ' CQ
+long 0              ' CQ XOR value (NTSC/PAL only)
+    
+cmode_ypbpr709 ' YPbPr (with Rec. 709 matrix for HDTV)
+long $00_00_00_00   ' DAC blanking value
+long Y_BLANK        ' Blanking color
+long Y_SYNC         ' HSync color
+long Y_SYNC         ' VSync color
+long Y_BLANK        ' HSync+VSync color
+long 0              ' Color burst color (NTSC/PAL only)
+long 0              ' Color burst frequency  (NTSC/PAL only)
+long ( 45&$FF) << 24 + (-41&$FF) << 16 + ( -4&$FF) << 8 + 128   ' CY
+long ( 19&$FF) << 24 + ( 64&$FF) << 16 + (  7&$FF) << 8 + BLANK_LEVEL   ' CI
+long (-10&$FF) << 24 + (-35&$FF) << 16 + ( 45&$FF) << 8 + 128   ' CQ
+long 0              ' CQ XOR value (NTSC/PAL only)
+
 
 DAT ' Timings
 
@@ -1477,9 +1509,6 @@ CON  ' CSC constant calculation
     'COLOR_BURST_NTSC = $B9FF00_01
 
 
-    CY_COMP_SDTV  = ( 27&$FF) << 24 + ( 53&$FF) << 16 + ( 10&$FF) << 8 + BLANK_LEVEL
-    CPB_COMP_SDTV = (-15&$FF) << 24 + (-30&$FF) << 16 + ( 45&$FF) << 8 + 128
-    CPR_COMP_SDTV = ( 45&$FF) << 24 + (-38&$FF) << 16 + ( -7&$FF) << 8 + 128
 
     Y_BLANK = 0
     Y_SYNC = 256-BLANK_LEVEL
