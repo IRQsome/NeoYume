@@ -394,6 +394,7 @@ audio_island_tx_h
               loc ptrb,#\packet_aclk
 audio_island_tx
               cmpsub hdmi_regen_counter,hdmi_regen_period wc
+        if_nc xcont packetblank,temp1
               loc ptra,#\packet_audio
               xcont hsync_guardband,pa
               rep @.loop,#32
@@ -405,10 +406,8 @@ audio_island_tx
               rdlut pb,ptrb++
               xcont bitbangcmd,pb
 .loop2
-        _ret_ xcont hsync_guardband,pa
 .no2nd
-              xcont hsync_guardband,pa
-        _ret_ xcont packetblank,temp1
+        _ret_ xcont hsync_guardband,pa
 
 
 hsync_hdmi_vbi ' Hsync during V blanking
@@ -1004,10 +1003,12 @@ terc_encode   ' PACKET ENCODER
               altgw serbyte,#packet_data2
               rolword temp1
               splitw temp1
-              rolbyte serch1,temp1,#1
-              rolbyte serch2,temp1,#3
-              rolbyte serch1,temp1,#0
-              rolbyte serch2,temp1,#2
+              rolword serch1,temp1,#0
+              rolword serch2,temp1,#1
+              'rolbyte serch1,temp1,#1
+              'rolbyte serch1,temp1,#0
+              'rolbyte serch2,temp1,#3
+              'rolbyte serch2,temp1,#2
               ' TODO: Can this be simplified by applying MOVBYTS magic?
 
               call scanfunc
@@ -1017,10 +1018,12 @@ terc_encode   ' PACKET ENCODER
               altgw serbyte,#packet_data0
               rolword temp1
               splitw temp1
-              rolbyte serch1,temp1,#1
-              rolbyte serch2,temp1,#3
-              rolbyte serch1,temp1,#0
-              rolbyte serch2,temp1,#2
+              rolword serch1,temp1,#0
+              rolword serch2,temp1,#1
+              'rolbyte serch1,temp1,#1
+              'rolbyte serch1,temp1,#0
+              'rolbyte serch2,temp1,#3
+              'rolbyte serch2,temp1,#2
 
               call scanfunc
 
@@ -1060,8 +1063,7 @@ terc_encode   ' PACKET ENCODER
     if_nc     jmp #.serloop
 
               sub scantimecomp,#1
-              call scanfunc
-              ret ' TODO: Can this be a tail call?
+              jmp scanfunc ' tail call
 
 ' TERC packet pre-encoding buffers
 packet_header res 1
