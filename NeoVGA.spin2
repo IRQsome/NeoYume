@@ -1202,15 +1202,7 @@ init_hdmi ' HDMI (=DVI + audio)
             'setbyte packet_data0,#%1_000_10_00,#3 ' Byte 3: IT content, Full RGB range, no non-uniform scaling
             mov packet_data0,##%1_000_10_00___10_00_1000___0_00_0_00_01 << 8
 
-             ' Stupid extra checksum into byte 0
-            mov temp1,#4+13 - 1
-            mov temp2,#0
-.chklp
-            altgb temp1,#packet_header
-            getbyte temp3
-            add temp2,temp3
-            djnf temp1,#.chklp
-            setbyte packet_data0,temp2,#0
+            call #util_infoframe_chksum
 
             mov packet_extra,##$FE_FF_00 ' Will send this during VSync as first packet
             call #terc_encode ' There shouldn't be a scanfunc set now
@@ -1272,6 +1264,25 @@ init_ili9342 ' 6-bit digital LCD interface
             ' TODO
             jmp #$
 
+util_infoframe_chksum
+            setbyte packet_data0+0,#0,#0
+            mov temp2,#7
+.clrlp
+            altd temp2,#packet_data0
+            setbyte 0-0,#0,#3
+            sub temp2,#2 wc
+      if_nc jmp #.clrlp
+
+            getbyte temp1,packet_header,#2 ' grab length
+            add temp1,#4-1
+            mov temp2,#0
+.chklp
+            altgb temp1,#packet_header
+            getbyte temp3
+            sub temp2,temp3
+            djnf temp1,#.chklp
+            debug("infoframe checksum ",uhex_(temp2))
+      _ret_ setbyte packet_data0,temp2,#0
 
 util_tmdscommon ' common TMDS TX setup
             mov pa,#%10_01_1_000_1
