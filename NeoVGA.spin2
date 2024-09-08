@@ -390,7 +390,6 @@ audio_island_tx_hv
 audio_island_tx_h
               mov pa,##TMDS_GUARDDAT_H
               mov temp1,hsync_color
-              loc ptra,#\packet_audio
               loc ptrb,#\packet_aclk
 audio_island_tx
               cmpsub hdmi_regen_counter,hdmi_regen_period wc
@@ -402,7 +401,7 @@ audio_island_tx
               xcont bitbangcmd,pb
 .loop
         if_nc jmp #.no2nd
-              rep @.loop2,#32 ' PB is latched, we can clobber it
+              rep @.loop2,#32
               rdlut pb,ptrb++
               xcont bitbangcmd,pb
 .loop2
@@ -444,7 +443,7 @@ vsync_hdmi
               call audio_poll_func
               call #vline_update ' update client on time
               mov pb,#INFO_PACKETS*32
-              loc ptrb,#\packet_aviinfo
+              loc ptra,#\packet_aviinfo
               callpa ##TMDS_GUARDDAT_V,#island_tx
               xcont blankline_packets,vsync_color ' Shortened
 .vsyn_task    mov scanfunc,#dummy_func
