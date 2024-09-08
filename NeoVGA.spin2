@@ -1266,12 +1266,11 @@ init_ili9342 ' 6-bit digital LCD interface
 
 util_infoframe_chksum
             setbyte packet_data0+0,#0,#0
-            mov temp2,#7
-.clrlp
-            altd temp2,#packet_data0
-            setbyte 0-0,#0,#3
-            sub temp2,#2 wc
-      if_nc jmp #.clrlp
+            setbyte packet_header+0,#0,#3
+            setbyte packet_data0+1,#0,#3
+            setbyte packet_data1+1,#0,#3
+            setbyte packet_data2+1,#0,#3
+            setbyte packet_data3+1,#0,#3
 
             getbyte temp1,packet_header,#2 ' grab length
             add temp1,#4-1
