@@ -731,6 +731,8 @@ terctable     long TERC_0 * $401004 + %10
 tmds_ch1_mask      long $3FF << 12
 tmds_ch2_mask      long $3FF << 22
 
+spdif_parity_mask  long $7_FFFFFF
+
 build_audio 
               'debug("Welcome to build_audio la-la-land")
               call scanfunc
@@ -859,9 +861,9 @@ build_audio
 
               call scanfunc
               ' set parity bits
-              test spleft,##$7_FFFFFF wc
+              test spleft,spdif_parity_mask wc
               bitc spleft,#27
-              test spright,##$7_FFFFFF wc
+              test spright,spdif_parity_mask wc
               bitc spright,#27
               ' store into subpacket
               mov temp2,temp3
