@@ -436,7 +436,10 @@ vsync_hdmi
 
                          '|||| Sample rate here       | Disable copy protection
 spdif_status  long %00_00_0010_00000000_00000000_00000100
-'TODO: set sample rate to actually match? (Does it really matter?)
+                                                   '|||| 24 bit sample length (load bearing)
+              long %00000000_00000000_00000000_0000_1011
+'TODO: programmatically set sample rate to actually match? (Does it really matter?)
+
 
 ' application parameters (must by synced with startx arglist)
 app_params
@@ -762,7 +765,7 @@ build_audio
               djnz resample_phase_int,#.feed ' always fall through if ratio < 2
 
 .dosp         ' Create an output sample using cubic resampling
-              sub scantimecomp,#6+5 ' dosp (cubic)
+              sub scantimecomp,#6+6 ' dosp (cubic)
               call scanfunc
 
               getword u1,resample_phase_frac,#1
@@ -850,12 +853,17 @@ build_audio
               ' Set sample as valid in header
               alts temp3,#8
               bith packet_header,#0-0
+              ' Advance channel status
               incmod spdif_phase,#191 wc
         if_c  alts temp3,#20
         if_c  bith packet_header,#0-0
+
+              call scanfunc
+
               ' Add S/PDIF status bit
-              cmp spdif_phase,#32 wc
-        if_c  testb spdif_status,spdif_phase wc
+              cmp spdif_phase,#64 wc
+        if_c  altb spdif_phase,#spdif_status
+        if_c  testb 0-0,spdif_phase wc
               bitc spleft,#26
               bitc spright,#26
 
