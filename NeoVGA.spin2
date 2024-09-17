@@ -249,6 +249,23 @@ long 2              ' Alt-res NCO
 long 0              ' Unused
 long 2              ' Guard Bands (HDMI only - subtracts from H.BP)
 
+timing_tmds_854x480
+long VIDEO_CLKFREQ  ' CLKFREQ
+long 2              ' active line multiplier
+long 12             ' V front porch
+long 2              ' V sync
+long 34             ' V back porch
+long 107            ' extra pillar
+long 854            ' blank line
+long 56             ' H front porch
+long 96             ' H sync
+long 69             ' H back porch
+long $0CCCCCCD      ' Sync NCO
+long 0              ' Pixel NCO
+long 2              ' Alt-res NCO
+long 0              ' Unused
+long 2              ' Guard Bands (HDMI only - subtracts from H.BP)
+
 DAT ' Cog-resident code
               org
 video_cog_code              
@@ -710,7 +727,6 @@ vsync_normal ' Vsync line including sync etc
 DAT ' HDMI overlay code
               org video_ovl_area
 hdmi_overlay
-              long terctable
 
 ' TERC4 encoder table
 ' bit 0 on ch0 is HSync, so VGA sync bit is set to match
@@ -957,7 +973,7 @@ terc_encode   ' PACKET ENCODER
               'setd packetptr,#packet_buffer
               ' Assume PTRB is an appropriate LUT pointer to deposit 32 longs of encoded TERC4
 .serloop
-              sub scantimecomp,#4 + (2*8)
+              sub scantimecomp,#3 + (3*4)
               call scanfunc
 
               ' serialize ch0
@@ -970,67 +986,77 @@ terc_encode   ' PACKET ENCODER
               'rolbyte serch0,#$FF,#0 ' HSYNC on
               rolword serch0,packet_extra,#0 ' Set sync status
 
-              call scanfunc
-
               altgw serbyte,#packet_data3
               rolword temp1
+
+              call scanfunc
+
               altgw serbyte,#packet_data2
               rolword temp1
               splitw temp1
-              rolbyte serch1,temp1,#1
-              rolbyte serch2,temp1,#3
-              rolbyte serch1,temp1,#0
-              rolbyte serch2,temp1,#2
-              ' TODO: Can this be simplified by applying MOVBYTS magic?
-
-              call scanfunc
+              rolword serch1,temp1,#0
+              rolword serch2,temp1,#1
 
               altgw serbyte,#packet_data1
               rolword temp1
               altgw serbyte,#packet_data0
               rolword temp1
               splitw temp1
-              rolbyte serch1,temp1,#1
-              rolbyte serch2,temp1,#3
-              rolbyte serch1,temp1,#0
-              rolbyte serch2,temp1,#2
 
               call scanfunc
+
+              rolword serch1,temp1,#0
+              rolword serch2,temp1,#1
 
               mergeb serch0
               mergeb serch1
               mergeb serch2
               'debug("TERC bytes ",uhex_long(serch0,serch1,serch2))
 
-              mov temp2,#8
+              mov temp4,#4
 .byteenc
               getnib temp1,serch0,#0
               alts temp1,#terctable
-              mov temp3,0-0 ' This also copies HSync bit for VGA
+              mov temp2,0-0 ' This also copies HSync bit for VGA
+              getnib temp1,serch0,#1
 
               call scanfunc
+
+              alts temp1,#terctable
+              mov temp3,0-0 ' This also copies HSync bit for VGA
 
               getnib temp1,serch1,#0
               setq tmds_ch1_mask
               alts temp1,#terctable
+              muxq temp2,0-0
+              getnib temp1,serch1,#1
+              alts temp1,#terctable
               muxq temp3,0-0
+
+              call scanfunc
 
               getnib temp1,serch2,#0
               setq tmds_ch2_mask
               alts temp1,#terctable
+              muxq temp2,0-0
+              getnib temp1,serch2,#1
+              alts temp1,#terctable
               muxq temp3,0-0
-              'alti packetptr,#%000_111_000
-              'mov 0-0,tmp3
+
+              wrlut temp2,ptrb++
               wrlut temp3,ptrb++
+              'debug("packet enc ",uhex_(temp2))
+              'debug("packet enc ",uhex_(temp3))
 
               call scanfunc
-              shr serch0,#4
-              shr serch1,#4
-              shr serch2,#4
-              djnz temp2,#.byteenc
+              shr serch0,#8
+              shr serch1,#8
+              shr serch2,#8
+              djnz temp4,#.byteenc
 
               incmod serbyte,#3   wc
-    if_nc     jmp #.serloop
+    if_nc     jmp #.serloop  
+
 
               sub scantimecomp,#1
               call scanfunc
