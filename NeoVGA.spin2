@@ -378,7 +378,7 @@ scantask        long dummy_func
 
 ' Audio poller upper - pin number is patched in on demand
 audio_poll_repo
-              cmp audio_inbuf_level,#3 wc
+              cmp audio_inbuf_level,#4 wc
 .pptchd if_c  testp #0-0 wc ' TESTP is a D-only instr
         if_c  altd audio_inbuf_level,.inbuf_incr
 .pptchs if_c  rdpin 0-0,#0-0
@@ -563,7 +563,7 @@ spright res 1
 ' audio-related, all needs zero-ing before use
 audio_clear_start
 audio_hist        res 4
-audio_inbuffer    res 3
+audio_inbuffer    res 4
 audio_inbuf_level res 1
 resample_phase_frac res 1
 resample_phase_int  res 1
@@ -809,6 +809,7 @@ build_audio
               mov audio_hist+3,audio_inbuffer+0
               mov audio_inbuffer+0,audio_inbuffer+1
               mov audio_inbuffer+1,audio_inbuffer+2
+              mov audio_inbuffer+2,audio_inbuffer+3
               sub audio_inbuf_level,#1
               call scanfunc
               djnz resample_phase_int,#.feed ' always fall through if ratio < 2
@@ -942,6 +943,8 @@ build_audio
               add hdmi_regen_counter,#1
 
               incmod temp3,#2-1 wc ' This limits it to encoding 2 samples per scanline, which ought to be enough
+              mov temp1,resample_phase_frac
+        if_nc add temp1,resample_ratio_frac wc
               call scanfunc
         if_nc jmp #.sploop
 .spdone
