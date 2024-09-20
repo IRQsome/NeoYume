@@ -5863,16 +5863,21 @@ opn_init
 
               mov pb,##opn_eg_start
 
-              rdlong adpcm_a_base,#_exr_adpa_base
-              shr adpcm_a_base,#4
-              rdlong adpcm_b_base,#_exr_adpb_base
-              shr adpcm_b_base,#4
-
+              drvh     #AUDIO_LEFT
+              drvh     #AUDIO_RIGHT
 
               'drvl #38 addpins 1 ' DEBUG LED
 
-              drvh     #AUDIO_LEFT
-              drvh     #AUDIO_RIGHT
+.waitloop
+              mov opn_outl,#0
+              mov opn_outr,#0
+              call #do_output
+              jnatn #.waitloop
+
+              setq #1
+              rdlong adpcm_a_base,#_exr_adpa_base
+              shr adpcm_a_base,#4
+              shr adpcm_b_base,#4
 
               jmp #\opn_mainLoop
 

@@ -51,7 +51,7 @@ long exmem_mailbox[8*3]
 
 long exmem_size
 
-byte lspc_cog,blt_cog,exmem_cog
+byte lspc_cog,blt_cog,opnb_cog,exmem_cog
 
 byte bios_type
 
@@ -100,9 +100,10 @@ end
 'video.start($F8,0,long[$20],VIDEO_MODE,VGA_BASEPIN,VGA_VSYNC,VIDEO_SUBMODE) '
 video.start(ANALOG_BASEPIN&63 + (DIGITAL_BASEPIN&63)<<8 + (DIGITAL_REVERSED?64<<8:0),VSYNC_PIN&63,VIDEO_MODE,VIDEO_SUBMODE,long[$20],16*4,2,$F8,$80000,video.CLK_MULTIPLIER*3*4*6*6)
 
-lspc_cog := coginit(COGEXEC_NEW,long[$34],0)
-blt_cog := coginit(COGEXEC_NEW,long[$38],0)
-coginit(COGEXEC_NEW,long[$44],0) ' Input cog
+lspc_cog := coginit(COGEXEC_NEW,long[$34],0) ' Start LSPC
+blt_cog := coginit(COGEXEC_NEW,long[$38],0) ' Start blitter
+coginit(COGEXEC_NEW,long[$44],0) ' Start input cog
+opnb_cog := coginit(HUBEXEC_NEW,long[$3C],0) ' Start OPNB
 
 'longmove(long[$24],@menu_palette,16)
 gen_gradient_palette(long[$24]+0*16*4,BG_NORMAL,FG_NORMAL)
@@ -182,10 +183,10 @@ putstring(@"Load ok?",2,10,0)
 'repeat
 
 exmem_stop()
-coginit(HUBEXEC_NEW,long[$1C],0)
-coginit(HUBEXEC_NEW,long[$3C],0)
-coginit(HUBEXEC_NEW,long[$30],0)
-coginit(COGEXEC+cogid(),long[$40],0)
+coginit(HUBEXEC_NEW,long[$1C],0) ' Start 68000
+cogatn(1<<opnb_cog) ' Properly init OPNB
+coginit(HUBEXEC_NEW,long[$30],0) ' Start Z80
+coginit(COGEXEC+cogid(),long[$40],0) ' Start memory arbiter
 
 
 PRI putstring(str,x,y,attr) | chr
