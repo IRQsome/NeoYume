@@ -476,11 +476,11 @@ vsync_hdmi
 
 
 
-                         '|||| Sample rate here       | Disable copy protection
+                         '|||| 48K rate here!!!       | Disable copy protection
 spdif_status  long %00_00_0010_00000000_00000000_00000100
                                                    '|||| 24 bit sample length (load bearing)
               long %00000000_00000000_00000000_0000_1011
-'TODO: programmatically set sample rate to actually match? (Does it really matter?)
+' Sample rate is overwritten by init code when appropriate
 
 
 ' application parameters (must by synced with startx arglist)
@@ -565,6 +565,9 @@ audio_clear_start
 audio_hist        res 4
 audio_inbuffer    res 4
 audio_inbuf_level res 1
+resample_ratio_frac res 1
+resample_ratio_int res 1
+resample_antidrift_period res 1
 resample_phase_frac res 1
 resample_phase_int  res 1
 resample_antidrift_phase res 1
@@ -573,9 +576,6 @@ hdmi_regen_counter res 1
 audio_clear_end
 
 hdmi_regen_period res 1
-resample_ratio_frac res 1
-resample_ratio_int res 1
-resample_antidrift_period res 1
 
 ' Unrelated TERC4-related nonsense
 serbyte       res 1
@@ -1281,21 +1281,36 @@ init_hdmi ' HDMI (=DVI + audio)
             call #terc_encode ' There shouldn't be a scanfunc set now
             
             ' Setup resampling rate
-            ' TODO: Smarter version for 32KHz native (-> MisoYume)
-            qdiv ##SAMPLE_OUT_PERIOD,audio_period
+            ' If it matches any standard rate we know then we disable resampling
+            rdlong temp2,#@clkfreq ' grab system clock
+            ' Check 32kHz
+            loc pa,#\32_000
+            call #util_check_sr_fuzzy
+      if_c  setnib spdif_status+0,#%0011,#6
+      if_c  jmp #.nctssetup
+            loc pa,#\44_100
+            call #util_check_sr_fuzzy
+      if_c  setnib spdif_status+0,#%0000,#6
+      if_c  jmp #.nctssetup
+            loc pa,#\48_000
+            call #util_check_sr_fuzzy ' gets 48k ideal period into temp1
+            setnib spdif_status+0,#%0010,#6 ' Always set 48k
+      if_c  jmp #.nctssetup
+
+            ' Ok, resample whatever it is to 48k
+            qdiv temp1,audio_period ' temp1 still has 48kHz period
             getqx resample_ratio_int
-            getqy temp1
-            qfrac temp1,audio_period
+            getqy pa
+            qfrac pa,audio_period
             getqx resample_ratio_frac
-            mov resample_antidrift_period,audio_period
+            mov resample_antidrift_period,audio_period wc ' Always set NC
             sub resample_antidrift_period,#1
+.nctssetup
+      if_c  mov temp1,audio_period ' If not resampling, use input rate
 
             ' Setup audio clock packet
             mov packet_header,#$00_00_00_01 ' Clock packet
-
-            mov temp1,##SAMPLE_OUT_PERIOD ' Resampler active, so if our ratio doesn't fail us...
-            rdlong temp2,#@clkfreq
-            debug(udec(temp2))
+            debug(udec(temp1,temp2,audio_period))
             mov temp3,##10000
             mul temp3,temp1
             shr temp3,#1 wc
@@ -1342,9 +1357,19 @@ init_hdmi ' HDMI (=DVI + audio)
 
             jmp #video_entry
 
-init_ili9342 ' 6-bit digital LCD interface
-            ' TODO
-            jmp #$
+
+util_check_sr_fuzzy
+'' Compute period of sample rate in PA into temp1 (using clkfreq in temp2)
+'' Set C if audio_period is close enough
+            mov pb,pa
+            shr pb,#1
+            add pb,temp2
+            qdiv pb,pa
+            getqx temp1
+            mov pb,temp1
+            sub pb,audio_period
+            abs pb
+      _ret_ cmp pb,#1 wc
 
 util_infoframe_chksum
             setbyte packet_data0+0,#0,#0
@@ -1472,6 +1497,10 @@ util_setactive_extra
 '              mov line_func,#line_soft2x
 '        _ret_ mov altline_func,#line_soft2x_alt
 
+init_ili9342 ' 6-bit digital LCD interface
+            ' TODO
+            jmp #$
+
 
 CON
 
@@ -1566,7 +1595,6 @@ CON ' Clocky business
     CLK_MULTIPLIER = 14
     VIDEO_CLKFREQ = MASTER_CLK*CLK_MULTIPLIER
 
-    SAMPLE_OUT_PERIOD = (VIDEO_CLKFREQ+24000)/48000
 
 CON  ' CSC constant calculation
 
