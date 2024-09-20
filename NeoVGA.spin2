@@ -567,7 +567,7 @@ audio_inbuffer    res 4
 audio_inbuf_level res 1
 resample_phase_frac res 1
 resample_phase_int  res 1
-resample_dejitter_phase res 1
+resample_antidrift_phase res 1
 spdif_phase res 1
 hdmi_regen_counter res 1
 audio_clear_end
@@ -575,7 +575,7 @@ audio_clear_end
 hdmi_regen_period res 1
 resample_ratio_frac res 1
 resample_ratio_int res 1
-resample_dejitter_period res 1
+resample_antidrift_period res 1
 
 ' Unrelated TERC4-related nonsense
 serbyte       res 1
@@ -893,7 +893,7 @@ build_audio
               zerox spleft,#23
               zerox spright,#23
 
-              incmod resample_dejitter_phase,resample_dejitter_period wc
+              incmod resample_antidrift_phase,resample_antidrift_period wc
         if_c  mov resample_phase_frac,#0
         if_nc add resample_phase_frac,resample_ratio_frac wc
               addx resample_phase_int,resample_ratio_int
@@ -1287,8 +1287,8 @@ init_hdmi ' HDMI (=DVI + audio)
             getqy temp1
             qfrac temp1,audio_period
             getqx resample_ratio_frac
-            mov resample_dejitter_period,audio_period
-            sub resample_dejitter_period,#1
+            mov resample_antidrift_period,audio_period
+            sub resample_antidrift_period,#1
 
             ' Setup audio clock packet
             mov packet_header,#$00_00_00_01 ' Clock packet
