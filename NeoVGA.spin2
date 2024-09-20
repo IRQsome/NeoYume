@@ -893,7 +893,7 @@ build_audio
               zerox spleft,#23
               zerox spright,#23
 
-              incmod resample_antidrift_phase,resample_antidrift_period wc
+              decmod resample_antidrift_phase,resample_antidrift_period wc
         if_c  mov resample_phase_frac,#0
         if_nc add resample_phase_frac,resample_ratio_frac wc
               addx resample_phase_int,resample_ratio_int
@@ -947,10 +947,10 @@ build_audio
               '  Packets where frac->int overflow occurs are only allowed in first packet slot
               '  This is probably bad and a better way should be found.
               mov temp1,resample_phase_frac
-        if_nc add temp1,resample_ratio_frac wc
-              cmp resample_antidrift_phase,resample_antidrift_period wz
+.jptch1 if_nc add temp1,resample_ratio_frac wc ' Check if next frac add or
+.jptch2 if_nc cmp resample_antidrift_phase,#1 wc ' antidrift overflows
               call scanfunc
- if_nc_and_nz jmp #.sploop
+        if_nc jmp #.sploop
 .spdone
               ' fall straight into packet encoder
 
@@ -1309,8 +1309,17 @@ init_hdmi ' HDMI (=DVI + audio)
             getqx resample_ratio_frac
             mov resample_antidrift_period,audio_period wc ' Always set NC
             sub resample_antidrift_period,#1
+            mov resample_antidrift_phase,resample_antidrift_period ' Init to max value because DECMOD
 .nctssetup
       if_c  mov temp1,audio_period ' If not resampling, use input rate
+      
+            ' Disable de-jitter code if not resampling or fractional ratio >= 0.5
+            tjns resample_ratio_frac,#.no_djkill
+            tjnz resample_antidrift_period,#.no_djkill
+            mov build_audio:jptch1,#0 ' NOP
+            mov build_audio:jptch2,#0 ' NOP
+            debug("Disabled de-jitter!")
+.no_djkill
 
             ' Setup audio clock packet
             mov packet_header,#$00_00_00_01 ' Clock packet
