@@ -943,10 +943,14 @@ build_audio
               add hdmi_regen_counter,#1
 
               incmod temp3,#2-1 wc ' This limits it to encoding 2 samples per scanline, which ought to be enough
+              ' Hacky check to fix sampling jitter:
+              '  Packets where frac->int overflow occurs are only allowed in first packet slot
+              '  This is probably bad and a better way should be found.
               mov temp1,resample_phase_frac
         if_nc add temp1,resample_ratio_frac wc
+              cmp resample_antidrift_phase,resample_antidrift_period wz
               call scanfunc
-        if_nc jmp #.sploop
+ if_nc_and_nz jmp #.sploop
 .spdone
               ' fall straight into packet encoder
 
