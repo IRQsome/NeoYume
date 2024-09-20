@@ -3,12 +3,14 @@ CON
   SUBMODE_NTSC = 0
   SUBMODE_PAL = 1<<8 ' Can be combined with others...
   SUBMODE_FORCE_ALTPILLAR = 1<<9 ' TODO NYI Can be combined with others...
+  SUBMODE_FORCE_REC601 = 1<<10 ' Force Rec601 color space for YPbPr
+  SUBMODE_FORCE_REC709 = 1<<11 ' Force Rec709 color space for YPbPr
 
   #0,MODE_RGBHV,MODE_RGBS,MODE_SoG,MODE_YPBPR,MODE_COMPOSITE,MODE_SVIDEO,MODE_SVID_AND_COMP,MODE_DVI,MODE_DVI_VGA,MODE_HDMI,MODE_HDMI_VGA,MODE_LCD6
 
   MODE_VGA = MODE_RGBHV
 
-  #0,SUBMODE_1X,SUBMODE_2X,SUBMODE_3X,SUBMODE_4X,SUBMODE_5X, ... ' Analog line-multiply modes
+  #0,SUBMODE_AUTO,SUBMODE_1X,SUBMODE_2X,SUBMODE_3X,SUBMODE_4X,SUBMODE_5X, ... ' Analog line-multiply modes
   SUBMODE_TMDS_640x480,SUBMODE_TMDS_768x480,SUBMODE_TMDS_800x480,SUBMODE_TMDS_854x480
 
 
@@ -41,25 +43,27 @@ CON
 PUB start(pins,extrapins,mode,submode,buffer,extrastride,buflines,linectr,vdpmode,audio_mb_period) : cogn | cmode,timing,initf,stride
 
 case mode
-  MODE_RGBHV:
-    cmode := @cmode_rgbhv_tmds
-    initf := @init_rgbhv
-    timing := @timing_line2x
-    'timing := @timing_owieouch
-    'timing := @timing_tmds_640x480
-  MODE_RGBS:
-    cmode := @cmode_rgbs
-    initf := @init_rgbs
-    timing := @timing_line2x
-  MODE_SoG:
-    cmode := @cmode_sync_on_green
-    initf := @init_soggy
-    timing := @timing_line2x
-  MODE_YPBPR:
-    'cmode := @cmode_ypbpr601
-    cmode := @cmode_ypbpr709
-    initf := @init_soggy
-    timing := @timing_line2x
+  MODE_RGBHV..MODE_YPBPR: ' All arbitrary-resolution analog modes
+    timing := @timing_line2x ' TODO
+    case mode
+      MODE_RGBHV:
+        cmode := @cmode_rgbhv_tmds
+        initf := @init_rgbhv
+      MODE_RGBS:
+        cmode := @cmode_rgbs
+        initf := @init_rgbs
+      MODE_SoG:
+        cmode := @cmode_sync_on_green
+        initf := @init_soggy
+      MODE_YPBPR:
+        if submode&SUBMODE_FORCE_REC709 || (long[timing][1] >= 3 && not(submode&SUBMODE_FORCE_REC601))
+          cmode := @cmode_ypbpr709
+          debug("YPbPr matrix set to Rec709")
+        else
+          cmode := @cmode_ypbpr601
+          debug("YPbPr matrix set to Rec601")
+        initf := @init_soggy
+        timing := @timing_line2x
   MODE_DVI..MODE_HDMI_VGA: ' All TMDS modes
     cmode := @cmode_rgbhv_tmds
     case mode
