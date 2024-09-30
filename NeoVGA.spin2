@@ -44,7 +44,11 @@ PUB start(pins,extrapins,mode,submode,buffer,extrastride,buflines,linectr,vdpmod
 
 case mode
   MODE_RGBHV..MODE_YPBPR: ' All arbitrary-resolution analog modes
-    timing := @timing_line2x ' TODO
+    case submode&255
+      SUBMODE_1X: timing := @timing_native
+      SUBMODE_3X: timing := @timing_line3x
+      other: timing := @timing_line2x
+      
     case mode
       MODE_RGBHV:
         cmode := @cmode_rgbhv_tmds
@@ -63,7 +67,18 @@ case mode
           cmode := @cmode_ypbpr601
           debug("YPbPr matrix set to Rec601")
         initf := @init_soggy
-        timing := @timing_line2x
+  MODE_COMPOSITE..MODE_SVID_AND_COMP: ' NTSC/PAL encoded modes
+    timing := @timing_native ' Always
+    if submode&SUBMODE_PAL
+      cmode := @cmode_pal
+    else
+      cmode := @cmode_ntsc
+
+    case mode
+      MODE_COMPOSITE: initf := @init_composite
+      MODE_SVIDEO: initf := @init_svideo
+      MODE_SVID_AND_COMP: initf := @init_compsvid
+
   MODE_DVI..MODE_HDMI_VGA: ' All TMDS modes
     cmode := @cmode_rgbhv_tmds
     case mode
@@ -157,8 +172,51 @@ long ( 19&$FF) << 24 + ( 64&$FF) << 16 + (  7&$FF) << 8 + BLANK_LEVEL   ' CI
 long (-10&$FF) << 24 + (-35&$FF) << 16 + ( 45&$FF) << 8 + 128   ' CQ
 long 0              ' CQ XOR value (NTSC/PAL only)
 
+cmode_ntsc
+long $00_00_00_00
+long %01            ' Blanking color
+long %11            ' HSync color
+long %11            ' VSync color
+long %01            ' HSync+VSync color
+long COLOR_BURST_NTSC ' Color burst color (NTSC/PAL only)
+long round(4_294_967_296.0*3_579_545.0/float(VIDEO_CLKFREQ))              ' Color burst frequency  (NTSC/PAL only)
+long CY_NTSC        ' CY
+long CI_NTSC        ' CI
+long CQ_NTSC        ' CQ
+long 0              ' CQ XOR value (NTSC/PAL only)
+
+cmode_pal
+long $00_00_00_00
+long %01            ' Blanking color
+long %11            ' HSync color
+long %11            ' VSync color
+long %01            ' HSync+VSync color
+long COLOR_BURST_PAL ' Color burst color (NTSC/PAL only)
+long round(4_294_967_296.0*4_433_618.0/float(VIDEO_CLKFREQ))              ' Color burst frequency  (NTSC/PAL only)
+long CY_PAL         ' CY
+long CU_PAL         ' CI
+long CV_PAL_EVEN    ' CQ
+long CV_PAL_ODD^CV_PAL_EVEN ' CQ XOR value (NTSC/PAL only)
+
 
 DAT ' Timings
+
+timing_native
+long VIDEO_CLKFREQ  ' CLKFREQ
+long 1              ' active line multiplier
+long 3              ' V front porch
+long 9              ' V sync
+long 12             ' V back porch
+long 0              ' extra pillar
+long 320            ' blank line
+long 8              ' H front porch
+long 28             ' H sync
+long 28             ' H back porch
+long round(2147483648.0/float(CLK_MULTIPLIER*4)) ' Sync NCO
+long round(2147483648.0/float(CLK_MULTIPLIER*4)) ' Pixel NCO
+long round(2147483648.0/float(CLK_MULTIPLIER*4)*256.0/320.0) ' Alt-res NCO
+long 3              ' Breezeway (NTSC/PAL only - subtracts from H.BP)
+long 16             ' Burst (NTSC/PAL only - subtracts from H.BP)
 
 timing_line2x
 long VIDEO_CLKFREQ  ' CLKFREQ
@@ -286,16 +344,16 @@ video_cog_code
 
 hsync_ntsc ' also PAL
               setq nco_sync
-              jnxmt #$ ' wait to avoid changing CQ while still in active (Why not waitxmt?)
-              xor cq_val,cq_xor
-              setcq cq_val
               xcont hsync_tip,hsync_color
               xcont hsync_breeze,blank_color
+              xor cq_val,cq_xor
+              setcq cq_val ' here because we know tip must be in progress
               xcont hsync_burst,burst_color
               xcont hsync_bpshort,blank_color
               jmp #vline_update
 
-vsync_ntsc
+vsync_ntsc    ' SDTV serrated sync
+
               ' TODO
               ret
 
@@ -1203,13 +1261,13 @@ init_compsvid ' SVideo + Composite dual
 
 init_dvivga ' DVI+VGA dual (DVI-I)
             call #util_vgacommon ' then fall through
-init_dvi ' Plain DVI-D
+init_dvi    ' Plain DVI-D
             call #util_tmdscommon
             jmp #video_entry
 
 init_hdmivga ' HDMI + VGA
             call #util_vgacommon  ' then fall through
-init_hdmi ' HDMI (=DVI + audio)
+init_hdmi    ' HDMI (=DVI + audio)
 
             ' load the overlay
             loc pa,#@hdmi_overlay
