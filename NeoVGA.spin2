@@ -35,8 +35,10 @@ CON
   BORDER_BOTTOM = 8
   HEIGHT_TOTAL = HEIGHT+BORDER_BOTTOM+BORDER_TOP
 
-  VDPBIT_INTERLACE = 0
-  VDPBIT_ALTRES = 1
+  VDPBIT_INTERLACE = 1
+  VDPBIT_ALTRES = 0
+
+  VDP_INVERT_ALTRES = false
 
   VDPR_OFFSET = 3 ' lines that rendering has to run ahead
 
@@ -369,6 +371,24 @@ scanfunc_2x_rgb24 ' scan out 2 pixels with 2x doubling -> 40 streamer cycles
         _ret_ xcont pixel_multiplier,scantmp
 
 
+line_scancomp_alt
+              cmp extra_pillar,#0 wz
+        if_nz xcont extra_pillar,border_color
+              xcont altres_pillar,border_color
+
+              mov scantimecomp,#WIDTH_ALT/2
+              mov scanfunc,#scanfunc_2x_rgb24
+              call scantask
+.comploop     cmpsub scantimecomp,#1 wc
+        if_c  call scanfunc
+        if_c  call audio_poll_func
+        if_c  jmp #.comploop
+              xcont altres_pillar,border_color
+              cmp extra_pillar,#0 wz
+        if_nz xcont extra_pillar,border_color
+              call audio_poll_func
+        _ret_ xcont hsync_fp,blank_color
+
 line_scancomp ' Software-scaled line with scan-compensated task
               cmp extra_pillar,#0 wz
         if_nz xcont extra_pillar,border_color
@@ -380,7 +400,6 @@ line_scancomp ' Software-scaled line with scan-compensated task
         if_c  call scanfunc
         if_c  call audio_poll_func
         if_c  jmp #.comploop
-
               cmp extra_pillar,#0 wz
         if_nz xcont extra_pillar,border_color
         _ret_ xcont hsync_fp,blank_color
@@ -487,6 +506,7 @@ blankline_packets res 1 ' rest of blanking line after packets (HDMI only)
 lines_left res 1 ' lines left in current section
 scanptr res 1
 vdp_mode res 1
+bob_lines res 1
 
 scantimecomp res 1 ' Time compensator for threaded scan conversion
 
@@ -579,11 +599,19 @@ frame_loop
               call blankline_func   
               djnz lines_left,#.back_porch
 
+              rdlong vdp_mode,vdpmode_ptr ' read VDP mode here, once.
+
               neg virtual_line,#BORDER_TOP - VDPR_OFFSET ' TODO SHOULD FLE INSTEAD
               mov subline,#0
               mov lines_left,#BORDER_TOP
               mul lines_left,line_multiplier
-              ' TODO Interlace bob here
+
+              ' Bob interlace for line2x modes
+              testb vdp_mode,#VDPBIT_INTERLACE wc
+              testbn virtual_frame,#0 andc
+        if_c  add lines_left,bob_lines
+        if_c  sub subline,bob_lines
+
 .top_border
               call hsync_func
               call borderline_func
@@ -593,7 +621,6 @@ frame_loop
               mul lines_left,line_multiplier
               mov scanptr,scanbuffer_base
               add virtual_frame,#1
-              rdlong vdp_mode,vdpmode_ptr ' read VDP mode here, once.
 .visible
               call hsync_func
               rdfast bit31,scanptr ' fire up FIFO
@@ -603,9 +630,14 @@ frame_loop
         if_ae mov scanptr,scanbuffer_base
               
               testb vdp_mode,#VDPBIT_ALTRES wc
+        if VDP_INVERT_ALTRES
+        if_c  mov pa,line_func
+        if_nc mov pa,altline_func
+        else
         if_nc mov pa,line_func
         if_c  mov pa,altline_func
-              call line_func
+        end
+              call pa
               'call borderline_func
 
               djnz lines_left,#.visible
@@ -613,7 +645,12 @@ frame_loop
 
               mov lines_left,#BORDER_BOTTOM
               mul lines_left,line_multiplier
-              ' TODO Interlace bob here
+
+
+              ' Bob interlace for line2x modes
+              testb vdp_mode,#VDPBIT_INTERLACE wc
+              testb virtual_frame,#0 andc ' got incremented inbetween
+        if_c  sub lines_left,bob_lines
 .bottom_border
               call hsync_func
               call borderline_func
@@ -1179,6 +1216,9 @@ video_init
               mov subline_incmod,line_multiplier
               cmpsub subline_incmod,#1
 
+              mov bob_lines,line_multiplier
+              shr bob_lines,#1
+
               mov borderline,blankline ' dup
 
               ' setup basic CSC parameters
@@ -1526,11 +1566,11 @@ util_setactive_extra
               or borderline,pa
               cmp extra_pillar,#0 wz
         if_nz or extra_pillar,pa
-              or altres_pillar,pa
 
               tjz nco_main,#.softscan
               cmp nco_alt,#0 wz
         if_z  mov altline_func,##line_native_altpillar ' Use pillarboxing if no alt NCO set
+              or altres_pillar,pa
 
               mov pa,##X_DACS_3_2_1_0|X_RFLONG_RGB24
               or pa,temp2
@@ -1538,9 +1578,11 @@ util_setactive_extra
         _ret_ or linecmd_alt,pa
 .softscan
               ' Use emulated pixel-doubling
+              mul altres_pillar,pixel_multiplier
+              or altres_pillar,pa
               or pixel_multiplier,pa
               mov line_func,#line_scancomp
-        _ret_ mov altline_func,#line_scancomp
+        _ret_ mov altline_func,#line_scancomp_alt
 '              mov line_func,#line_soft2x
 '        _ret_ mov altline_func,#line_soft2x_alt
 
