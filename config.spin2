@@ -67,18 +67,23 @@ SDCARD_DO = 58
 ' \/ Uncomment for fast ROM loading
 #define _SDHC_45MHZ
 
-
-'{ ' NEW NEW NEW
-VIDEO_MODE = vconst.MODE_HDMI
-VIDEO_SUBMODE = vconst.SUBMODE_2X
+'{ ' NEW video driver config
 
 ANALOG_BASEPIN = 24
 VSYNC_PIN = 24+4
 DIGITAL_BASEPIN = 32 ' MUST be -1 if not present
 DIGITAL_REVERSED = false
-
 '}
 
+{ ' For 6-bit ILI9342 LCD screen
+VIDEO_MODE = vconst.MODE_LCD6
+VIDEO_SUBMODE = 0 ' Not used (yet)
+
+ANALOG_BASEPIN = -1 ' Not used
+VSYNC_PIN = (8<<0) + (9<<8) + (10<<16) + (11<<24) ' extra pins: DOTCLK<<0 + CS<<8 + CLK<<16 + SDA<<24
+DIGITAL_BASEPIN = 0 ' HSync, VSync and 6 data pins
+DIGITAL_REVERSED = false
+'}
 
 {
 VIDEO_MODE = vconst.MODE_VGA2X
