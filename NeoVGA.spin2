@@ -1724,6 +1724,10 @@ init_ili9342 ' 6-bit digital LCD interface
             mov temp1,#1
             callpa #$26,#ili_sendcmd ' Gamma Set
 
+            mov temp2,#$00_02 ' ???? but it makes inversion less objectionable
+            mov temp1,#2
+            callpa #$B4,#ili_sendcmd ' Display inversion control
+
             mov temp2,#$6C ' (RGB, no DE pin, bypass memory, positive sync)
             mov temp1,#1
             callpa #$B0,#ili_sendcmd ' Set IFMODE
