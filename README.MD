@@ -13,7 +13,7 @@ NeoYume is a NeoGeo AES emulator for Parallax P2 micro-controllers with appropri
 Features include:
   - Low latency framebuffer-less high-level emulation
   - Pretty good audio
-  - Video output over VGA, HDMI, YPbPr, S-video, Composite or 6bit RGB bus (ILI9342 LCD)
+  - Video output over VGA, DVI, HDMI(including audio), YPbPr, S-video, Composite or 6bit RGB bus (ILI9342 LCD)
   - Low-latency USB input (Keyboard and select gamepads, see below) or direct hookup to discrete switches.
   - Bugs. But not _that_ many.
 
