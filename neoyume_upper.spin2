@@ -426,38 +426,86 @@ repeat while pos < size
       org
           wrfast #0,##MKRAM_BASE+$8000
           loc ptrb,#\MKRAM_BASE
-          mov tmp,#256
-      .loop1
-          rep @.loop2,#8
-          rdlong i,ptrb[$00/4]
-          rdlong j,ptrb[$20/4]
+          mov i,##-$4000 + $10
+          mov j,##-$4000 + $30
+          rep @.loop,##512
+          ' $1E0..$1EF are free for funsies
+          setq #3
+          rdlong $1e0+0,ptrb
+          add ptrb,#$20
+          setq #3
+          rdlong $1e0+4,ptrb
           bitnot ptrb,#encod $4000
-          rdlong k,ptrb[$00/4]
-          rdlong l,ptrb[$20/4]
+          setq #3
+          rdlong $1e0+12,ptrb
+          sub ptrb,#$20
+          setq #3
+          rdlong $1e0+8,ptrb
 
-          getword tmp2,l,#1
-          rolword tmp2,j,#1
+          rolword tmp2,$1e0+12,#1
+          rolword tmp2,$1e0+4,#1
           mergeb tmp2
-          
-          getword tmp3,k,#1
-          rolword tmp3,i,#1
+          rolword tmp3,$1e0+8,#1
+          rolword tmp3,$1e0+0,#1
           mergeb tmp3
-
-          rolword l,j,#0
-          mergeb l
-
-          rolword k,i,#0
-          mergeb k
-
-          wflong l
-          wflong k
+          rolword $1e0+12,$1e0+4,#0
+          mergeb $1e0+12
+          wflong $1e0+12
+          rolword $1e0+8,$1e0+0,#0
+          mergeb $1e0+8
+          wflong $1e0+8
           wflong tmp2
           wflong tmp3
 
-          sub ptrb,##$4000 - 4
-      .loop2
-          add ptrb,#$20
-          djnz tmp,#.loop1
+          rolword tmp2,$1e0+13,#1
+          rolword tmp2,$1e0+5,#1
+          mergeb tmp2
+          rolword tmp3,$1e0+9,#1
+          rolword tmp3,$1e0+1,#1
+          mergeb tmp3
+          rolword $1e0+13,$1e0+5,#0
+          mergeb $1e0+13
+          wflong $1e0+13
+          rolword $1e0+9,$1e0+1,#0
+          mergeb $1e0+9
+          wflong $1e0+9
+          wflong tmp2
+          wflong tmp3
+
+          rolword tmp2,$1e0+14,#1
+          rolword tmp2,$1e0+6,#1
+          mergeb tmp2
+          rolword tmp3,$1e0+10,#1
+          rolword tmp3,$1e0+2,#1
+          mergeb tmp3
+          rolword $1e0+14,$1e0+6,#0
+          mergeb $1e0+14
+          wflong $1e0+14
+          rolword $1e0+10,$1e0+2,#0
+          mergeb $1e0+10
+          wflong $1e0+10
+          wflong tmp2
+          wflong tmp3
+
+          rolword tmp2,$1e0+15,#1
+          rolword tmp2,$1e0+7,#1
+          mergeb tmp2
+          rolword tmp3,$1e0+11,#1
+          rolword tmp3,$1e0+3,#1
+          mergeb tmp3
+          rolword $1e0+15,$1e0+7,#0
+          mergeb $1e0+15
+          wflong $1e0+15
+          rolword $1e0+11,$1e0+3,#0
+          mergeb $1e0+11
+          wflong $1e0+11
+          wflong tmp2
+          wflong tmp3
+
+          testb ptrb,#4 wc
+    if_nc add ptrb,i
+    if_c  add ptrb,j
+.loop
       end
       exmem_write(target+pos,MKRAM_BASE+$8000,$8000,true)
       pushed:=$8000
