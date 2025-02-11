@@ -3836,7 +3836,7 @@ blt_linelp
 
               mov blt_renderptr,blt_renderbase
               testb blt_curline,#0 wc
-        if_c add blt_renderptr,##(320+16)*4 '##DRAWBUFFER_WIDTH*4
+        if_c  add blt_renderptr,##(320+16)*4 '##DRAWBUFFER_WIDTH*4
               mov blt_renderptr_spr,blt_renderptr
               sub blt_renderptr_spr,#15*4
 
