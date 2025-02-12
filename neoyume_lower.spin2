@@ -3499,6 +3499,8 @@ iog_lspc_rd16
               orgh .lspcrd_base + 2*8*4 ' Read LSPC status
               rdbyte mk_memvalue,#_lspc_animctr
               rdlong mk_memtmp0,#video_line_ctr
+              cmps mk_memtmp0,#224+16 wc
+        if_ae sub mk_memtmp0,#$108
               add mk_memtmp0,#$100 ' TODO: I want to say this is all very wrong?
               shl mk_memtmp0,#7
               setword mk_memtmp0,#0,#1
