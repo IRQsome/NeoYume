@@ -83,8 +83,8 @@ PSRAM_BANKS = 3
 '#define USE_PSRAM_NOBANKS
 
 PSRAM_WAIT  = 5
-PSRAM_DELAY = 15
-PSRAM_SYNC_CLOCK = true
+PSRAM_DELAY = 14
+PSRAM_SYNC_CLOCK = false
 PSRAM_SYNC_DATA = false
 
 ' \/ Uncomment for lameness

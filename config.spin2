@@ -89,6 +89,7 @@ DIGITAL_REVERSED = false
 
 AUDIO_LEFT  = 24+6
 AUDIO_RIGHT = AUDIO_LEFT + 1
+' Note that these must be set even if digital audio is used
 
 ' \/ Uncomment for mono audio (still sent to both pins (you can set them to the same pin))
 '#define AUDIO_MIX_MONO
