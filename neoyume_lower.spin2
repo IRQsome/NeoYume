@@ -3501,7 +3501,7 @@ iog_lspc_rd16
               rdlong mk_memtmp0,#video_line_ctr
               cmps mk_memtmp0,#224+16 wc
         if_ae sub mk_memtmp0,#$108
-              add mk_memtmp0,#$100 ' TODO: I want to say this is all very wrong?
+              add mk_memtmp0,#$100 ' see https://wiki.neogeodev.org/index.php?title=Display_timing#Vertical
               shl mk_memtmp0,#7
               setword mk_memtmp0,#0,#1
               or mk_memvalue,mk_memtmp0
