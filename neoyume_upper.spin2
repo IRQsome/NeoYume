@@ -118,7 +118,11 @@ gen_gradient_palette(long[$24]+7*16*4,BG_SELECTION,FG_GREY)
 wordfill(long[$28]+$E000," ",32*40)
 putgfx(256,5,1,30,4)
 
-_mount(@"/sd",c._vfs_open_sdcardx(SDCARD_CLK,SDCARD_SELECT,SDCARD_DI,SDCARD_DO))
+if _mount(@"/sd",c._vfs_open_sdcardx(SDCARD_CLK,SDCARD_SELECT,SDCARD_DI,SDCARD_DO))
+  putstring(@"FS mount error:",2,24,0)
+  putstring(c.strerror(errno),3,25,0)
+  repeat
+
 exmem_start()
 
 #ifdef INPUT_USE_USB
