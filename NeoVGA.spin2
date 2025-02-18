@@ -741,6 +741,8 @@ line_native  ' native scanline
         if_nz xcont extra_pillar,border_color
               setq nco_main
               xcont linecmd,#0 ' No color needed for DMA
+              mov scanfunc,#dummy_func
+              call scantask
         if_nz setq nco_sync
         if_nz xcont extra_pillar,border_color
               setq nco_sync
@@ -751,6 +753,8 @@ line_native_altnco ' alt-res scanline with NCO switch
         if_nz xcont extra_pillar,border_color
               setq nco_alt
               xcont linecmd_alt,#0 ' No color needed for DMA
+              mov scanfunc,#dummy_func
+              call scantask
         if_nz setq nco_sync
         if_nz xcont extra_pillar,border_color
               setq nco_sync
@@ -762,6 +766,8 @@ line_native_altpillar ' alt-res scanline with pillarbox
               setq nco_main
               xcont altres_pillar,border_color
               xcont linecmd_alt,#0 ' No color needed for DMA
+              mov scanfunc,#dummy_func
+              call scantask
               xcont altres_pillar,border_color
         if_nz setq nco_sync
         if_nz xcont extra_pillar,border_color
@@ -1662,12 +1668,6 @@ util_sdtvcommon
               mov hsync_bpshort,hsync_bp
               sub hsync_bpshort,hsync_breeze
               sub hsync_bpshort,hsync_burst
-              mov vsync_half,blankline
-              add vsync_half,hsync_bp
-              add vsync_half,hsync_tip
-              add vsync_half,hsync_fp
-              shr vsync_half,#1
-              sub vsync_half,hsync_tip
               mov hsync_func,#hsync_ntsc
               mov vbi_hsync_func,#hsync_ntsc
 
