@@ -64,6 +64,11 @@ c : "libc"
 a : "fsadapter.c"
 padmap: "padmap_parser"
 
+#ifdef USE_SD_4BIT
+'sdmm: "blkdrvr/sdmm_bashed.cc"
+sdsd: "blkdrvr/sdsd.cc"
+#endif
+
 
 #ifdef USE_PSRAM16
 exmem : "psram16drv.spin2"
@@ -118,7 +123,18 @@ gen_gradient_palette(long[$24]+7*16*4,BG_SELECTION,FG_GREY)
 wordfill(long[$28]+$E000," ",32*40)
 putgfx(256,5,1,30,4)
 
-if _mount(@"/sd",c._vfs_open_sdcardx(SDCARD_CLK,SDCARD_SELECT,SDCARD_DI,SDCARD_DO))
+'#define _DEBUG_FATFS
+'#pragma exportdef _DEBUG_FATFS
+'#define _DEBUG_SDMM
+'#pragma exportdef _DEBUG_SDMM
+
+#ifdef USE_SD_4BIT
+'tmp := c._vfs_open_fat_handle(sdmm._sdmm_open(SDCARD_CLK,SDCARD_SELECT,SDCARD_DI,SDCARD_DO))
+tmp := c._vfs_open_fat_handle(sdsd._sdsd_open(SD4_CLK,SD4_CMD,SD4_DAT0,SD4_PPWR,SD4_PLED))
+#else
+tmp := c._vfs_open_sdcardx(SDCARD_CLK,SDCARD_SELECT,SDCARD_DI,SDCARD_DO)
+#endif
+if _mount(@"/sd",tmp)
   putstring(@"FS mount error:",2,24,0)
   putstring(c.strerror(errno),3,25,0)
   repeat

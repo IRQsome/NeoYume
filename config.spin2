@@ -67,6 +67,14 @@ SDCARD_DO = 58
 ' \/ Uncomment for fast ROM loading
 #define _SDHC_45MHZ
 
+' 4 bit SD mode (experimental)
+#define USE_SD_4BIT
+SD4_DAT0 = 0
+SD4_CMD  = 4
+SD4_CLK  = 5
+SD4_PLED = 6
+SD4_PPWR = 7
+
 '{ ' NEW video driver config
 VIDEO_MODE = vconst.MODE_VGA
 VIDEO_SUBMODE = vconst.SUBMODE_2X
