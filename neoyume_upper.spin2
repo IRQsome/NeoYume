@@ -674,7 +674,7 @@ repeat
     BIOS_JAPAN:   tmp := @"Using japanese BIOS"
     BIOS_UNIBIOS: tmp := @"Using UniBIOS"
   putstring(tmp,GAMECHOOSE_X,GAMECHOOSE_Y+GAMECHOOSE_SIZE+2,0<<12)
-  putstring(@"Hit D for credits!",GAMECHOOSE_X,27,0<<12)
+  putstring(@"Hit C for credits!",GAMECHOOSE_X,27,0<<12)
 
   repeat
     previnput := input
@@ -706,7 +706,7 @@ repeat
       else
         bios_type++
       quit
-    if tmp.[7]
+    if tmp.[6]
       settiles(0,39,GAMECHOOSE_Y,27," ")
       i := print_info(@credits_text,GAMECHOOSE_Y)
 #ifdef USE_PSRAM_EITHER
