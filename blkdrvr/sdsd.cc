@@ -237,10 +237,10 @@ static int  sdcard_power( void )
 
     if( samples ) {
 #ifdef SD_DEBUG
-        __builtin_printf("  Error: Stuck high at SD power-down\n");
+        __builtin_printf("  Warning: Stuck high at SD power-down\n");
 #endif
-        releasepins();
-        return 0;
+        //releasepins();
+        //return 0;
     }
 #ifdef SD_DEBUG
     tmr = _muldiv64(tmr, 1_000_000, _clockfreq());
