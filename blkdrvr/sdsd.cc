@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------/
-/  Experimental SD interface mode (not SPI) control module
+/  4-bit SD interface mode (not SPI) SD card driver plug-in
 /-------------------------------------------------------------------------/
 /
 /  Copyright (C) 2024,2025, Evan Hillas, all right reserved.
@@ -10,13 +10,12 @@
 / * Redistributions of source code must retain the above copyright notice.
 /
 /-------------------------------------------------------------------------/
-    v1.0, 17 Feb 2025
 
   Features and Limitations:
 
   * Requires compiling with FlexC v7.0 or newer.
 
-  * Platform Specific - Prop2 - for performance uses hardware DMA resources
+  * Platform Specific - Prop2 - uses hardware DMA resources
 
   * Uses 6, 7 or 8 I/O pins, 4-bit mode only
     DAT pins must be ordered on a 4-bit pin boundary
@@ -25,28 +24,45 @@
   * No Media Change Detection
     Application program needs to perform a f_umount()/f_mount() after media change.
 
-/-------------------------------------------------------------------------*/
 
-#include <filesys/fatfs/diskio.h>    // Common include file for FatFs and disk I/O layer
-#include <stdlib.h>    // needed for some data types
-#include <string.h>    // needed for memset()
+Revisions:
+Work began end of June 2023 - https://forums.parallax.com/discussion/comment/1551799/#Comment_1551799
+10 Oct 2024: v0.1  https://forums.parallax.com/discussion/comment/1562218/#Comment_1562218
+14 Oct 2024: v0.2, added SDSC support for old 2 GB cards - https://forums.parallax.com/discussion/comment/1562391/#Comment_1562391
+28 Oct 2024: v0.3  https://forums.parallax.com/discussion/comment/1562889/#Comment_1562889
+25 Nov 2024: v0.5  https://forums.parallax.com/discussion/comment/1563618/#Comment_1563618
+15 Dec 2024: v0.7
+ 9 Jan 2025: v0.8  https://forums.parallax.com/discussion/comment/1564719/#Comment_1564719
+14 Feb 2025: v0.9
+17 Feb 2025: v1.0, Released, added to Obex database - https://obex.parallax.com/obex/sdsd-cc/
+
+26 Feb 2025: v1.1, bug fix for multi-card use - Convert DMA parameter structs to non-static
+20 Apr 2025: v1.2, bug fix for sharing amongst cogs - Ensure DIR/OUT, for used pins, finish as set low, https://forums.parallax.com/discussion/comment/1566465/#Comment_1566465
+26 Apr 2025: v1.3, rework disk_read()/disk_write() to implement lazy CMD12 for sequential performance
+30 Apr 2025: v1.4, some size optimising, remove legacy driver interface, bug fix SETSE1 for lazy CMD12
+18 May 2025: v1.5, now supports optional FF_USE_TRIM compile switch - Effective when SD card supports erase-discard
+26 July 2025: v1.6, fixed a harmless typo that appeared in v1.4: unconditional ROLBYTE instruction in tx block CRC calc
+11 Sept 2025: v1.7, changed power down error into just a warning and removed the subsequent excessive power up check
+
+/-------------------------------------------------------------------------*/
+#define _SDSD_VERSION_ "v1.7"
+
 
 #ifndef __propeller2__
 #error ONLY SUPPORTS THE PROPELLER 2 MICROCONTROLLER
 #endif
 #include <propeller2.h>
 
+#include <filesys/fatfs/diskio.h>    // Common include file for FatFs and disk I/O layer
+#include <stdlib.h>    // needed for some data types
+#include <string.h>    // needed for memset()
 
-//--------------------------------------------------------------------------
-// Compile options
-//--------------------------------------------------------------------------
 
-//#define SD_USE_ACMD23
+
 #ifdef _DEBUG
     #define SD_DEBUG
 #endif
-//#define SD_DEBUG_PERFORMANCE
-
+//#define SD_DEBUG_ACCESSES
 
 
 enum {
@@ -61,6 +77,7 @@ enum {
     BLOCKREAD_CRC_MASK = 2,
     CLK_POLARITY_MASK = 4,
     CARD_CACHING_MASK = 8,
+    TRIM_DISCARD_MASK = 16,
 
 //--------------------------------------------------------------------------
 // driver specific ioctl() commands
@@ -78,61 +95,19 @@ enum {
 // SD Card/Socket specific variables
 uint8_t  cidbytes[18];
 uint16_t  rca16;    // active card's 16-bit RCA register
-uint32_t  discblocks;    // active card's user capacity
+LBA_t  discblocks;    // active card's user capacity
 uint16_t  clkdivider;    // full speed clock-divider, minimum value of 2
-uint8_t  rxlagcomp;    // Compensates for cumulative clk-rx latencies,
-                                // read errors trigger a recalibration
-DSTATUS  Stat;    // Disk status
-uint8_t  clkpin;    // pin number of clock pin
-uint8_t  cmdpin;    // pin number of command/response pin
-uint8_t  dat0pin;    // base pin number of the four DAT pins
-uint8_t  pwrpin;    // pin number of power switch (-1 == not defined)
-uint16_t  ledpin;    // pin number of activity LED (-1 == not defined),
-                     // doubles up as SDSC byte addressing flag in bit0,
-                     // and block read CRC enable flag in bit1,
-                     // and clock polarity flag in bit2,
-                     // and SDHC caching flag in bit3,
-
-
-
-
-//----------------------------------------------------------------------------
-// Compute the CRC7 of some bytes, matched to framing of SD command-response
-//----------------------------------------------------------------------------
-
-static uint32_t  crc7sd(    // SD spec 4.5
-    uint8_t *buf,
-    size_t len )
-{
-    uint32_t  crc = 0;
-    uint32_t  val;
-
-    __asm const {    // "const" enforces XIP, "volatile" enforces Fcache
-// Reference code courtesy of Ariba
-crc7lp
-		rdlong	val, buf
-		add	buf, #4
-		movbyts	val, #0b00_01_10_11    // byte swap within longwords
-		setq	val
-		crcnib	crc, #0x48    // CRC-7-ITU reversed (x7 + x3 + x0: 0x09, odd parity)
-		crcnib	crc, #0x48
-		djz	len, #crc7done
-		crcnib	crc, #0x48
-		crcnib	crc, #0x48
-		djz	len, #crc7done
-		crcnib	crc, #0x48
-		crcnib	crc, #0x48
-		djz	len, #crc7done
-		crcnib	crc, #0x48
-		crcnib	crc, #0x48
-		djnz	len, #crc7lp
-crc7done
-		rev	crc    // correct the bit order to match standard
-		shr	crc, #24
-		or	crc, #1    // add the SD response end-bit as 8th bit
-    }
-    return crc;
-}
+uint8_t  clkpin;  // pin number of clock pin
+uint8_t  cmdpin;  // pin number of command/response pin
+uint8_t  dat0pin;  // base pin number of the four DAT pins
+uint8_t  pwrpin;  // pin number of power switch (-1 == not present)
+uint16_t ledpin;  // pin number of activity LED (-1 == not present), in upper 8 bits
+                  // doubles up as SDSC byte addressing flag in bit0, autodetected
+                  // and block read CRC enable flag in bit1, defaults to set, overridden by IOCTL
+                  // and clock polarity flag in bit2, autodetected
+                  // and SDHC caching flag in bit3, autodetected, (feature removed, no benefit without queuing)
+                  // and Erase Discard flag in bit4, autodetected
+uint8_t rxlagcomp;  // Compensates for cumulative clk-rx latencies, block read errors trigger a recalibration
 
 
 
@@ -148,15 +123,6 @@ static void  releasepins( void )
     unsigned  PIN_PWR = pwrpin;
     unsigned  PIN_LED = ledpin >> 8;    // Doubles up as SDSC byte addressing flag in bit0
 
-    if( PIN_PWR != PIN_CLK ) {    // power switch is present
-        _pinf(PIN_PWR);
-        _wrpin(PIN_PWR, 0);
-    }
-    if( PIN_LED != PIN_CLK ) {    // activity LED is present
-        _pinf(PIN_LED);
-        _wrpin(PIN_LED, 0);
-    }
-
     _pinf(PIN_CLK);    // stop SD clock
 
     _pinf(PIN_CMD);
@@ -168,7 +134,135 @@ static void  releasepins( void )
 
     _wrpin(PIN_CLK, 0);    // release clock pin
 
+    if( PIN_LED != PIN_CLK ) {    // activity LED is present
+        _pinf(PIN_LED);
+        _wrpin(PIN_LED, 0);
+    }
+    if( PIN_PWR != PIN_CLK ) {    // power switch is present
+        _pinf(PIN_PWR);
+        _wrpin(PIN_PWR, 0);
+    }
+
     _waitus(1);    // wait for pull-up to act
+}
+
+
+
+//-----------------------------------------------------------------------
+// Give up control of pins by this cog
+//-----------------------------------------------------------------------
+
+static void  give_pins( void )
+{
+    _fltl(clkpin);
+    _fltl(dat0pin | 3<<6);
+    _fltl(cmdpin);
+}
+
+
+
+//-----------------------------------------------------------------------
+// Take control of clock pin - used by block r/w jointing feature
+//-----------------------------------------------------------------------
+
+static void  take_clkpin( void )
+{
+    uint32_t  PIN_CLK = clkpin;
+
+    __asm {
+//		setse1	#0    // cancel triggering before reuse - not needed if POLLSE1 is used
+		drvl	PIN_CLK    // enable CLK smartpin
+		or	PIN_CLK, #0b001<<6;    // trigger on rising edge - clocks completed
+		setse1	PIN_CLK
+    }
+}
+
+
+
+//-----------------------------------------------------------------------
+// Wait for card ready - Checks the DAT0 pin write-data-busy indicator
+//-----------------------------------------------------------------------
+
+static int  wait_ready(    // 0:Card Busy, 1:Card Ready
+    uint32_t timeout )    // 100/250/500 ms interval in sysclock ticks
+{
+    unsigned  PIN_CLK = clkpin;
+    uint32_t  m_se2;
+    int  ready;
+
+    _drvl(PIN_CLK);    // enable CLK smartpin
+    _wypin(PIN_CLK, -1);
+    timeout += _cnt();
+    m_se2 = 0b110<<6 | dat0pin;    // trigger on high level - card ready
+    ready = 0;   // Busy
+
+    __asm {    // "const" enforces XIP, "volatile" enforces Fcache
+		setse2	#0    // cancel triggering before reuse - not needed if POLLSE2 is used
+		setse2	m_se2
+		setq	timeout
+		waitse2   wc
+	if_nc	mov	ready, #1    // Not busy
+    }
+
+#ifdef SD_DEBUG
+    if( !ready )
+        __builtin_printf(" Busy timeout! ");
+#endif
+
+    return ready;
+}
+
+
+
+//----------------------------------------------------------------------------
+// Compute the CRC7 of some bytes, matched to framing of SD command-response
+//----------------------------------------------------------------------------
+
+static uint32_t  crc7sd(    // SD spec 4.5
+    uint8_t *buf,
+    size_t len )
+{
+    uint32_t  crc = 0;
+
+    __asm volatile {    // "const" enforces XIP, "volatile" enforces Fcache
+// Reference code courtesy of Ariba
+		rdfast	#0, buf
+		rep	@.rend, len
+		rfbyte	pa
+		movbyts	pa, #0b00_01_10_11    // byte swap within longwords
+		setq	pa
+		crcnib	crc, #0x48    // CRC-7-ITU reversed (x7 + x3 + x0: 0x09, odd parity)
+		crcnib	crc, #0x48
+.rend
+		rev	crc    // correct the bit order to match standard
+		shr	crc, #24    // 7-bit CRC in bits 7..1
+		or	crc, #1    // and the SD response end-bit in bit0
+    }
+    return crc;
+}
+
+
+
+//-----------------------------------------------------------------------
+// Extract disc capacity from the CSD bits, both v1.0 and v2.0 variants
+//-----------------------------------------------------------------------
+
+static LBA_t  disc_size(
+    uint8_t *csd )
+{
+    uint32_t  cs = __builtin_bswap32(*(uint32_t *)&csd[6]);
+    int  n;
+
+    if( csd[0]>>6 ) {    // SDC ver 2.00
+        cs = (cs & 0xfff_ffff) + 1;  // 0.5 MiByte granularity
+        n = 10;
+    } else {    // SDC ver 1.00
+        cs = (cs>>14 & 0xfff) + 1;    // C_SIZE
+        n = (__builtin_bswap16(*(uint16_t *)&csd[9])>>7 & 0x7) + 2    // C_SIZE_MULT
+            + (csd[5] & 15) - 9;    // READ_BL_LEN
+    }
+
+    return (LBA_t)cs << n;    // 32/64-bit block count
 }
 
 
@@ -216,7 +310,7 @@ static int  sdcard_power( void )
 #endif
 
 // Use CompDAC pin mode to wait for supply to fall below 0.5 Volt, SD spec 6.4.1.2
-    threshold = (int)(0.5 / 3.4 * 255.0);    // 0.5 Volts
+    threshold = (uint32_t)(0.5 / 3.4 * 255.0);    // 0.5 Volts
     timeout = 500 * 32;    // 500 ms
 #ifdef SD_DEBUG
     __builtin_printf("  power-down threshold = %d   pin state = %d\n", threshold, _pinr(PIN_VOLT));
@@ -235,51 +329,16 @@ static int  sdcard_power( void )
     } while( samples && timeout );    // unanimous wait for pin to drop below threshold level
     tmr = _cnt() - tmr;
 
-    if( samples ) {
 #ifdef SD_DEBUG
-        __builtin_printf("  Warning: Stuck high at SD power-down\n");
-#endif
-        //releasepins();
-        //return 0;
-    }
-#ifdef SD_DEBUG
+    if( samples )
+        __builtin_printf("WARNING: Stuck high at SD power-down\n");
+
     tmr = _muldiv64(tmr, 1_000_000, _clockfreq());
     __builtin_printf("  power-down slope = %d us   pin state = %d\n", tmr, _pinr(PIN_VOLT));
 #endif
-//    _waitms(50);
 
-    // Use CompDAC pin mode to wait for supply to rise above 2.7 Volts, SD spec 6.4.1.3
-    threshold = (int)(2.7 / 3.3 * 255.0 + 0.5);    // 2.7 Volts
-    timeout = 36 * 32;    // 35 ms + 1 ms to cover filter effect
-#ifdef SD_DEBUG
-    __builtin_printf("  power-up threshold = %d   pin state = %d\n", threshold, _pinr(PIN_VOLT));
-#endif
-    _pinf(PIN_DAT);
-    _pinf(PIN_CMD);
-    _pinf(PIN_PWR);    // and power back on, released back to Card Detect function
-    tmr = _cnt();
-    _wrpin(PIN_VOLT, P_LEVEL_A | threshold<<8);    // set CompDAC threshold to 2.7 volts
-    _waitus(1);    // DAC settle time is about 1.0 us
-    samples = !_pinr(PIN_VOLT);
-    do {
-        _waitus(32);    // 32 us x 32 samples = 1.0 ms
-        samples = samples<<1 | !_pinr(PIN_VOLT);
-        timeout--;
-    } while( samples && timeout );    // unanimous wait for pin to rise above threshold level
-    tmr = _cnt() - tmr;
-    if( samples ) {
-#ifdef SD_DEBUG
-        __builtin_printf("  Error: Stuck low at SD power-up\n");
-#endif
-        releasepins();
-        return 0;
-    }
-#ifdef SD_DEBUG
-    tmr = _muldiv64(tmr, 1_000_000, _clockfreq());
-    __builtin_printf("  power-up slope = %d us   pin state = %d\n", tmr, _pinr(PIN_VOLT));
-#endif
-
-    releasepins();
+    releasepins();    // and power back on
+    _waitms(2);    // delay for card supply ramp up plus card start up, SD spec 6.4.1.1
 
     return 1;
 }
@@ -287,24 +346,29 @@ static int  sdcard_power( void )
 
 
 //-----------------------------------------------------------------------
-// Transmit a data block to the card
+// Transmit a data block to the SD card
 //-----------------------------------------------------------------------
+// Return codes:
+//  %10_010_1 == CRC matched
+//  %10_101_1 == CRC mismatch
+//  %11_111_1 == CRC no response
+//  %00_000_0 == card busy timeout
 
-static int  tx_datablock(    // $00 = busy timeout, $3F = no CRC response, %10_101_1 = CRC mismatch, %10_010_1 = CRC matched
-    const uint8_t *buf,    // Buffer address of block data to be transmitted
+static int  tx_datablock(
+    const void *buf,    // Buffer address of block data to be transmitted
     uint32_t timeout )    // 250 ms timeout for card busy, in sysclock ticks
-    __attribute__(opt(no-fast-inline-asm))    // use the full assembler, Fcache duplicates the C locals
+    __attribute__(opt(no-fast-inline-asm))    // use the full assembler, for RES fitting, duplicates C locals
 {
-    void *ptr = &txblkset;
+    void  *ptr = &txblkset;
 
     __asm volatile {    // "const" enforces XIP, "volatile" enforces Fcache
 // retrieve parameter set
-//		loc	pa, #txblkset    // fast copy from struct
 		setq	#sizeof(txblkset) / 4 - 1
 		rdlong	p_clk, ptr    // fast copy to cogRAM
 // start clocking to see when card exits from write busy status
-		wypin	##-1, p_clk    // busy check
+		wypin	lnco, p_clk    // busy check
 		getct	pb    // timeout begins
+//		testb	timeout, #0   wc    // diag to force a CRC error
 		add	timeout, pb    // SDHC 250 ms timeout of block erase-write (SD spec 4.6.2.2)
 
 		setse2	m_se2    // trigger on DAT0 high level - card ready
@@ -314,10 +378,11 @@ static int  tx_datablock(    // $00 = busy timeout, $3F = no CRC response, %10_1
 
 		pollse1       // clear stale event
 		pollse2       // clear stale event
-		rdfast	lnco, buf    // start the FIFO
-		setxfrq	lnco
+		rdfast	lnco, buf    // start the FIFO, non-blocking init
+		setxfrq	lnco    // sysclock/1 for lead-in timing
 		setq	timeout    // apply the 250 ms timeout to WAITSEn
 		waitse2   wz    // wait for ready (DAT0 high), Z set if timed-out - still busy
+
 		wypin	#2, p_clk    // minimum turnaround, Nwr (SD spec 4.12.4)
 		waitse1    // wait for clocking to complete
 
@@ -326,15 +391,15 @@ static int  tx_datablock(    // $00 = busy timeout, $3F = no CRC response, %10_1
 
 	if_nz	xinit	m_align, #0    // lead-in delay from here at sysclock/1
 	if_nz	setq	v_nco        // streamer transfer rate (takes effect with buffered command below)
-	if_nz	xzero	m_dat, #0     // rx buffered-op, aligned to clock via lead-in
+	if_nz	xzero	m_dat, #0     // buffered-op, aligned to clock via lead-in
 		dirh	p_clk    // clock timing starts here
 	if_nz	wypin	clocks, p_clk    // first pulse outputs during second clock period
 
-// compute the block's CRC
+// compute the SD data block's CRC
 	if_nz	rep	@.rend1, #512/4    // one SD data block
 	if_nz	alti	altireg, #0b100_111_000    // next D-field substitution, then increment altireg, result goes to PA
 	if_nz	movbyts	pa, #0b00_01_10_11    // byte swap within longword
-	if_nz	splitb	pa    // 8-nibble order swapped to bit order of 4 bytes
+	if_nz	splitb	pa    // every 4th bit makes a byte, 8 parallel to 4 serial
 	if_nz	setq	pa
 	if_nz	crcnib	crc3, poly
 	if_nz	crcnib	crc3, poly
@@ -349,24 +414,26 @@ static int  tx_datablock(    // $00 = busy timeout, $3F = no CRC response, %10_1
 	if_nz	rolbyte	pa, crc2, #0
 	if_nz	rolbyte	pa, crc1, #0
 	if_nz	rolbyte	pa, crc0, #0
-	if_nz	mergeb	pa    // 4-byte order swapped to bit order of 8 nibbles
+	if_nz	mergeb	pa    // every 8th bit makes a nibble, 4 serial to 8 parallel
 
 	if_nz	waitse1    // wait for clocking to complete
 
 // transmitt the CRC
-	if_nz	setxfrq	lnco
+	if_nz	setxfrq	lnco    // sysclock/1 for lead-in timing
 	if_nz	dirl	p_clk    // reset smartpin
 	if_nz	xinit	m_align2, #0    // lead-in delay from here at sysclock/1
 	if_nz	setq	v_nco        // streamer transfer rate (takes effect with buffered command below)
-	if_nz	xzero	m_crc, pa    // 8 nibbles, transmit low nibble first
+	if_nz	xzero	m_crc, pa    // 8 nibbles, transmit low nibble first, suits the reversed CRC
 	if_nz	dirh	p_clk    // clock timing starts here
 	if_nz	wypin	v_crc, p_clk    // 16-bit CRC + end-bit (either 18 or 19 clocks)
+
 	if_nz	rolbyte	pa, crc3, #1
 	if_nz	rolbyte	pa, crc2, #1
 	if_nz	rolbyte	pa, crc1, #1
 	if_nz	rolbyte	pa, crc0, #1
-	if_nz	mergeb	pa    // 4-byte order swapped to bit order of 8 nibbles
-	if_nz	xzero	m_crc, pa    // 8 nibbles, transmit low nibble first
+//if_nc_and_nz	rolbyte	pa, crc0, #1    // diag, modified to force an error
+	if_nz	mergeb	pa    // every 8th bit makes a nibble, 4 serial to 8 parallel
+	if_nz	xzero	m_crc, pa    // 8 nibbles, transmit low nibble first, suits the reversed CRC
 	if_nz	xzero	m_crc, endbit
 	if_nz	waitse1    // wait for clocking to complete
 
@@ -381,10 +448,10 @@ static int  tx_datablock(    // $00 = busy timeout, $3F = no CRC response, %10_1
 		waitse1      // wait for each clock done
 .rend2
 	_ret_	wypin	#500, p_clk    // trailing clocks
-//		ret
+//		ret    // RET not needed, full assembler can handle _RET_ instead
 
 clocks		long 1 + 512 * 2    // start-bit + nibble count
-lnco		long 0x8000_0000    // tells RDFAST/WRFAST not to wait for FIFO ready
+lnco		long 0x8000_0000    // lead-in rate, sysclock/1
 endbit		long 0xffff_ffff
 poly		long 0x8408    // CRC-16-CCITT reversed (x16 + x12 + x5 + x0: 0x1021, even parity)
 altireg		long pa<<19 | cogdatbuf<<9    // register PA for ALTI result substitution, and CRC buffer address
@@ -393,32 +460,35 @@ crc2		long 0
 crc1		long 0
 crc0		long 0
 
-p_clk		res 1
-p_dat		res 1
-m_align		res 1
-v_nco		res 1
-m_se2		res 1
-m_dat		res 1
-m_crc		res 1
-m_align2	res 1
-v_crc		res 1    // 18 or 19
+// copy of txblkset parameters
+p_clk		res 1    // CLK pin number
+p_dat		res 1    // DAT pin number + ADDPINS
+m_align		res 1    // Streamer mode word, data leadin timing
+v_nco		res 1    // NCO divider, streamer transfer rate
+m_se2		res 1    // SETSET2 mode word
+m_dat		res 1    // Streamer mode word, data timing
+m_crc		res 1    // Streamer mode word, CRC timing
+m_align2	res 1    // Streamer mode word, CRC leadin timing
+v_crc		res 1    // CRC clocks, compensates CRC status timing on clock polarity change
 
 cogdatbuf	res 512/4    // longwords for data block
-//		fit 128
     }
 
     timeout &= 0x3f;    // remove excess bits from "CRC status"
 
 #ifdef SD_DEBUG
-    if( timeout == 0x37 )
-        __builtin_printf(" BlockWriteError: No CRC response!\n");
-    if( timeout == 0b10_101_1 )
-        __builtin_printf(" BlockWriteError: CRC mismatch response!\n");
-    if( timeout == 0 )
-        __builtin_printf(" BlockWriteError: Data busy timeout!\n");
+    if( timeout != 0b10_010_1 ) {    // CRC didn't match
+        __builtin_printf(" BlockWriteError: %%%06b ", timeout);
+        if( timeout == 0 )
+            __builtin_printf("Data busy timeout!\n");
+        else if( timeout == 0b10_101_1 )
+            __builtin_printf("CRC mismatched!\n");
+        else
+            __builtin_printf("Unknown CRC Status\n");
+    }
 #endif
 
-    return timeout;    // $00 = busy timeout, $3F = no CRC response, %10_101_1 = CRC mismatch, %10_010_1 = CRC matched
+    return timeout;  // $00 = busy timeout, $3F = CRC no response, %10_101_1 = CRC mismatch, %10_010_1 = CRC matched
 }
 
 
@@ -426,7 +496,7 @@ cogdatbuf	res 512/4    // longwords for data block
 // Tx data block's DMA parameter setup
 //-----------------------------------------------------------------------
 
-static struct txblk_parms_t {
+struct txblk_parms_t {
     uint32_t  p_clk, p_dat, m_align, v_nco, m_se2, m_dat, m_crc, m_align2, v_crc;
 } txblkset;
 
@@ -437,37 +507,36 @@ static void  set_txblkset(
     uint32_t CLK_POL )
 {
     uint32_t  PIN_DAT0 = dat0pin;
-    uint32_t  cmdiv = (CLK_POL ? clkdiv : clkdiv/2);
+    uint32_t  poldiv = (CLK_POL ? clkdiv : clkdiv/2);
     CMDAT_REG = CMDAT_REG & 1;    // extract lsb from rxlag
 
     txblkset.p_clk = clkpin;
     txblkset.p_dat = PIN_DAT0 | 3<<6;    // DAT0..3 ordered pin group
     txblkset.m_se2 = PIN_DAT0 | 0b110<<6;    // trigger on high level - card ready
-    txblkset.m_align = X_IMM_32X1_1DAC1 | 5 + CLK_REG - CMDAT_REG + clkdiv + cmdiv;  // start(S)-bit is ahead of first streamer bit
-    txblkset.m_align2 = X_IMM_32X1_1DAC1 | 5 + CLK_REG - CMDAT_REG + cmdiv;    // no S-bit, CRC abuts end of data block
+    txblkset.m_align = X_IMM_32X1_1DAC1 | 5 + CLK_REG - CMDAT_REG + clkdiv + poldiv;  // start(S)-bit is ahead of first streamer bit
+    txblkset.m_align2 = X_IMM_32X1_1DAC1 | 5 + CLK_REG - CMDAT_REG + poldiv;    // no S-bit, CRC abuts end of data block
     txblkset.v_nco = 0x8000_0000UL / clkdiv + (0x8000_0000UL % clkdiv > 0 ? 1 : 0);  // data transfer rate, round up upon a non-zero remainder
-    txblkset.m_dat = X_RFBYTE_4P_1DAC4 | PIN_DAT0<<17 | X_PINS_ON | X_ALT_ON | 512 * 2;    // mode and nibble count
-    txblkset.m_crc = X_IMM_8X4_1DAC4 | PIN_DAT0<<17 | X_PINS_ON | 8;    // mode and nibble count
-    txblkset.v_crc = 16 + 2 + (CLK_POL ? 1 : 0);    // 18 or 19
+    txblkset.m_dat = X_RFBYTE_4P_1DAC4 | PIN_DAT0<<17 | X_PINS_ON | X_ALT_ON | 512 * 2;    // mode and nibble count, msnib first
+    txblkset.m_crc = X_IMM_8X4_1DAC4 | PIN_DAT0<<17 | X_PINS_ON | 8;    // mode and nibble count, lsnib first
+    txblkset.v_crc = 16 + 2 + (CLK_POL ? 1 : 0);    // CRC clocks, 18 or 19
 }
 
 
 
 //-----------------------------------------------------------------------
-// Receive data blocks from the card
+// Receive data blocks from the SD card
 //-----------------------------------------------------------------------
 
 static int  rx_datablocks(    // 0 = success, 1 = CRC fail, 2 = start-bit timeout
-    uint8_t *buf,    // Buffer address to store the received data blocks
+    void *buf,    // Buffer address to store the received data blocks
     uint32_t blocks,    // Number of data blocks to be read
     uint32_t timeout,    // 100 ms timeout for each start-bit latency, in sysclock ticks
     uint8_t *crcbuf )    // extra hubRAM for holding the final 16 CRC nibbles
-    __attribute__(opt(no-fast-inline-asm))    // use the full assembler, Fcache duplicates the C locals
+    __attribute__(opt(no-fast-inline-asm))    // use the full assembler, for RES fitting, duplicates C locals
 {
-    void *ptr = &rxblkset;
+    void  *ptr = &rxblkset;
 
     __asm volatile {    // "const" enforces XIP, "volatile" enforces Fcache
-//		loc	pa, #rxblkset    // fast copy from struct
 		setq	#sizeof(rxblkset) / 4 - 1
 		rdlong	p_clk, ptr    // fast copy to cogRAM
 
@@ -475,88 +544,94 @@ static int  rx_datablocks(    // 0 = success, 1 = CRC fail, 2 = start-bit timeou
 		setse2	m_se2    // trigger on DAT0 low level, preferred to falling edge trigger
 		// because DAT pins idle high during command and response and also ensures best chance
 		// of seeing an early start-bit
-		pollse1
 		modz	_clr   wz    // clear Z flag to create a one-shot for first block
+		pollse1
+// SKIPF patterns:
+//   (a)  Ignore CRC, first block
+//   (b)  Ignore CRC, further blocks
+//   (c)  Process CRC, except last block
+//   (d)  Ignore CRC, last block
+//   (e)  Process CRC, last block
 nextblk
-		wrfast	lnco, buf    // setup FIFO for streamer use                                             a |  c d
+		wrfast	lnco, buf    // setup FIFO for streamer use                                             a |   c
 
-		skipf	skip1    // a = Block1 NoCRC, b = Block2+ NoCRC, c = Block1 CRC, d = Block2+ CRC        ++++++++
-		wxpin	v_sdiv, p_clk    // clock-divider for start-bit search                                  a b  c d
-// no room in the buffer for final CRC-16 nibbles, to be handled later
-		cmp	blocks, #2   wc    // last block?                                                       | |  c d
-	if_c	sub	clocks, #16+2    // stop the clocks before the CRC-16 nibbles                           | |  c d
-	if_c	sub	m_dat, #16    // truncate DMA to end of buffer                                          | |  c d
-// locate data block start-bit
+		skipf	skip1    // a/b = Ignore CRC, c = Process CRC                                           +++++++
+		wxpin	v_sdiv, p_clk    // clock-divider for start-bit search                                  a b   c
+// no room in the main buffer for final CRC-16 nibbles - to be handled later
+		cmp	blocks, #2   wc    // last block?                                                       | |   c
+	if_c	sub	clocks, #16+2    // stop the clocks before the CRC-16 nibbles                           | |   c
+	if_c	sub	m_dat, #16    // truncate DMA to end of buffer                                          | |   c
+// locate SD data block start-bit
 // NOTE: Search code has a one SD clock lag.  The start(S)-bit has been and gone by the time it triggers.
 //   The following streamer setup begins its sampling ahead of the second data bit arriving.
-		wypin	lnco, p_clk    // start the search                                                      a b  c d
-		getct	pb    // timeout begins                                                                 a b  c d
-		pollse2       // clear stale event                                                              a b  c d
-		setxfrq	lnco    // set streamer to sysclock/1 for lead-in timing                                a b  c d
-		add	pb, timeout    // SDHC 100 ms timeout of start-bit search, Nac (SD spec 4.6.2.1)        a b  c d
-		setq	pb    // apply the 100 ms timeout to WAITSEn                                            a b  c d
-		waitse2   wc    // wait for DAT0 low, a timeout sets C                                          a b  c d
-		dirl	p_clk    // halt clock-gen ASAP                                                         a b  c d
-		wxpin	v_div, p_clk    // clock-divider for data block                                         a b  c d
+		wypin	lnco, p_clk    // start the search                                                      a b   c
+		getct	pb    // timeout begins                                                                 a b   c
+		pollse2       // clear stale event                                                              a b   c
+		setxfrq	lnco    // set streamer to sysclock/1 for lead-in timing                                a b   c
+		add	pb, timeout    // SDHC 100 ms timeout of start-bit search, Nac (SD spec 4.6.2.1)        a b   c
+		setq	pb    // apply the 100 ms timeout to WAITSEn                                            a b   c
+		waitse2   wc    // wait for DAT0 low, sets C upon time-out                                      a b   c
 
-// start-bit found, now read the data block
-	if_nc	xinit	m_align, #0    // lead-in delay from here at sysclock/1                                 a b  c d
-	if_nc	setq	v_nco    // streamer transfer rate (takes effect with buffered command below)           a b  c d
-	if_nc	xzero	m_dat, #0     // rx buffered-op, aligned to clock via lead-in                           a b  c d
-		dirh	p_clk    // clock timing starts here                                                    a b  c d
-	if_nc	wypin	clocks, p_clk    // first pulse outputs during second clock period                      a b  c d
+// start-bit found
+		dirl	p_clk    // halt clock-gen ASAP                                                         a b   c
+		wxpin	v_div, p_clk    // clock-divider to match streamer rate                                 a b   c
 
-	if_nc	call	#crc_check    // returned with Z set is CRC passed, Z is clear on entry for first block | |  c d
+// now read the SD data block
+	if_nc	xinit	m_align, #0    // lead-in delay from here at sysclock/1                                 a b   c
+	if_nc	setq	v_nco    // streamer transfer rate (takes effect with buffered command below)           a b   c
+	if_nc	xzero	m_dat, #0     // buffered-op, aligned to clock via lead-in                              a b   c
+		dirh	p_clk    // clock timing starts here                                                    a b   c
+	if_nc	wypin	clocks, p_clk    // first pulse outputs during second clock period                      a b   c
 
-	if_nc	waitse1    // wait for clocking to complete, fresh block received                               a b  c d
-		setq	#512/4+16/8-1    // one SD block + CRC, copy the fresh block                            | |  c d
-		rdlong	cogdatbuf, buf    // fast copy to cogRAM before engaging the FIFO                       | |  c d
+	if_nc	call	#crc_check    // returned with Z set is CRC passed, Z is clear on entry for first block | |   c
 
-	if_nc	add	buf, blklen    // prep for next block                                                   | |  c d
-	if_nc	djnz	blocks, #nextblk    //                                                                  a b  | |
-if_nc_and_z	djnz	blocks, #nextblk    //                                                                  | |  c d
+	if_nc	waitse1    // wait for clocking to complete, fresh block received                               a b   c
+		setq	#512/4+16/8-1    // one data block + CRC, copy the fresh block                          | |   c
+		rdlong	cogdatbuf, buf    // fast copy to cogRAM before engaging the FIFO                       | |   c
 
-// now collect final block's CRC nibbles
-		skipf	skip2    // a = NoCRC, c = CRC                                                          +++
-if_nc_and_z	wrfast	lnco, crcbuf    // setup FIFO for streamer use, assumes mdat holds stale streamer mode  | c
-if_nc_and_z	setxfrq	lnco    // set streamer to sysclock/1 for lead-in timing                                | c
-if_nc_and_z	dirl	p_clk    // reset clock smartpin                                                        | c
+	if_nc	add	buf, blksize    // prep for next block                                                  | |   c
+	if_nc	djnz	blocks, #nextblk    //                                                                  a b   |
+if_nc_and_z	djnz	blocks, #nextblk    //                                                                  | |   c
 
-if_nc_and_z	xinit	m_align, #0    // lead-in delay from here at sysclock/1                                 | c
-if_nc_and_z	setq	v_nco    // streamer transfer rate (takes effect with buffered command below)           | c
-if_nc_and_z	xzero	m_crc, #0    // rx buffered-op, aligned to clock via lead-in                            | c
-if_nc_and_z	dirh	p_clk    // clock timing starts here                                                    | c
-if_nc_and_z	wypin	#16+2, p_clk    // CRC-16 nibbles + end bit                                             | c
+// Now collect final data block's CRC nibbles.
+// Since there is no room left in the main data buffer, this needs
+// aditional code to restart the streamer at a separate buffer
+		skipf	skip2    // d = Ignore CRC, e = Process CRC                                               +++++
+	if_c	mov	blocks, #2    // indicate a start-bit time-out                                            d   e
 
-if_nc_and_z	waitse1    // wait for clocking to complete                                                     | c
+if_nc_and_z	wrfast	lnco, crcbuf    // setup FIFO for streamer use, assumes mdat holds stale streamer mode    |   e
+if_nc_and_z	setxfrq	lnco    // set streamer to sysclock/1 for lead-in timing                                  |   e
+if_nc_and_z	dirl	p_clk    // reset clock smartpin                                                          |   e
+
+if_nc_and_z	xinit	m_align, #0    // lead-in delay from here at sysclock/1                                   |   e
+if_nc_and_z	setq	v_nco    // streamer transfer rate (takes effect with buffered command below)             |   e
+if_nc_and_z	xzero	m_crc, #0    // buffered-op, aligned to clock via lead-in                                 |   e
+if_nc_and_z	dirh	p_clk    // clock timing starts here                                                      |   e
+if_nc_and_z	wypin	#16+2, p_clk    // CRC-16 nibbles + end bit                                               |   e
+
+if_nc_and_z	waitse1    // wait for clocking to complete                                                       |   e
 
 // copy CRC nibbles to cogRAM then process
-if_nc_and_z	setq	#16/8-1    // 16 CRC-16 nibbles, 8 nibbles per longword                                 | c
-if_nc_and_z	rdlong	cogcrcbuf, crcbuf    //                                                           | c
-if_nc_and_z	call	#crc_check    //                                                                        | c
+if_nc_and_z	setq	#16/8-1    // 16 CRC-16 nibbles, 8 nibbles per longword                                   |   e
+if_nc_and_z	rdlong	cogcrcbuf, crcbuf    //                                                                   |   e
+if_nc_and_z	call	#crc_check    //                                                                          |   e
 
-	if_nz	mov	blocks, #1    // indicate a failed CRC                                                  | c
-	if_c	mov	blocks, #2    // timed out
+if_nc_and_nz	mov	blocks, #1    // indicate a failed CRC                                                    |   e
 		ret
 
-lnco		long 0x8000_0000    // lead-in rate, sysclock/1
-clocks		long 512 * 2 + 16 + 2    // clock pulses, nibble count + 16-bit CRC + end-bit
-poly		long 0x8408    // CRC-16-CCITT reversed (x16 + x12 + x5 + x0: 0x1021, even parity)
-altireg		long pa<<19 | cogdatbuf<<9    // register PA for ALTI result substitution, and CRC buffer address
-blklen		long 512
-
 crc_check
-// CRC-16 check of prior read SD block
-// Z is clear upon first block, returns quickly with Z set
+// CRC-16 check of prior read data block
+// Z is clear upon first data block of transaction, returns quickly with Z set
 		mov	crc3, #0
 		mov	crc2, #0
 		mov	crc1, #0
 		mov	crc0, #0
 		mov	pb, altireg
-	if_z	rep	@.rend, #512/4+16/8    // one SD block + CRC
+	if_z	rep	@.rend, #512/4+16/8    // one SD data block + CRC
+
 	if_z	alti	pb, #0b100_111_000    // next D-field substitution, then increment PB, result goes to PA
 	if_z	movbyts	pa, #0b00_01_10_11    // byte swap within longword
-	if_z	splitb	pa    // 8-nibble order swapped to bit order of 4 bytes
+	if_z	splitb	pa    // every 4th bit makes a byte, 8 parallel to 4 serial
 	if_z	setq	pa
 	if_z	crcnib	crc3, poly
 	if_z	crcnib	crc3, poly
@@ -571,29 +646,34 @@ crc_check
 		or	crc3, crc2
 		or	crc1, crc0
 	_ret_	or	crc3, crc1   wz    // Z set for pass, clear for fail
-//		long 0xfd64002d    // RET, not needed, there is a real RET added at the end anyway
-//		ret
+//		ret    // full assembler can handle _RET_ instead
 
-p_clk		res 1
-p_dat		res 1
-m_align		res 1
-v_nco		res 1
-m_se2		res 1
-m_dat		res 1
-m_crc		res 1
-v_div		res 1
-v_sdiv		res 1
-skip1		res 1
-skip2		res 1
+clocks		long 512 * 2 + 16 + 2    // clock pulses, nibble count + 16-bit CRC + end-bit
+lnco		long 0x8000_0000    // lead-in rate, sysclock/1
+poly		long 0x8408    // CRC-16-CCITT reversed (x16 + x12 + x5 + x0: 0x1021, even parity)
+altireg		long pa<<19 | cogdatbuf<<9    // register PA for ALTI result substitution, and CRC buffer address
+blksize		long 512
+
+// copy of rxblkset parameters
+p_clk		res 1    // CLK pin number
+p_dat		res 1    // DAT pin number + ADDPINS
+m_align		res 1    // Streamer mode word, data leadin timing
+v_nco		res 1    // NCO divider, streamer transfer rate
+m_se2		res 1    // SETSET2 mode word
+m_dat		res 1    // Streamer mode word, for data timing
+m_crc		res 1    // Streamer mode word, for CRC timing
+v_div		res 1    // Clock divider, data rate, post-v_sdiv reset
+v_sdiv		res 1    // Clock divider, start-bit search rate
+skip1		res 1    // SKIPF pattern, ignore CRC or process CRC
+skip2		res 1    // SKIPF pattern, final block CRC
 
 crc3		res 1
 crc2		res 1
 crc1		res 1
 crc0		res 1
 
-cogdatbuf	res 512/4    // longwords for data block
-cogcrcbuf	res 16/8    // adjacent longwords for CRC nibbles
-//		fit 128
+cogdatbuf	res 512/4    // longwords for SD data block
+cogcrcbuf	res 16/8    // longwords for CRC nibbles, must be contiguous with the SD data block
     }
 
 #ifdef SD_DEBUG
@@ -614,24 +694,23 @@ cogcrcbuf	res 16/8    // adjacent longwords for CRC nibbles
 // Rx data block's DMA parameter setup
 //-----------------------------------------------------------------------
 
-static struct rxblk_parms_t {
+struct rxblk_parms_t {
     uint32_t  p_clk, p_dat, m_align, v_nco, m_se2, m_dat, m_crc, v_div, v_sdiv, skip1, skip2;
 } rxblkset;
 
 
-static void  set_rxblkcrc(
-    unsigned crc_exec )
+static void  set_rxblkcrc( void )
 {
     rxblkset.m_dat &= 0xffff_0000;    // remove existing nibble count
 
-    if( crc_exec )  {    // exec path includes CRC processing
+    if( ledpin & BLOCKREAD_CRC_MASK )  {    // exec path includes CRC processing
         rxblkset.m_dat |=  512 * 2 + 16;  // apply nibble count, 16 CRC nibbles
-        rxblkset.skip1 = 0b00000000_10000000_00000000_00000000;    // pat-c and pat-d (CRC)
-        rxblkset.skip2 = 0b00000000_00000000_00000000_00000000;    // pat-c (CRC)
+        rxblkset.skip1 = 0b00000000_10000000_00000000_00000000;    // pat-c
+        rxblkset.skip2 = 0b00000000_00000000_00000000_00000000;    // pat-e
     } else {    // exec path excludes CRC processing
         rxblkset.m_dat |= 512 * 2;  // apply nibble count
-        rxblkset.skip1 = 0b00000001_01110100_00000000_00001110;    // pat-a and pat-b (No CRC)
-        rxblkset.skip2 = 0b00000000_00000000_00011111_11111111;    // pat-a (No CRC)
+        rxblkset.skip1 = 0b00000001_01110100_00000000_00001110;    // pat-a and pat-b
+        rxblkset.skip2 = 0b00000000_00000000_00111111_11111110;    // pat-d
     }
 }
 
@@ -660,16 +739,16 @@ static void  set_rxblkset(
     rxblkset.v_div = clkdiv | clkdiv/2<<16;
     rxblkset.v_nco = 0x8000_0000UL / clkdiv + (0x8000_0000UL % clkdiv > 0 ? 1 : 0);  // data transfer rate, round up upon a non-zero remainder
 
-    rxblkset.m_dat = X_4P_1DAC4_WFBYTE | PIN_DAT0<<17 | X_PINS_ON | X_ALT_ON;  // mode component only
-    rxblkset.m_crc = X_4P_1DAC4_WFBYTE | PIN_DAT0<<17 | X_PINS_ON | X_ALT_ON | 16;  // mode and nibble count
+    rxblkset.m_dat = X_4P_1DAC4_WFBYTE | PIN_DAT0<<17 | X_PINS_ON | X_ALT_ON;  // mode component only, msnib first
+    rxblkset.m_crc = X_4P_1DAC4_WFBYTE | PIN_DAT0<<17 | X_PINS_ON | X_ALT_ON | 16;  // mode and nibble count, msnib first
 
-    set_rxblkcrc(ledpin & BLOCKREAD_CRC_MASK);    // set the skip patterns and nibble count
+    set_rxblkcrc();    // set the skip patterns and nibble count for selected exec path
 }
 
 
 
 //-----------------------------------------------------------------------
-// Receive the card's command-response packet
+// Receive the SD card's command-response packet
 //-----------------------------------------------------------------------
 
 static int  rx_response(    // 0:Start-bit timed out
@@ -677,10 +756,12 @@ static int  rx_response(    // 0:Start-bit timed out
     uint32_t len,    // Number of bytes in response, including the start-end framing bits
     uint32_t clocks )    // Additional clocks for card's post-response idle transition
 {
+    void *ptr = &crset;    // needed when non-static structs used - which is required for instancing
+
     __asm volatile {    // "const" enforces XIP, "volatile" enforces Fcache
-		loc	pb, #crset    // fast copy from struct
+//		loc	pb, #crset    // static struct required
 		setq	#sizeof(crset) / 4 - 1
-		rdlong	p_clk, pb    // fast copy to registers PR8..PR15
+		rdlong	p_clk, ptr    // fast copy to cogRAM
 
 		shl	len, #3
 		setword	m_resp, len, #0    // add bit count to DMA mode word, crset.m_resp
@@ -697,19 +778,21 @@ static int  rx_response(    // 0:Start-bit timed out
 		wypin	lnco, p_clk    // start the search
 		fltl	p_cmd    // pin drive release before SD card takes over
 		pollse2       // clear stale event
-		wrfast	lnco, resp    // engage the FIFO
-		setxfrq	lnco    // set sysclock/1 for lead-in timing
+		wrfast	lnco, resp    // engage the FIFO, non-blocking init
+		setxfrq	lnco    // sysclock/1 for lead-in timing
 		getct	pb    // timeout begins
 		add	pb, timeout    // max of 64 clocks for response to start, Ncr (SD spec 4.12.4)
 		setq	pb    // apply the 64 clock timeout to WAITSEn
 		waitse2   wc    // wait for CMD start bit, C set if timed-out
-		dirl	p_clk    // halt clock-gen ASAP
-		wxpin	v_div, p_clk    // revert to regular clock-gen
 
-// start-bit found, now read the response (NOTE: start-bit is part of first byte)
+// start-bit found
+		dirl	p_clk    // halt clock-gen ASAP
+		wxpin	v_div, p_clk    // clock-divider to match streamer rate
+
+// now read the response (NOTE: start-bit is part of first byte)
 		xinit	m_align, #0    // lead-in delay from here at sysclock/1
 	if_nc	setq	v_nco    // streamer transfer rate (takes effect with buffered command below)
-	if_nc	xzero	m_resp, #0     // rx buffered-op aligned to clock via lead-in
+	if_nc	xzero	m_resp, #0     // buffered-op aligned to clock via lead-in
 		dirh	p_clk    // clock timing starts here
 	if_nc	wypin	clocks, p_clk    // first clock pulse outputs during second clock period
 
@@ -719,16 +802,18 @@ static int  rx_response(    // 0:Start-bit timed out
 		waitxfi      // wait for rx data completion before resuming hubexec
 		ret    // mini assembler requires a standalone RET
 
-lnco		long 0x8000_0000
-p_clk		res 1
-p_cmd		res 1
-m_align		res 1
-v_nco		res 1
-m_se2		res 1
-timeout		res 1
-m_resp		res 1
-v_div		res 1
-v_sdiv		res 1
+lnco		long 0x8000_0000    // lead-in rate, sysclock/1
+
+// copy of crset parameters
+p_clk		res 1    // CLK pin number
+p_cmd		res 1    // CMD pin number
+m_align		res 1    // Streamer mode word, response leadin timing
+v_nco		res 1    // NCO divider, streamer transfer rate
+m_se2		res 1    // SETSET2 mode word
+timeout		res 1    // Start-bit search timeout, in sysclock ticks
+m_resp		res 1    // Streamer mode word, response data timing
+v_div		res 1    // Clock divider, data rate, post-v_sdiv reset
+v_sdiv		res 1    // Clock divider, start-bit search rate
     }
 #ifdef SD_DEBUG
     if( !len )
@@ -743,7 +828,7 @@ v_sdiv		res 1
 // Command response's DMA parameter setup
 //-----------------------------------------------------------------------
 
-static struct cmdresp_parms_t {
+struct cmdresp_parms_t {
     uint32_t  p_clk, p_cmd, m_align, v_nco, m_se2, timeout, m_resp, v_div, v_sdiv;
 } crset;
 
@@ -772,7 +857,7 @@ static void  set_respset(
     }
     crset.v_div = clkdiv | clkdiv/2<<16;    // response clock-divider
     crset.v_nco = 0x8000_0000UL / clkdiv + (0x8000_0000UL % clkdiv > 0 ? 1 : 0);  // data transfer rate, round up upon a non-zero remainder
-    crset.m_resp = X_1P_1DAC1_WFBYTE | PIN_CMD<<17 | X_PINS_ON | X_ALT_ON;    // + bit count
+    crset.m_resp = X_1P_1DAC1_WFBYTE | PIN_CMD<<17 | X_PINS_ON | X_ALT_ON;    // + bit count, msbit first
 }
 
 
@@ -781,12 +866,12 @@ static void  set_respset(
 // Command's DMA parameter setup
 //-----------------------------------------------------------------------
 
-static struct cmd_parms_t {
+struct cmd_parms_t {
     uint32_t  p_clk, p_cmd, m_align, v_nco, m_ca, m_se1;
 } cmdset;
 
 enum {    // address hack to land presets in the Fcache area, tx_command() isn't assigned to Fcache itself
-      rp_clk = 0x70, rp_cmd, rm_align, rv_nco, rm_ca, rm_se1
+      rp_clk = 0, rp_cmd, rm_align, rv_nco, rm_ca, rm_se1
 };
 
 
@@ -803,39 +888,43 @@ static void  set_cmdset(
     cmdset.p_cmd = PIN_CMD;
     cmdset.m_align = X_IMM_32X1_1DAC1 | 5 + CLK_REG - CMDAT_REG + (CLK_POL ? clkdiv : clkdiv/2);
     cmdset.v_nco = 0x8000_0000UL / clkdiv + (0x8000_0000UL % clkdiv > 0 ? 1 : 0);  // data transfer rate, round up upon a non-zero remainder
-    cmdset.m_ca = X_IMM_32X1_1DAC1 | PIN_CMD<<17 | X_PINS_ON | 32;    // mode and bit count
+    cmdset.m_ca = X_IMM_32X1_1DAC1 | PIN_CMD<<17 | X_PINS_ON | 32;    // mode and bit count, lsbit first
     cmdset.m_se1 = PIN_CLK | 0b001<<6;    // SETSE1 mode, trigger on rising edge - clocks completed
 }
 
 
 //-----------------------------------------------------------------------
-// Transmit a command packet to the card
+// Transmit a command packet to the SD card
 //-----------------------------------------------------------------------
 
 static int  tx_command(    // 0:CMD pin stuck low
     uint32_t cmd,    // Command
     uint32_t arg )    // Argument
 {
-    __asm const {    // "const" enforces XIP, "volatile" enforces Fcache
-		loc	pb, #cmdset    // fast copy from struct
-		setq	#sizeof(cmdset) / 4 - 1
-		rdlong	rp_clk-0, pb    // fast copy to cogRAM
+    void *ptr = &cmdset;    // needed when non-static structs - which is required for instancing
 
+    __asm const {    // "const" enforces XIP, "volatile" enforces Fcache
+//		loc	pb, #cmdset    // static struct required
+		setq	#sizeof(cmdset) / 4 - 1
+		rdlong	rp_clk-0, ptr    // fast copy to cogRAM
+
+		drvl	rp_clk-0    // enable CLK smartpin
 		setse1	#0    // cancel triggering before reuse - not needed if POLLSE1 is used
 		wypin	#1, rp_clk-0    // ensure card releases the CMD bus
 		setse1	rm_se1-0    // must be immediately after WYPIN to catch IN rising
 
-		or	cmd, #0x40    // add T bit in front of command
+		or	cmd, #0x40    // add S (low) and T (high) bits in front of command
 		shl	cmd, #24    // command at [31:24] is needed for later CRC
 		mov	pb, arg
 		shr	pb, #8
 		or	pb, cmd
 		rev	pb    // first 32 bits prep'd for streamer
-		setxfrq	##0x8000_0000UL    // set sysclock/1 for lead-in timing
+		setxfrq	##0x8000_0000UL    // sysclock/1 for lead-in timing
 		waitse1        // wait for clock pulse to complete
+
 		fltl	rp_clk-0    // reset clock-gen smartpin, needed to instruction align the samrtpin cycle
 		testp	rp_cmd-0   wc    // send new command only if CMD pin has returned high
-// C is set when CMD pin is high
+// C set when CMD pin high
 	if_c	drvl	rp_cmd-0    // drive CMD pin low, start-bit, ready for streamer output
 
 // begin command phase
@@ -860,8 +949,8 @@ static int  tx_command(    // 0:CMD pin stuck low
 	if_c	crcnib	pb, #0x48
 	if_c	crcnib	pb, #0x48
 
-	if_c	or	pb, #0x180    // add end-bit after the CRC
-	if_c	rev	arg
+	if_c	or	pb, #0x180    // add packet end-bit after the CRC
+	if_c	rev	arg    // msbit in bit0 position to suit both reverse CRC and lsbit first streamer mode
 	if_c	rolbyte	pb, arg, #3    // insert last byte of arg ahead of CRC
 
 	if_c	xzero	rm_ca-0, pb     // place remaining 16 bits in buffer for when first 32 bits completes
@@ -878,36 +967,7 @@ static int  tx_command(    // 0:CMD pin stuck low
 
 
 //-----------------------------------------------------------------------
-// Setup the SD clock pin. Also configure DMA parameter sets
-//-----------------------------------------------------------------------
-
-static void  sd_clockconf(
-    uint32_t clkdiv,    // minimum value of 2
-    uint32_t rxlag )    // range 1..24
-{
-    uint32_t  pinmode;
-    uint32_t  CLK_POL = ledpin & CLK_POLARITY_MASK;
-
-    // update the parameter sets
-    set_cmdset(clkdiv, rxlag, CLK_POL);
-    set_respset(clkdiv, rxlag);
-    set_rxblkset(clkdiv, rxlag);
-    set_txblkset(clkdiv, rxlag, CLK_POL);
-
-    // configure pins
-    pinmode = (rxlag&1 ? P_SYNC_IO : 0) | (RX_SCHMITT ? P_SCHMITT_A : 0);
-    _wrpin(cmdpin, pinmode);
-    _wrpin(dat0pin | 3<<6, pinmode);
-
-    // SD clock-gen smartpin
-    pinmode = P_PULSE | P_OE | (CLK_POL ? P_INVERT_OUTPUT : 0) | P_SCHMITT_A | (CLK_REG ? P_SYNC_IO : 0);
-    _pinstart(clkpin, pinmode, clkdiv | clkdiv/2<<16, 0);
-}
-
-
-
-//-----------------------------------------------------------------------
-// Send a common housekeeping command packet to the card
+// Send a common housekeeping command packet to the SD card
 //-----------------------------------------------------------------------
 
 static int  send_cmd(    // 0:Fail, 1:Success
@@ -919,7 +979,7 @@ static int  send_cmd(    // 0:Fail, 1:Success
 //    __builtin_printf(" CMD%d - ", cmd);
 #endif
     tx_command(cmd, arg);
-    if( !resp ) {    // expecting no response
+    if( !resp ) {    // expecting no response, eg: CMD7 deselect
         uint32_t  PIN_CLK = clkpin;
         uint32_t  PIN_CMD = cmdpin;
         __asm {
@@ -944,7 +1004,7 @@ static int  send_cmd(    // 0:Fail, 1:Success
 
 
 //-----------------------------------------------------------------------
-// Send a R2 housekeeping command packet to the card
+// Send a R2 housekeeping command packet to the SD card
 //-----------------------------------------------------------------------
 
 static int  send_cmd_r2(    // 0:Fail, 1:Success
@@ -968,7 +1028,7 @@ static int  send_cmd_r2(    // 0:Fail, 1:Success
 
 
 //-----------------------------------------------------------------------
-// Send an application specific command packet to the card
+// Send an application specific command packet to the SD card
 //-----------------------------------------------------------------------
 
 static int  send_acmd(    // 0:Fail, 1:Success
@@ -982,7 +1042,7 @@ static int  send_acmd(    // 0:Fail, 1:Success
 #endif
         tx_command(acmd, arg);
         if( rx_response(resp, 6, -500) )
-            return 1;    // skip CRC processing since not all ACMDs have one
+            return 1;    // skip CRC checking since not all ACMDs have one
     }
 #ifdef SD_DEBUG
     __builtin_printf(" ACMD%d error! ", acmd);
@@ -993,76 +1053,72 @@ static int  send_acmd(    // 0:Fail, 1:Success
 
 
 //-----------------------------------------------------------------------
-// Wait for card ready - Checks the DAT0 pin write-data-busy indicator
+// Setup the SD clock pin. Also configure DMA parameter sets
 //-----------------------------------------------------------------------
 
-static int  wait_ready(    // 0:Card Busy, 1:Card Ready
-    uint32_t timeout )    // 100/250/500 ms interval in sysclock ticks
+static void  sd_clockconf(
+    uint32_t clkdiv,    // minimum value of 2
+    uint32_t rxlag )    // range 1..24
 {
-    uint32_t  m_se2;
-    int  ready;
+    uint32_t  CLK_POL = ledpin & CLK_POLARITY_MASK;
 
-    _wypin(clkpin, -1);
-    timeout += _cnt();
-    m_se2 = 0b110<<6 | dat0pin;    // trigger on high level - card ready
-    ready = 0;   // Busy
+    // update the parameter sets
+    set_cmdset(clkdiv, rxlag, CLK_POL);
+    set_respset(clkdiv, rxlag);
+    set_rxblkset(clkdiv, rxlag);
+    set_txblkset(clkdiv, rxlag, CLK_POL);
 
-    __asm {    // "const" enforces XIP, "volatile" enforces Fcache
-		setse2	#0    // cancel triggering before reuse - not needed if POLLSE2 is used
-		setse2	m_se2
-		setq	timeout
-		waitse2   wc
-	if_nc	mov	ready, #1    // Not busy
-    }
+    // configure pins
+    uint32_t  pinmode = (rxlag&1 ? P_SYNC_IO : 0) | (RX_SCHMITT ? P_SCHMITT_A : 0);
+    _wrpin(cmdpin, pinmode);
+    _wrpin(dat0pin | 3<<6, pinmode);
 
-#ifdef SD_DEBUG
-    if( !ready )
-        __builtin_printf(" Busy timeout! ");
-#endif
-
-    return ready;
+    // SD clock-gen smartpin
+    pinmode = P_PULSE | P_OE | (CLK_POL ? P_INVERT_OUTPUT : 0) | P_SCHMITT_A | (CLK_REG ? P_SYNC_IO : 0);
+    _pinstart(clkpin, pinmode, clkdiv | clkdiv/2<<16, 0);
 }
 
 
 
-enum { PER_DOT_TRIES = 12 };
 //-----------------------------------------------------------------------
 // Rx clock-data phase alignment routine
 // operates with CMD pin only but applies to DAT pins equally, for which
 // I'd like remedied but don't know of one
 //-----------------------------------------------------------------------
+enum { PER_DOT_TRIES = 12, CID_SIZE = 17 };
 
-static int  calibrate_rxlag(void)    // 0:Failed calibration,  1..30:New rxlag
+
+static int  calibrate_rxlag(void)    // 0:Failed calibration,  1..30:New rxlag set
 {
-    uint8_t  *resp = __builtin_alloca(17*PER_DOT_TRIES);    // response buffer, in hubRAM
-    uint8_t  *comp = __builtin_alloca(17*PER_DOT_TRIES);    // compare buffer, in hubRAM
+    uint8_t  *resp = __builtin_alloca(PER_DOT_TRIES * CID_SIZE);    // response buffer, in hubRAM
+    uint8_t  *comp = __builtin_alloca(PER_DOT_TRIES * CID_SIZE);    // compare buffer, in hubRAM
     uint32_t  clkdiv = clkdivider;
     uint32_t  idx, pass = 0, rca = rca16 << 16;    // stored copy of the card's RCA register
     int32_t  rxlag, repeats, highest = 0, lowest = 0;
 
-    for( idx = 0; idx < 17*PER_DOT_TRIES; idx += 17 )
-        memcpy(comp + idx, cidbytes, 17);
+    for( idx = 0; idx < PER_DOT_TRIES * CID_SIZE; idx += CID_SIZE )
+        memcpy(comp + idx, cidbytes, CID_SIZE);
 
     send_cmd(7, 0, NULL);    // CMD7  DESELECT_CARD - "tran" to "standby" state, no response
 
     for( rxlag = 1; rxlag <= 24; rxlag++ )
     {
-        sd_clockconf(clkdiv, rxlag);
+        sd_clockconf(clkdiv, rxlag);    // adjust to next phase timings
 
         repeats = 80;
         do {
-            memset(resp, 0, 17 * PER_DOT_TRIES);    // erase buffer before use
+            memset(resp, 0, PER_DOT_TRIES * CID_SIZE);    // erase buffer before use
 #ifdef SD_DEBUG
             putchar('.');
 #endif
-            idx = 17 * PER_DOT_TRIES;
+            idx = PER_DOT_TRIES * CID_SIZE;
             do {
-                idx -= 17;
+                idx -= CID_SIZE;
                 if( !send_cmd_r2(10, rca, resp + idx) )    // CMD10  SEND_CID - R2 response
                     break;
             } while( idx );
 
-            if( memcmp(comp, resp, 17 * PER_DOT_TRIES) )    // compare stored copy of CID register
+            if( memcmp(comp, resp, PER_DOT_TRIES * CID_SIZE) )    // compare stored copy of CID register
                 break;
 
         } while( --repeats );
@@ -1084,8 +1140,8 @@ static int  calibrate_rxlag(void)    // 0:Failed calibration,  1..30:New rxlag
     } else
         rxlag = 0;    // no result
 
-    rxlagcomp = rxlag;    // update to new value
-    sd_clockconf(clkdiv, rxlag);    // apply it to presets
+    rxlagcomp = rxlag;    // update to newly selected value
+    sd_clockconf(clkdiv, rxlag);    // apply selected value
 #ifdef SD_DEBUG
     __builtin_printf( "  rxlag=%d selected  Lowest=%d Highest=%d\n", rxlag, lowest, highest );
 #endif
@@ -1118,76 +1174,29 @@ static int  new_clkdiv(
 
 
 //-----------------------------------------------------------------------
-// Extract disc capacity from the CSD bits, both v1.0 and v2.0 variants
+// Command-Response error handler
 //-----------------------------------------------------------------------
 
-static LBA_t  disc_size(
-    uint8_t *csd )
+static int  cr_error_handler( void )
 {
-    uint32_t  cs = __builtin_bswap32(*(uint32_t *)&csd[6]);
-    int  n;
 
-    if( csd[0]>>6 ) {    // SDC ver 2.00
-        cs = (cs & 0xfff_ffff) + 1;  // 0.5 MiByte granularity
-        n = 10;
-    } else {    // SDC ver 1.00
-        cs = (cs>>14 & 0xfff) + 1;    // C_SIZE
-        n = (__builtin_bswap16(*(uint16_t *)&csd[9])>>7 & 0x7) + 2    // C_SIZE_MULT
-            + (csd[5] & 15) - 9;    // READ_BL_LEN
-    }
-
-    return (LBA_t)cs << n;    // 32/64-bit block count
-}
-
-
-
-//--------------------------------------------------------------------------
-//
-//   Public Functions
-//
-//--------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------
-// Get Disk Status                                                       
-//-----------------------------------------------------------------------
-
-DSTATUS disk_status(
-    BYTE drv )       // Drive number (always 0)
-{
-    if( drv )
-        return STA_NOINIT;
-
-    return Stat;
+    return 1;
 }
 
 
 
 //-----------------------------------------------------------------------
-// Initialize Disk Drive
+// Initialize SD Card
 //-----------------------------------------------------------------------
-enum {
-    CMD8CHECKPAT = 0x100|0x5a  // 3V3 bit and check pattern, SD spec 4.3.13
-};
+enum { CMD8CHECKPAT = 0x100|0x5a };    // 3V3 bit and check pattern, SD spec 4.3.13
 
 
-DSTATUS disk_initialize (
-    BYTE drv )        // Physical drive nmuber (0)
+static int  sd_initialise( void )
 {
-    unsigned  PIN_CLK = clkpin;
-    uint32_t  queuedepth, rca, tmr, a41arg;
     uint8_t  *resp = __builtin_alloca(20);    // response buffer, in hubRAM
-    DSTATUS  status;
+    uint32_t  rca, tmr, a41arg, PIN_CLK = clkpin;
+    int  status = STA_NOINIT | STA_NODISK;
 
-    status = STA_NOINIT | STA_NODISK;
-    Stat = status;
-
-    if( drv ) {
-#ifdef SD_DEBUG
-        __builtin_printf("bad drv %d\n", drv);
-#endif
-        return status;
-    }
 //_pinl(56);    // diag
     if( !sdcard_power() )    // attempt to power cycle the SD card
         return status;
@@ -1204,11 +1213,13 @@ DSTATUS disk_initialize (
     _wypin(PIN_CLK, 500);    // SD spec 6.4.1
     _waitms(1);
     send_cmd(0, 0, NULL);    // CMD0  GO_IDLE_STATE - in case the power cycle didn't happen
+    _waitms(1);
     send_cmd(8, CMD8CHECKPAT, resp);    // CMD8  SEND_IF_COND - 3.3V and check pattern, SD spec 4.3.13, R7 response
     _waitms(1);
 
 // start conversing with SD card
     send_cmd(0, 0, NULL);    // CMD0  GO_IDLE_STATE - no response expected
+    _waitms(1);
 //    if( !send_cmd(8, CMD8CHECKPAT, resp) )    // CMD8  SEND_IF_COND - 3.3V and check pattern, SD spec 4.3.13, R7 response
 //        goto faillabel;    // no response, probably card missing
     if( send_cmd(8, CMD8CHECKPAT, resp) ) {    // CMD8  SEND_IF_COND - 3.3V and check pattern, SD spec 4.3.13, R7 response
@@ -1233,15 +1244,14 @@ DSTATUS disk_initialize (
 
 // find card type
     rca = 0;
-    rca16 = 0;    // "idle" state uses RCA=0 in ACMDs
+    rca16 = 0;    // card "idle" state expects RCA=0 in ACMDs
     tmr = _getms();
     do {
         _waitms(1);    // card busy, polling faster than 50 ms, SD spec 4.4
         if( !send_acmd(41, a41arg, resp) )   // ACMD41  SD_SEND_OP_COND - "idle" to "ready" state, R3 response
             goto faillabel;
         rca = __builtin_bswap32(*(uint32_t *)&resp[1]);
-//            rca = resp[4];
-//            if( rca>>7 )    // valid Ready bit, card has switched from "idle" to "ready" state
+//        if( resp[1]>>7 )    // valid Ready bit, card has switched from "idle" to "ready" state
         if( rca>>31 )    // valid Ready bit, card has switched from "idle" to "ready" state
             break;
     } while( _getms() - tmr < 1000 );    // SD spec 4.2.3, 1.0 sec timeout, probably gone "inactive"
@@ -1267,7 +1277,6 @@ DSTATUS disk_initialize (
     // CMD2 then CMD3 are required back-to-back.  If the sequence is
     //   unsuccesful then CMD3 will timeout and return a zero value
     send_cmd_r2(2, 0, resp);    // CMD2  ALL_SEND_CID - "ready" to "ident" state, R2 response (CID)
-    // also next R1/R6 card status (CMD3) will indicate a partial ACMD state
     if( !send_cmd(3, 0, resp) )    // CMD3  publish new RCA - "ident" to "standby" state, R6 response
         goto faillabel;
 
@@ -1299,10 +1308,14 @@ DSTATUS disk_initialize (
     uint8_t  *buff = __builtin_alloca(512);    // data buffer, in hubRAM
     uint32_t  timeout = _clockfreq() / 4;    // 250 ms
 
-#ifdef SD_DEBUG
+#if FF_USE_TRIM
     if( send_acmd(13, 0, resp) ) {    // ACMD13  SEND_SD_STATUS (SSR), spec 4.10.2
         rx_datablocks(buff, 1, timeout, resp);    // data length is 64 bytes, CRC will fail
 
+        if( (buff[24]>>1) & 1 )
+            ledpin |= TRIM_DISCARD_MASK;    // TRIM support enable, via block erase "discard"ing
+
+#ifdef SD_DEBUG
    //     __builtin_printf("ACMD13: ");
   //      for( tmr = 0; tmr <= 63; tmr++ )
  //           __builtin_printf(" %02x", buff[tmr]);
@@ -1317,6 +1330,8 @@ DSTATUS disk_initialize (
         __builtin_printf("  UHS Grade = U%d", buff[14] >> 4);    // spec 4.10.2.8
         __builtin_printf("  Video Class = V%d", buff[15]);    // spec 4.10.2.10
         __builtin_printf("  App Class = A%d\n", buff[21] & 0xf);    // spec 4.10.2.13
+        __builtin_printf("  TRIM = %b  FULE = %b\n", (buff[24]>>1) & 1, buff[24] & 1);    // table 4-44, bits 313,312
+#endif
     }
 #endif
 
@@ -1334,11 +1349,11 @@ DSTATUS disk_initialize (
     send_cmd(7, 0, NULL);    // CMD7  DESELECT_CARD - "tran" to "standby" state, no response
     if( !send_cmd_r2(9, rca, resp) )    // CMD9  SEND_CSD - R2 response
         goto faillabel;
-    discblocks = disc_size(resp + 1);    // block count
+    discblocks = disc_size(resp + 1);    // user area block count, C_SIZE - SD spec 5.3.3 table 5-16
 #ifdef SD_DEBUG
     __builtin_printf(" Card User Capacity = %d MiB\n", discblocks / 2048);
 #endif
-    if( a41arg && (resp[4] == 0x5a) ) {    // TRAN_SPEED - SD spec 5.3.3, tables 5-16 and 5-6
+    if( a41arg && (resp[4] == 0b0_1011_010) ) {    // 50 Mb/s: TRAN_SPEED - SD spec, table 5-6
 #ifdef SD_DEBUG
         __builtin_printf(" High-Speed access mode engaged\n");
 #endif
@@ -1351,27 +1366,43 @@ DSTATUS disk_initialize (
 
     ledpin |= BLOCKREAD_CRC_MASK;    // block read CRC enable flag
 
-    // Time for full speed clocking - After optional High-Speed access mode has been set!
-    // Important for timing to stay loose until now because the calibration process
-    // phase aligns the rx clock-data relationship - which itself changes between
-    // the speed modes.  Calibration would mess up before this point.
-    if( !new_clkdiv(CLK_DIV_DEFAULT) )
+    // Time for full speed clocking - After optional High-Speed access mode has been set.
+    // The calibration process phase aligns the rx clock-data relationship - Which differs between
+    // access modes.
+    // Ie: It's important for timing to stay loose, (rxlagcomp = 0) while at 400 KHz, because
+    // calibrating prior to setting the access mode would just mess up when the access mode gets set.
+    if( !new_clkdiv(CLK_DIV_DEFAULT) )    // sets and runs the calibration for this divider value
         goto faillabel;
 
 #ifdef SD_DEBUG
     uint8_t  *cid = &cidbytes[1];
-    __builtin_printf(" CID decode:  ManID=%02X   OEMID=%c%c",cid[0],cid[1],cid[2]);
-    __builtin_printf("  Name=%c%c%c%c%c\n",cid[3],cid[4],cid[5],cid[6],cid[7]);
-    __builtin_printf("  Ver=%x.%x   Serial=%08X   Date=%d-%d\n", cid[8]>>4, cid[8]&0xf,
-                __builtin_bswap32(*(int32_t*)&cid[9]), 2000+((cid[13]<<4|cid[14]>>4)&0xff), cid[14]&0xf );
-
+    __builtin_printf(" CID decode:  ManID=%02x   OEMID=%c%c", cid[0], cid[1], cid[2]);
+    __builtin_printf("  Name=%c%c%c%c%c\n", cid[3], cid[4], cid[5], cid[6], cid[7]);
+    __builtin_printf("  Ver=%x.%x   Serial=%08x   Date=%d-%d\n", cid[8]>>4, cid[8]&0x0f,
+            __builtin_bswap32(*(int32_t*)&cid[9]), 2000+((cid[13]<<4|cid[14]>>4)&0xff), cid[14]&0x0f );
+/*
+    //----------------------------------------
+    // This is a whole SD card discard erase
+    // Used only for testing
+    //----------------------------------------
+    if( ledpin & TRIM_DISCARD_MASK ) {
+        send_cmd(32, 0, resp);    // CMD32  ERASE_WR_BLK_START
+        send_cmd(33, discblocks - 1, resp);    // CMD33  ERASE_WR_BLK_END
+        if( send_cmd(38, 1, resp) )    // CMD38  ERASE, 0 = Erase, 1 = Discard, 2 = FULE
+            __builtin_printf("FULE command issued\n");
+        else
+            __builtin_printf("FULE command error\n");
+        if( wait_ready(_clockfreq()*4) )    // 4 secs, check busy status on DAT0
+            __builtin_printf("Card ready\n");
+        else
+            __builtin_printf("Card still busy\n");
+    }
+*/
     __builtin_printf("SD Card Init Successful\n");
 #endif
-
-    Stat = status;
+    give_pins();    // pins DIRs lowered
 
     return status;
-
 
 faillabel:
 #ifdef SD_DEBUG
@@ -1379,267 +1410,14 @@ faillabel:
 #endif
     _wypin(PIN_CLK, 500);
     _waitus(20);
-    status = STA_NOINIT;
-    Stat = status;
 
-    return status;
-}
-
-
-
-//-----------------------------------------------------------------------
-// Read Block(s)
-//-----------------------------------------------------------------------
-
-DRESULT disk_read(
-    BYTE drv,       // Physical drive nmuber (0)
-    BYTE *buff,     // Pointer to the data buffer to store read data
-    LBA_t firstblk,    // Start block number (LBA)
-    LBA_t blocks )     // Block count
-{
-    uint8_t  *resp = __builtin_alloca(20);    // response buffer, in hubRAM
-    uint32_t  cmd, timeout = _clockfreq() / 4;    // 250 ms
-    unsigned  PIN_LED = ledpin;    // Doubles up as SDSC byte addressing flag in bit0
-
-    if( disk_status(drv) & STA_NOINIT )
-        return RES_NOTRDY;
-
-    if( blocks < 2 )
-        cmd = 17;    // CMD17  READ_SINGLE_BLOCK
-    else
-        cmd = 18;    // CMD18  READ_MULTIPLE_BLOCK
-#ifdef SD_DEBUG_PERFORMANCE
-    if( blocks < 2 )
-        __builtin_printf(" RD%x %d ", firstblk, _getus());
-    else
-        __builtin_printf(" RD%x+%x %d ", firstblk, blocks, _getus());
-#endif
-    if( PIN_LED & BYTE_ADDRESSING_MASK )    // SDSC card type is attached to the pin number
-        firstblk <<= 9;    // translate block to byte address
-    PIN_LED >>= 8;    // just the pin number
-
-    if( wait_ready(timeout) ) {    // examine busy-low on DAT0
-
-        // DAT0 now remains high until data start-bit arrives
-        tx_command(cmd, firstblk);
-        if( rx_response(resp, 6, 2) ) {    // R1 response, response length, trailing clocks
-
-            _pinl(PIN_LED);    // activity LED on
-            blocks = rx_datablocks(buff, blocks, timeout, resp);    // 0 = success, 1 = CRC mismatch, 2 = start-bit timed out
-            _pinh(PIN_LED);    // activity LED off
-
-            if( cmd == 18 ) {
-                tx_command(12, 0);    // CMD12  STOP_TRANSMISSION
-                rx_response(resp, 6, -500);    // don't much care if this works
-            }
-            if( blocks == 1 )    // CRC mismatch
-                calibrate_rxlag();    // attempt to improve situation
-        }
-    }
-
-    return blocks ? RES_ERROR : RES_OK;
-}
-
-
-
-//-----------------------------------------------------------------------
-// Write Block(s)
-//-----------------------------------------------------------------------
-
-DRESULT disk_write(
-    BYTE drv,            // Physical drive nmuber (0)
-    const BYTE *buff,    // Pointer to the data to be written
-    LBA_t firstblk,         // Start block number (LBA)
-    LBA_t blocks )          // Block count
-{
-    uint8_t  *resp = __builtin_alloca(20);    // response buffer, in hubRAM
-    uint32_t  rc, timeout = _clockfreq() / 4;    // 250 ms
-    unsigned  PIN_LED = ledpin;    // Doubles up as SDSC byte addressing flag in bit0
-
-    if( disk_status(drv) & STA_NOINIT )
-        return RES_NOTRDY;
-
-#ifdef SD_DEBUG_PERFORMANCE
-    if( blocks < 2 )
-        __builtin_printf(" WR%x %d ", firstblk, _getus());
-    else
-        __builtin_printf(" WR%x+%x %d ", firstblk, blocks, _getus());
-#endif
-    if( PIN_LED & BYTE_ADDRESSING_MASK )    // SDSC card type is attached to the pin number
-        firstblk <<= 9;    // translate block to byte address
-    PIN_LED >>= 8;    // just the pin number
-
-    if( wait_ready(timeout) ) {    // examine busy-low on DAT0
-
-        if( blocks < 2 ) {
-            tx_command(24, firstblk);    // CMD24  WRITE_SINGLE_BLOCK
-            if( !rx_response(resp, 6, 2) )    // R1 response, response length, trailing clocks
-                goto errorlabel;
-
-            _pinl(PIN_LED);    // activity LED on
-            rc = tx_datablock(buff, timeout);    // $00 = busy timeout, $3F = no CRC response, %10_101_1 = CRC mismatch, %10_010_1 = CRC matched
-            if( rc == 0b10_010_1 )    // CRC matched
-                blocks = 0;
-            _pinh(PIN_LED);    // activity LED off
-
-        } else {
-#ifdef SD_USE_ACMD23
-            if( !send_acmd(23, blocks, resp) )    // ACMD23  SET_WR_BLK_ERASE_COUNT
-                goto errorlabel;
-#endif
-            tx_command(25, firstblk);    // CMD25  WRITE_MULTIPLE_BLOCK
-            if( !rx_response(resp, 6, 2) )    // R1 response, response length, trailing clocks
-                goto errorlabel;
-
-            _pinl(PIN_LED);    // activity LED on
-            do {
-                rc = tx_datablock(buff, timeout);    // $00 = busy timeout, $3F = no CRC response, %10_101_1 = CRC mismatch, %10_010_1 = CRC matched
-                if( rc != 0b10_010_1 )
-                    break;   // other than CRC matched
-                buff += 512;
-            } while( --blocks );
-            _pinh(PIN_LED);    // activity LED off
-
-            tx_command(12, 0);    // CMD12  STOP_TRANSMISSION
-            if( !rx_response(resp, 6, -500) )    // R1b response, response length, trailing clocks
-                blocks = 1;
-        }
-//        if( rc == %10_101_1 )    // CRC mismatch
-//            calibrate_rxlag();    // won't help with a write error
-    }
-
-errorlabel:
-    return blocks ? RES_ERROR : RES_OK;
-}
-
-
-
-//-----------------------------------------------------------------------
-// Miscellaneous Functions
-//-----------------------------------------------------------------------
-
-DRESULT disk_ioctl(
-    BYTE drv,    // Physical drive nmuber (0)
-    BYTE ctrl,    // Control code
-    void *buff )    // Buffer to send/receive control data
-{
-    if( disk_status(drv) & STA_NOINIT )    // Check if card is in the socket
-        return RES_NOTRDY;
-
-    uint8_t  *resp = __builtin_alloca(20);    // response buffer, in hubRAM
-    uint32_t  rca = rca16<<16;
-    unsigned  crc_exec;
-    DRESULT  res = RES_ERROR;
-
-    switch( ctrl ) {
-        case CTRL_SYNC :    // Make sure that no pending write process
-        {
-            uint32_t  timeout = _clockfreq() / 4;    // 250 ms
-#ifdef SD_DEBUG_PERFORMANCE
-            __builtin_printf(" SYNC %d ", _getus());
-#endif
-            if( wait_ready(timeout) )    // selects card to examine busy on DAT0
-                res = RES_OK;
-            break;
-        }
-
-        case GET_SECTOR_COUNT :    // Get number of 512 byte blocks on the disc
-#ifdef SD_DEBUG
-            __builtin_printf(" CAPACITY ");
-#endif
-            *(LBA_t *)buff = discblocks;    // block count
-            res = RES_OK;
-            break;
-
-        case GET_BLOCK_SIZE :    // Get erase Allocation Unit (AU) size, in blocks
-            *(LBA_t *)buff = 128;    // 64 kB
-            res = RES_OK;
-            break;
-
-//        case CTRL_TRIM :    // to be implemented
-//            break;
-
-        case CTRL_BLOCKREAD_CRC :    // Disables/enables CRC processing of block read, default is enabled
-            crc_exec = *(unsigned *)buff;
-            if( crc_exec )
-                ledpin |= BLOCKREAD_CRC_MASK;
-            else
-                ledpin &= ~BLOCKREAD_CRC_MASK;
-            set_rxblkcrc(crc_exec);    // select exec path in rx_datablocks()
-#ifdef SD_DEBUG
-            __builtin_printf(" BLOCK_READ_CRC %x %d ", res, ledpin&0xff);
-#endif
-            res = RES_OK;
-            break;
-
-        case CTRL_GET_CLKDIV :    // Get the active clock-divider
-            *(int *)buff = clkdivider;
-            res = RES_OK;
-            break;
-
-        case CTRL_SET_CLKDIV :    // Set the active clock-divider
-            new_clkdiv(*(int *)buff);
-            res = RES_OK;
-            break;
-
-        default:
-            res = RES_PARERR;
-    }
-
-    return res;
-}
-
-
-
-DRESULT disk_setpins(
-    BYTE drv,
-    int PIN_CLK,
-    int PIN_CMD,
-    int PIN_DAT0,
-    int PIN_PWR,
-    int PIN_LED )
-{
-    if( drv )
-        return RES_NOTRDY;
-
-#ifdef SD_DEBUG
-    __builtin_printf(" Assign pins: CLK_PIN=%d CMD_PIN=%d DAT_PIN=%d PWR_PIN=%d LED_PIN=%d\n",
-                     PIN_CLK, PIN_CMD, PIN_DAT0, PIN_PWR, PIN_LED);
-#endif    
-    clkpin = PIN_CLK;
-    cmdpin = PIN_CMD;
-    dat0pin = PIN_DAT0;
-    if( PIN_PWR < 0 )    // power switch pin (-1 == not defined)
-        PIN_PWR = PIN_CLK;    // use clock smartpin as dummy
-    if( PIN_LED < 0 )    // activity LED pin (-1 == not defined)
-        PIN_LED = PIN_CLK;    // use clock smartpin as dummy
-    pwrpin = PIN_PWR;
-    ledpin = (unsigned)PIN_LED << 8;    // doubles up as SDSC byte addressing flag in bit0
-                              // tripples up as SDHC caching flag in bit1
-    return RES_OK;
-}
-
-
-//
-// new routine: deinitialize (clean up pins, if necessary)
-//
-DSTATUS disk_deinitialize( 
-    BYTE drv )
-{
-    if( drv ) {
-#ifdef SD_DEBUG
-        __builtin_printf( " Deinitialize: bad drv %d\n", drv );
-#endif
-        return RES_NOTRDY;
-    }
-#ifdef SD_DEBUG
-    __builtin_printf( " Clear pins: %d %d %d %d %d\n", clkpin, cmdpin, dat0pin, pwrpin, ledpin >> 8 );
-#endif
+    // return the I/O pins to unconfigured
     releasepins();
-    _waitms(1);
 
-    return RES_OK;
+    return STA_NOINIT;
 }
+
+
 
 
 //-----------------------------------------------------------------------
@@ -1658,61 +1436,283 @@ DSTATUS disk_deinitialize(
 #define BLOCK_SHIFT 9
 #define BLOCK_MASK  0x1ff
 
-off_t curpos;
-uint64_t f_pinmask;
+off_t  curpos;    // 64-bit, byte offset of current/next block number (system interface variable)
+uint64_t  f_pinmask;    // 64-bit, driver's I/O pin map, for both allocating and deallocating
+LBA_t  cmd12lba;    // lazy CMD12's jointing block number
 
-ssize_t v_do_io(vfs_file_t *fil, void *buf_p, size_t count, bool is_write)
+
+
+static ssize_t  v_read( vfs_file_t *fil, void *buff, size_t count )
 {
-    unsigned char *buf = (unsigned char *)buf_p;
-    unsigned startoff = curpos & BLOCK_MASK;
-    unsigned blocks;
-    ssize_t  bytes_io = 0;
-    unsigned lba = curpos >> BLOCK_SHIFT;
-    int res;
-    
-    if (startoff) {
-        /* we have to do the I/O for the first sector */
-        /* for now throw up our hands and punt, we don't support arbitrary seeks */
+    uint8_t  *resp = __builtin_alloca(8);    // response buffer, in hubRAM
+    LBA_t  blocks = count >> BLOCK_SHIFT;
+    ssize_t  bytes_io;
+    LBA_t  cmdparam, lba = curpos >> BLOCK_SHIFT;
+    LBA_t  cmd12blk = cmd12lba;    // state tracking for where CMD12 to be next issued
+    uint32_t  timeout = _clockfreq() / 4;    // 250 ms
+    unsigned  PIN_LED = ledpin;    // Doubles up as SDSC byte addressing flag in bit0
+    int  rc;
+
+#ifdef SD_DEBUG_ACCESSES
+    if( blocks == 1 )
+        __builtin_printf(" cp%dRD%x ", rxblkset.p_clk, lba);
+    else
+        __builtin_printf(" cp%dRD%x+%x ", rxblkset.p_clk, lba, blocks);
+#endif
+    if( !blocks || (uint32_t)curpos & BLOCK_MASK ) {
+        // we have to do the I/O for the first sector
+        // for now throw up our hands and punt, we don't support arbitrary seeks
         return -1;
     }
-    blocks = count >> BLOCK_SHIFT;
-    if (is_write) {
-        res = disk_write(0, buf, lba, blocks);
+
+    // disjoint
+    if( (cmd12blk != lba) || !lba ) {    // detect a disjoint
+        if( cmd12blk )
+            send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+
+        cmdparam = (PIN_LED & BYTE_ADDRESSING_MASK) ? lba << BLOCK_SHIFT : lba;
+        if( !wait_ready(timeout) )    // check busy-low on DAT0
+            goto errorlabel;
+
+        tx_command(18, cmdparam);    // CMD18  READ_MULTIPLE_BLOCK
+        if( !rx_response(resp, 6, 2) )    // R1 response, response length, trailing clocks
+            goto errorlabel;
+
+    } else    // joint, prior CMD18 is still in operaion
+        take_clkpin();    // pins DIRs get lowered at end of each driver transaction
+
+    // joint
+    PIN_LED >>= 8;    // just the pin number
+    _pinl(PIN_LED);    // activity LED on
+    rc = rx_datablocks(buff, blocks, timeout, resp);
+    _pinf(PIN_LED);    // activity LED off
+
+    if( rc ) {    // any error
+        send_cmd(12, 0, resp);    // CMD12  STOP_TRANSMISSION
+        if( rc == 1 )    // CRC mismatch
+            calibrate_rxlag();    // attempt to improve situation
+    }
+
+errorlabel:
+    give_pins();    // pins DIRs lowered
+#ifdef SD_DEBUG_ACCESSES
+    __builtin_printf("%d ", _getus());
+#endif
+    if( rc ) {    // error
+        cmd12lba = 0;    // force a disjoint
+        return 0;
+
     } else {
-        res = disk_read(0, buf, lba, blocks);
+        cmd12lba = lba + blocks;    // remember next incremental block number (joint)
+        bytes_io = (ssize_t)blocks << BLOCK_SHIFT;
+        curpos += bytes_io;    // byte offset of same block (system interfaced variable)
+        return bytes_io;
     }
-    if (res == RES_OK) {
-        unsigned update = blocks << BLOCK_SHIFT;
-        bytes_io += update;
-        count -= update;
-        curpos += update;
-    }
-    if (count) {
-        // handle the trailing bytes;
-        // not supported for now, I/O must be on block boundaries
-    }
-    return bytes_io;
 }
 
-ssize_t v_read(vfs_file_t *fil, void *buf, size_t count)
+
+
+static ssize_t  v_write( vfs_file_t *fil, void *buff, size_t count )
 {
-    return v_do_io(fil, buf, count, false);
-}
-ssize_t v_write(vfs_file_t *fil, void *buf, size_t count)
-{
-    return v_do_io(fil, buf, count, true);
+    uint8_t  *resp = __builtin_alloca(8);    // response buffer, in hubRAM
+    LBA_t  blocks = count >> BLOCK_SHIFT;
+    LBA_t  cmdparam, lba = curpos >> BLOCK_SHIFT;
+    LBA_t  cmd12blk = cmd12lba;    // state tracking for where CMD12 to be next issued
+    ssize_t  bytes_io = (ssize_t)blocks << BLOCK_SHIFT;
+    uint32_t  timeout = _clockfreq() / 4;    // 250 ms
+    unsigned  PIN_LED = ledpin;    // Doubles up as SDSC byte addressing flag in bit0
+    int  rc;
+
+#ifdef SD_DEBUG_ACCESSES
+    if( blocks == 1 )
+        __builtin_printf(" cp%dWR%x ", rxblkset.p_clk, lba);
+    else
+        __builtin_printf(" cp%dWR%x+%x ", rxblkset.p_clk, lba, blocks);
+#endif
+    if( !blocks || (uint32_t)curpos & BLOCK_MASK ) {
+        // we have to do the I/O for the first sector
+        // for now throw up our hands and punt, we don't support arbitrary seeks
+        return -1;
+    }
+
+    cmdparam = (PIN_LED & BYTE_ADDRESSING_MASK) ? lba << BLOCK_SHIFT : lba;
+    PIN_LED >>= 8;    // just the pin number
+
+    if( blocks == 1 ) {    // some cards get pissy if using CMD25 to write one block
+        lba = 0;    // without CMD25 all singles are considered as disjoints
+        if( cmd12blk )
+            send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+
+        if( wait_ready(timeout) ) {    // check busy-low on DAT0
+
+            tx_command(24, cmdparam);    // CMD24  WRITE_SINGLE_BLOCK
+            if( rx_response(resp, 6, 2) ) {    // R1 response, response length, trailing clocks
+
+                _pinl(PIN_LED);    // activity LED on
+                rc = tx_datablock(buff, timeout);
+                if( rc == 0b10_010_1 )    // CRC matched
+                    blocks = 0;
+                _pinf(PIN_LED);    // activity LED off
+            }
+        }
+    } else {
+        // disjoint
+        lba = -lba;    // to differentiate writes from reads
+        if( (cmd12blk != lba) || !lba ) {    // detect a disjointed block number
+            if( cmd12blk )
+                send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+
+            if( !wait_ready(timeout) )    // check busy-low on DAT0
+                goto errorlabel;
+
+            tx_command(25, cmdparam);    // CMD25  WRITE_MULTIPLE_BLOCK
+            if( !rx_response(resp, 6, 2) )    // R1 response, response length, trailing clocks
+                goto errorlabel;
+
+        } else    // joint, prior CMD25 is still in operaion
+            take_clkpin();    // pins DIRs get lowered at end of each driver transaction
+
+        // joint
+        lba -= blocks;    // to update "cmd12lba", if no error
+//        timeout |= 1;    // diag control to force a sent CRC to fail during CMD25
+
+        _pinl(PIN_LED);    // activity LED on
+        do {
+            rc = tx_datablock(buff, timeout);
+            if( rc != 0b10_010_1 )
+                break;   // other than CRC matched
+            buff += BLOCK_SIZE;
+        } while( --blocks );
+        _pinf(PIN_LED);    // activity LED off
+
+        if( blocks )    // error
+            send_cmd(12, 0, resp);    // CMD12  STOP_TRANSMISSION, also wait for the command response
+    }
+
+errorlabel:
+    give_pins();    // pins DIRs lowered
+#ifdef SD_DEBUG_ACCESSES
+    __builtin_printf("%d ", _getus());
+#endif
+    if( blocks ) {    // error
+        cmd12lba = 0;    // force a disjoint
+        return 0;
+
+    } else {
+        cmd12lba = lba;    // remember next incremental block number (joint)
+        curpos += bytes_io;    // byte offset of same block (system interfaced variable)
+        return bytes_io;
+    }
 }
 
-int v_ioctl(vfs_file_t *fil, int arg, void *buf)
+
+
+static int  v_ioctl(vfs_file_t *fil, int ctrl, void *buff)
 {
-    DRESULT res;
-    res = disk_ioctl(0, arg, buf);
-    if (res)
+    DRESULT  res = RES_OK;
+
+    switch( ctrl )
+    {
+        case CTRL_SYNC :    // Make sure that no pending write process
+#ifdef SD_DEBUG_ACCESSES
+    __builtin_printf(" SYNC ");
+#endif
+            if( cmd12lba  ) {
+                cmd12lba = 0;    // disjointed here
+                send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+            }
+            if( !wait_ready(_clockfreq()/4) )    // 250 ms, check busy status on DAT0
+                res = RES_ERROR;
+#ifdef SD_DEBUG_ACCESSES
+    __builtin_printf("%d ", _getus());
+#endif
+            break;
+
+
+        case GET_SECTOR_COUNT :    // Get number of (512 byte) blocks on the disc
+#ifdef SD_DEBUG
+    __builtin_printf(" CAPACITY ");
+#endif
+            *(LBA_t *)buff = discblocks;    // SD user area block count, from CSD register
+            break;
+
+#if FF_MAX_SS != FF_MIN_SS
+        case GET_SECTOR_SIZE :    // Get block size
+            *(LBA_t *)buff = BLOCK_SIZE;    // 512 bytes
+            break;
+#endif
+#if FF_USE_MKFS
+        case GET_BLOCK_SIZE :    // Get erase Allocation Unit (AU) size
+            *(LBA_t *)buff = 128;    // 128 blocks, 64 kB, copied from sdmm.cc
+            break;
+#endif
+#if FF_USE_TRIM
+        case CTRL_TRIM :
+            if( ledpin & TRIM_DISCARD_MASK ) {    // action only if discard feature is supported
+                uint8_t  *resp = __builtin_alloca(8);    // response buffer, in hubRAM
+
+                if( cmd12lba  ) {
+                    cmd12lba = 0;    // disjointed here
+                    send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+                }
+#if defined SD_DEBUG_ACCESSES || defined SD_DEBUG
+    __builtin_printf(" TRIM %x..%x ", ((LBA_t *)buff)[0], ((LBA_t *)buff)[1]);
+#endif
+                if( wait_ready(_clockfreq()/4) ) {    // 250 ms, check busy status on DAT0
+                    send_cmd(32, ((LBA_t *)buff)[0], resp);    // CMD32  ERASE_WR_BLK_START
+                    send_cmd(33, ((LBA_t *)buff)[1], resp);    // CMD33  ERASE_WR_BLK_END
+                    if( !send_cmd(38, 1, resp) )    // CMD38  ERASE, 0 = Erase, 1 = Discard, 2 = FULE
+                        res = RES_ERROR;
+                }
+#ifdef SD_DEBUG_ACCESSES
+    __builtin_printf(" %d %d ", res, _getus());
+#endif
+            }
+            break;
+#endif
+
+        case CTRL_BLOCKREAD_CRC :    // Disables/enables CRC processing of block read, default is enabled
+            if( *(unsigned *)buff )
+                ledpin |= BLOCKREAD_CRC_MASK;
+            else
+                ledpin &= ~BLOCKREAD_CRC_MASK;
+#ifdef SD_DEBUG
+    __builtin_printf(" BLOCK_READ_CRC %x %d ", res, ledpin&0xff);
+#endif
+            set_rxblkcrc();    // apply the selected exec path of rx_datablocks()
+            break;
+
+
+        case CTRL_GET_CLKDIV :    // Get the active clock-divider
+#ifdef SD_DEBUG
+    __builtin_printf(" GETDIV ");
+#endif
+            *(int *)buff = clkdivider;
+            break;
+
+
+        case CTRL_SET_CLKDIV :    // Set the active clock-divider
+#ifdef SD_DEBUG
+    __builtin_printf(" SETDIV ");
+#endif
+            new_clkdiv(*(int *)buff);
+            break;
+
+
+        default:
+            res = RES_PARERR;
+    }
+
+    give_pins();    // pins DIRs lowered
+
+    if( res )
         return _seterror(EINVAL);
     return 0;
 }
 
-off_t v_lseek(vfs_file_t *fil, off_t off, int whence)
+
+
+static off_t  v_lseek( vfs_file_t *fil, off_t off, int whence )
 {
     if (whence == 0) {
         curpos = off;
@@ -1724,23 +1724,21 @@ off_t v_lseek(vfs_file_t *fil, off_t off, int whence)
     return curpos;
 }
 
-int v_flush(vfs_file_t *fil)
+
+
+static int  v_flush( vfs_file_t *fil )    // flush v_putc/v_getc buffers
 {
+#ifdef SD_DEBUG
+    __builtin_printf(" FLUSH ");
+#endif
     return 0;
 }
 
-int v_close(vfs_file_t *fil)
-{
-    disk_deinitialize(0);
-    _freepins(f_pinmask);
-    return 0;
-}
-
-int v_putc(int c, vfs_file_t *fil) {
+static int  v_putc(int c, vfs_file_t *fil) {
     if (v_write(fil, &c, 1) == 1) return c;
     return -1;
 }
-int v_getc(vfs_file_t *fil) {
+static int  v_getc(vfs_file_t *fil) {
     int c = 0;
     if (v_read(fil, &c, 1) == 1) return c;
     return -1;
@@ -1748,57 +1746,79 @@ int v_getc(vfs_file_t *fil) {
 
 
 
+static int  v_close(vfs_file_t *fil)
+{
+#ifdef _DEBUG
+    __builtin_printf( " Clear pins: %d %d %d %d %d\n", clkpin, cmdpin, dat0pin, pwrpin, ledpin >> 8 );
+#endif
+    // return the I/O pins to unconfigured
+    releasepins();
+    _waitms(1);
+
+    // deallocate and exit
+    _freepins(f_pinmask);
+    return 0;
+}
+
+
 
 vfs_file_t *
 _sdsd_open(int pclk, int pcmd, int pdat0, int ppwr, int pled)
 {
-    int r;
-    int drv = 0;
-    unsigned long long pmask;
-    vfs_file_t *handle;
-
-#ifdef _DEBUG
-    __builtin_printf("sdsd_open: using pins: %d %d %d %d %d\n", pclk, pcmd, pdat0, ppwr, pled);
+    cmd12lba = 0;    // clear the jointing block number
+#ifdef SD_DEBUG
+    puts(" SD card driver (4-bit SD mode) "_SDSD_VERSION_);
 #endif
-    pmask = (1ULL << pclk) | (1ULL << pcmd) | (7ULL << pdat0);
+#ifdef _DEBUG
+    __builtin_printf(" sdsd_open: using pins: %d %d %d %d %d\n", pclk, pcmd, pdat0, ppwr, pled);
+#endif
+    uint64_t  pmask = (1ULL << pclk) | (1ULL << pcmd) | (7ULL << pdat0);
     if( ppwr >= 0 )    // optional SD slot power switch
         pmask |= 1ULL << ppwr;
     if( pled >= 0 )    // optional SD slot activity LED
         pmask |= 1ULL << pled;
-    if (!_usepins(pmask)) {
+    if( !_usepins(pmask) )  {
         _seterror(EBUSY);
-        return 0;
+        return NULL;
     }
-    f_pinmask = pmask;
-    r = disk_setpins(drv, pclk, pcmd, pdat0, ppwr, pled);
-    if (r == 0)
-        r = disk_initialize(0);
-    if (r != 0) {
+    f_pinmask = pmask;    // store the alloted pin mask
+
+    // Fill out I/O pin assignments for the physical SD card
+    clkpin = pclk;
+    cmdpin = pcmd;
+    dat0pin = pdat0;
+    if( ppwr < 0 )    // power switch pin (-1 == not defined)
+        ppwr = pclk;    // use clock smartpin as dummy
+    if( pled < 0 )    // activity LED pin (-1 == not defined)
+        pled = pclk;    // use clock smartpin as dummy
+    pwrpin = ppwr;
+    ledpin = (unsigned)pled << 8;    // doubles up as SDSC byte addressing flag in bit0
+
+    // Bring up the card, ready for mounting
+    int  rc = sd_initialise();
+    if( rc == 0 )  {
+        vfs_file_t  *handle = _get_vfs_file_handle();
+        if( handle )  {
+            // We're all good, assign the FS hooks and exit
+            handle->flags = O_RDWR;
+            handle->bufmode = _IONBF;
+            handle->state = _VFS_STATE_INUSE | _VFS_STATE_WROK | _VFS_STATE_RDOK;
+            handle->read = &v_read;
+            handle->write = &v_write;
+            handle->close = &v_close;
+            handle->ioctl = &v_ioctl;
+            handle->flush = &v_flush;
+            handle->lseek = &v_lseek;
+            handle->putcf = &v_putc;
+            handle->getcf = &v_getc;
+            return handle;
+        }
+    }
 #ifdef _DEBUG
-       __builtin_printf("sd card initialize: result=[%d]\n", r);
-       _waitms(1000);
+    __builtin_printf(" sd card initialise: result=[0b%b]\n", rc);
+    _waitms(1000);
 #endif
-       goto cleanup_and_out;
-    }
-    handle = _get_vfs_file_handle();
-    if (!handle) goto cleanup_and_out;
-
-    handle->flags = O_RDWR;
-    handle->bufmode = _IONBF;
-    handle->state = _VFS_STATE_INUSE | _VFS_STATE_WROK | _VFS_STATE_RDOK;
-    handle->read = &v_read;
-    handle->write = &v_write;
-    handle->close = &v_close;
-    handle->ioctl = &v_ioctl;
-    handle->flush = &v_flush;
-    handle->lseek = &v_lseek;
-    handle->putcf = &v_putc;
-    handle->getcf = &v_getc;
-    return handle;
-
-cleanup_and_out:
     _freepins(pmask);
     _seterror(EIO);
-    return 0;
+    return NULL;
 }
-
