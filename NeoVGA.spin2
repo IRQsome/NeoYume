@@ -227,8 +227,8 @@ long $00_00_00_80   ' Blanking color
 long $00_00_00_C0   ' HSync color
 long $00_00_00_A0   ' VSync color
 long $00_00_00_E0   ' HSync+VSync color
-long $FC_FC_FC_E0   ' Port pin mask (in color burst register)
-long 0              ' Color burst frequency  (NTSC/PAL only)
+long $FC_FC_FC_E0   ' Port pin mask (in burst color register)
+long $00_00_00_E0   ' Port pin inversion (in burst freq register)
 long 0              ' CY
 long 0              ' CI
 long 0              ' CQ
@@ -1918,10 +1918,14 @@ init_lcd24    '' TODO merge stuff with LCD6/ILI code
               getbyte temp2,vpins,#1
               and temp2,#63
               mov temp1,burst_color ' burst_color is Pin Mask
+              mov temp3,burst_freq  ' burst_freq is invert mask
+              and temp3,temp1
               rep @.pinlp,#32
               shr temp1,#1 wc
         if_c  wrpin ##P_SYNC_IO,temp2
         if_c  drvl temp2
+              shr temp3,#1 wc
+        if_c  wrpin ##P_SYNC_IO|P_INVERT_OUTPUT,temp2
               alti temp2,##%000_000_100__000_000_011 ' increment S looped but without substitution
 .pinlp
               
