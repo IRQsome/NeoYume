@@ -399,13 +399,13 @@ timing_lcd24_640x480
 long VIDEO_CLKFREQ  ' CLKFREQ
 long 2              ' active line multiplier
 long 12             ' V front porch
-long 2              ' V sync
-long 34             ' V back porch
+long 34             ' V sync
+long 2              ' V back porch
 long 0              ' extra pillar
 long 640            ' blank line
 long 16             ' H front porch
-long 56             ' H sync
-long 56             ' H back porch
+long 82             ' H sync
+long 20             ' H back porch
 long $0924924a      ' Sync NCO
 long $0924924a>>1   ' Pixel NCO
 long 0              ' Alt-res NCO
@@ -1914,7 +1914,7 @@ init_lcd24    '' TODO merge stuff with LCD6/ILI code
               debug(uhex_long(hsync_breeze),udec(pb))
               wxpin hsync_breeze,pb
 
-              ' Setup video pins - Hsync+Vsync+6bit
+              ' Setup video pins
               getbyte temp2,vpins,#1
               and temp2,#63
               mov temp1,burst_color ' burst_color is Pin Mask
