@@ -46,11 +46,15 @@ Work began end of June 2023 - https://forums.parallax.com/discussion/comment/155
 18 May 2025: v1.5, now supports Flexspin's optional FF_USE_TRIM compile switch - Effective when SD card supports erase-discard
 26 July 2025: v1.6, fixed a harmless typo that appeared in v1.4: unconditional ROLBYTE instruction in tx block CRC calc
 11 Sept 2025: v1.7, changed power down error into just a warning and removed the subsequent excessive power up check
-12 Oct 2025: v1.8, merge the command and the response phases into one assembly routine
+12 Oct 2025: v1.8, merged the command and the response phases into one assembly routine
 19 Oct 2025: v1.9, compacted the rxlag calibrate routine to save a little space, uses a much smaller stack buffer too
 24 Oct 2025: v1.10, compacted set*set() functions - Compiles to 788 bytes smaller than v1.3.  But still 5364 bytes above sdmm.cc
+27 Oct 2025: v1.11, merged block read and write routines.  Another 364 bytes smaller
+3 Nov 2025: v1.12, fixed lazy CMD12 response handling, also improved lazy state tracking.  Bad from v1.3
+                   fixed idiot regression, as of v1.8, (Nwr = 2) minimum card-busy turnaround with multi-block writes
+
 /-------------------------------------------------------------------------*/
-#define _SDSD_VERSION_ "v1.10"
+#define _SDSD_VERSION_ "v1.12"
 
 
 #ifndef __propeller2__
@@ -276,7 +280,7 @@ static LBA_t  disc_size(
 // Robust power cycling of the SD Card, optional - if pin defined
 //-----------------------------------------------------------------------
 
-static int  sdcard_power( void )
+static bool  sdcard_power( void )
 {
     unsigned  PIN_VOLT = clkpin;
     unsigned  PIN_CMD = cmdpin;
@@ -297,21 +301,21 @@ static int  sdcard_power( void )
     if( PIN_PWR == PIN_VOLT ) {    // power switch not present
         if( _pinr(PIN_CMD) )
             if( _pinread(PIN_DAT) == 15 )
-                return 1;    // pull-up resistors are present
+                return true;    // success, pull-up resistors are present
 #ifdef SD_DEBUG
-        __builtin_printf(" Error: CMD/DAT pull-up resistors are missing\n");
+        puts(" Error: CMD/DAT pull-up resistors are missing");
 #endif
-        return 0;
+        return false;    // error
     }
 
     if( _pinr(PIN_PWR) ) {    // An inserted card will pull this down against the 22k ohm pull-up
 #ifdef SD_DEBUG
-        __builtin_printf(" Error: SD Card not detected\n");
+        puts(" Error: SD Card not detected");
 #endif
-        return 0;
+        return false;    // error
     }
 #ifdef SD_DEBUG
-    __builtin_printf(" Card detected ... power cycle of SD card\n");
+    puts(" Card detected ... power cycle of SD card");
 #endif
 
 // Use CompDAC pin mode to wait for supply to fall below 0.5 Volt, SD spec 6.4.1.2
@@ -344,7 +348,7 @@ static int  sdcard_power( void )
     releasepins();    // and power back on
     _waitms(2);    // delay for card supply ramp up plus card start up, SD spec 6.4.1.1
 
-    return 1;
+    return true;    // success
 }
 
 
@@ -386,7 +390,7 @@ static int  tx_datablock(
 		add	pb, timeout    // SDHC 250 ms timeout of block erase-write (SD spec 4.6.2.2)
 		setq	pb    // apply the 250 ms timeout to WAITSEn
 		waitse2   wz    // wait for ready (DAT0 high), Z set if timed-out - still busy
-		wypin	#1, p_clk    // clean clocking termination
+		wypin	#2, p_clk    // minimum turnaround, Nwr = 2 (SD spec 4.12.4)
 		waitse1    // wait for clocking to complete
 		dirl	p_clk    // reset smartpin
 
@@ -484,11 +488,11 @@ cogdatbuf	res 512/4    // longwords for data block
     if( timeout != 0b10_010_1 ) {    // CRC didn't match
         __builtin_printf(" WriteError=%%%06b ", timeout);
         if( timeout == 0 )
-            __builtin_printf("Data busy timeout!\n");
+            puts("Card busy timeout!");
         else if( timeout == 0b10_101_1 )
-            __builtin_printf("CRC mismatched!\n");
+            puts("CRC mismatched!");
         else
-            __builtin_printf("Unknown CRC Status\n");
+            puts("Unknown CRC Status");
     }
 #endif
 
@@ -528,6 +532,8 @@ static void  set_txblkset(
 }
 
 
+enum { ENDBITS = 4 };
+
 
 //-----------------------------------------------------------------------
 // Receive data blocks from the SD card
@@ -551,7 +557,7 @@ static int  rx_datablocks(    // 0 = success, 1 = CRC fail, 2 = start-bit timeou
 		// because DAT pins idle high during command and response and also ensures best chance
 		// of seeing an early start-bit
 		modz	_clr   wz    // clear Z flag to create a one-shot for first block
-		pollse1
+//		pollse1
 // SKIPF patterns:
 //   (a)  Ignore CRC, first block
 //   (b)  Ignore CRC, further blocks
@@ -565,7 +571,7 @@ nextblk
 		wxpin	v_sdiv, p_clk    // clock-divider for start-bit search                                  a b   c
 // no room in the main buffer for final CRC-16 nibbles - to be handled later
 		cmp	blocks, #2   wc    // last block?                                                       | |   c
-	if_c	sub	clocks, #16+2    // stop the clocks before the CRC-16 nibbles                           | |   c
+	if_c	sub	clocks, #16+ENDBITS    // stop the clocks before the CRC-16 nibbles                     | |   c
 	if_c	sub	m_dat, #16    // truncate DMA to end of buffer                                          | |   c
 // locate SD data block start-bit
 // NOTE: Search code has a one SD clock lag.  The start(S)-bit has been and gone by the time it triggers.
@@ -591,7 +597,10 @@ nextblk
 
 	if_nc	call	#crc_check    // returned with Z set is CRC passed, Z is clear on entry for first block | |   c
 
-	if_nc	waitse1    // wait for clocking to complete, fresh block received                               a b   c
+//	if_nc	waitse1    // fresh block received                                                              a b   c
+	if_nc	waitxfi    // fresh block received                                                              a b   c
+
+// copy latest data block and CRC nibbles to cogRAM before starting next block
 		setq	#512/4+16/8-1    // one data block + CRC, copy the fresh block                          | |   c
 		rdlong	cogdatbuf, buf    // fast copy to cogRAM before engaging the FIFO                       | |   c
 
@@ -613,9 +622,10 @@ if_nc_and_z	xinit	m_align, #0    // lead-in delay from here at sysclock/1       
 if_nc_and_z	setq	v_nco    // streamer transfer rate (takes effect with buffered command below)             |   e
 if_nc_and_z	xzero	m_crc, #0    // buffered-op, aligned to clock via lead-in                                 |   e
 if_nc_and_z	dirh	p_clk    // clock timing starts here                                                      |   e
-if_nc_and_z	wypin	#16+2, p_clk    // CRC-16 nibbles + end bit                                               |   e
+if_nc_and_z	wypin	#16+ENDBITS, p_clk    // CRC-16 nibbles + end bit                                         |   e
 
-if_nc_and_z	waitse1    // wait for clocking to complete                                                       |   e
+//if_nc_and_z	waitse1    // CRC received                                                                        |   e
+if_nc_and_z	waitxfi    // CRC received                                                                        |   e
 
 // copy CRC nibbles to cogRAM then process
 if_nc_and_z	setq	#16/8-1    // 16 CRC-16 nibbles, 8 nibbles per longword                                   |   e
@@ -654,7 +664,7 @@ crc_check
 	_ret_	or	crc3, crc1   wz    // Z set for pass, clear for fail
 //		ret    // full assembler can handle _RET_ instead
 
-clocks		long 512 * 2 + 16 + 2    // clock pulses, nibble count + 16-bit CRC + end-bit
+clocks		long 512 * 2 + 16 + ENDBITS    // clock pulses, nibble count + 16-bit CRC + end-bit
 lnco		long 0x80000000    // lead-in rate, sysclock/1
 poly		long 0x8408    // reversed CRC-16-CCITT (x16 + x12 + x5 + x0: 0x1021, even parity)
 altireg		long pa<<19 | cogdatbuf<<9    // register PA for ALTI result substitution, and CRC buffer address
@@ -686,9 +696,9 @@ cogcrcbuf	res 16/8    // longwords for CRC nibbles, must be contiguous with the 
     if( blocks ) {
         __builtin_printf(" ReadError=%d, ", blocks);
         if( blocks == 1 )
-            __builtin_printf("CRC failed!\n");
+            puts("CRC failed!");
         if( blocks == 2 )
-            __builtin_printf("start-bit timed out!\n");
+            puts("start-bit timed out!");
     }
 #endif
 
@@ -773,10 +783,10 @@ static int  do_cmdresp(    //  0:Success  1:CMD pin stuck low  2:Response start-
 		setq	#sizeof(crset) / 4 - 1
 		rdlong	p_clk, ptr    // fast copy to cogRAM
 
-		drvl	p_clk    // enable CLK smartpin
+		drvl	p_clk    // enable CLK smartpin if not already enabled
+		wypin	#2, p_clk    // terminate any trailing clocking
 		setse1	#0    // cancel triggering before reuse - not needed if POLLSE1 is used
-		wypin	#1, p_clk    // ensure card releases the CMD bus, and terminates any trailing clocking
-		setse1	m_se1    // must be immediately after WYPIN to catch IN rising
+		setse1	m_se1    // must be immediately after WYPIN #1 to catch IN rising
 
 		or	cmd, #0x40    // add S (low) and T (high) bits in front of command
 		mov	pb, arg
@@ -846,7 +856,7 @@ if_nc_or_z	ret    // pin stuck error, or no response expected
 		waitse2   wc    // wait for CMD start bit, C set if timed-out
 
 // start-bit found
-		dirl	p_clk    // halt clock-gen ASAP
+		dirl	p_clk    // reset clock-gen smartpin to align with streamer
 		wxpin	v_div, p_clk    // clock-divider to match streamer rate
 
 // now read the response (NOTE: start-bit is part of first byte)
@@ -902,7 +912,7 @@ static void  set_crset(
     uint32_t rxlag,
     uint32_t CLK_POL )
 {
-    uint32_t  PIN_CMD = cmdpin, PIN_CLK = clkpin;
+    uint32_t  mode, PIN_CMD = cmdpin, PIN_CLK = clkpin;
 
     crset.p_clk = PIN_CLK;
     crset.p_cmd = PIN_CMD;
@@ -916,14 +926,15 @@ static void  set_crset(
         rxlag += 2;    // linear correction, registered pins take one tick longer than unregistered
     rxlag >>= 1;    // latency component
 
+    mode = X_IMM_32X1_1DAC1 | 8 + rxlag;    // lead-in streamer mode and timing for clock alignment
     if( clkdiv < 20 )  {    // start-bit search ends on T-bit
         crset.v_sdiv = 10 | 5<<16;    // search clock-divider
         crset.timeout = 10 * 64;    // max of 64 clocks for response to start, Ncr (SD spec 4.12.4)
-        crset.m_ralign = X_IMM_32X1_1DAC1 | 8 + rxlag;    // store T-bit twice to fill both S and T bits in memory
+        crset.m_ralign = mode;    // store T-bit twice to fill both S and T bits in memory
     } else {    // start-bit search ends on start(S)-bit
         crset.v_sdiv = clkdiv | clkdiv/2<<16;    // search clock-divider
         crset.timeout = clkdiv * 64;    // max of 64 clocks for response to start, Ncr (SD spec 4.12.4)
-        crset.m_ralign = X_IMM_32X1_1DAC1 | 8 + clkdiv + rxlag;    // real start(S)-bit is collected
+        crset.m_ralign = mode + clkdiv;    // real start(S)-bit is collected
     }
     crset.v_div = clkdiv | clkdiv/2<<16;    // response clock-divider
     crset.m_resp = X_1P_1DAC1_WFBYTE | X_PINS_ON | X_ALT_ON | PIN_CMD<<17;    // + bit count, msbit first
@@ -935,10 +946,10 @@ static void  set_crset(
 // Command-Response error handler
 //-----------------------------------------------------------------------
 
-static int  cr_error_handler( void )
+static bool  cr_error_handler( void )
 {
 
-    return 1;
+    return true;    // success
 }
 
 
@@ -947,7 +958,7 @@ static int  cr_error_handler( void )
 // Send a common housekeeping command packet to the SD card
 //-----------------------------------------------------------------------
 
-static int  send_cmd(    // 0:Fail, 1:Success
+static bool  send_cmd(
     uint32_t cmd,    // Command
     uint32_t arg,    // Argument
     uint8_t *resp )    // Buffer address for response bytes
@@ -955,16 +966,16 @@ static int  send_cmd(    // 0:Fail, 1:Success
 #ifdef SD_DEBUG
 //    __builtin_printf(" CMD%d - ", cmd);
 #endif
-    if( !do_cmdresp(cmd, arg, resp, 6, -500) ) {    // R1,R1b,R3,R6,R7 responses
+    if( !do_cmdresp(cmd, arg, resp, 6, 500) ) {    // R1,R1b,R3,R6,R7 responses
         if( !resp )    // expecting no response, eg: CMD7 deselect
-            return 1;
+            return true;    // success
         if( resp[5] == crc7sd(resp, 5) )
-            return 1;
+            return true;    // success
     }
 #ifdef SD_DEBUG
     __builtin_printf(" CMD%d error! ", cmd);
 #endif
-    return 0;
+    return false;    // error
 }
 
 
@@ -973,7 +984,7 @@ static int  send_cmd(    // 0:Fail, 1:Success
 // Send a R2 housekeeping command packet to the SD card
 //-----------------------------------------------------------------------
 
-static int  send_cmd_r2(    // 0:Fail, 1:Success
+static bool  send_cmd_r2(
     uint32_t cmd,    // Command
     uint32_t arg,    // Argument
     uint8_t *resp )    // Buffer address for response bytes
@@ -981,13 +992,13 @@ static int  send_cmd_r2(    // 0:Fail, 1:Success
 #ifdef SD_DEBUG
 //    __builtin_printf(" CMD%d - ", cmd);
 #endif
-    if( !do_cmdresp(cmd, arg, resp, 17, -500) )    // R2 response
+    if( !do_cmdresp(cmd, arg, resp, 17, 500) )    // R2 response
         if( resp[16] == crc7sd(&resp[1], 15) )
-            return 1;
+            return true;    // success
 #ifdef SD_DEBUG
     __builtin_printf(" CMD%d error! ", cmd);
 #endif
-    return 0;
+    return false;    // error
 }
 
 
@@ -996,7 +1007,7 @@ static int  send_cmd_r2(    // 0:Fail, 1:Success
 // Send an application specific command packet to the SD card
 //-----------------------------------------------------------------------
 
-static int  send_acmd(    // 0:Fail, 1:Success
+static bool  send_acmd(
     uint32_t acmd,    // App command
     uint32_t arg,    // Argument
     uint8_t *resp )    // Buffer address for response bytes
@@ -1005,13 +1016,13 @@ static int  send_acmd(    // 0:Fail, 1:Success
 #ifdef SD_DEBUG
 //    __builtin_printf(" ACMD%d - ", acmd);
 #endif
-        if( !do_cmdresp(acmd, arg, resp, 6, -500) )
-            return 1;    // skip CRC checking since not all ACMDs have one
+        if( !do_cmdresp(acmd, arg, resp, 6, 500) )
+            return true;    // skip CRC checking since not all ACMDs have one
     }
 #ifdef SD_DEBUG
     __builtin_printf(" ACMD%d error! ", acmd);
 #endif
-    return 0;
+    return false;    // error
 }
 
 
@@ -1175,7 +1186,7 @@ static int  sd_initialise( void )
 // still can't be sure there is actually a card pressent
     if( send_acmd(41, a41arg, resp) ) {   // ACMD41  SD_SEND_OP_COND - any response is card really exists
 #ifdef SD_DEBUG
-        __builtin_printf(" Card idle OK\n");
+        puts(" Card idle OK");
 #endif
         status = STA_NOINIT;
     } else {
@@ -1206,9 +1217,9 @@ static int  sd_initialise( void )
         ledpin |= BYTE_ADDRESSING_MASK;    // byte addressed card type
 #ifdef SD_DEBUG
     if( rca == 3 )
-        __builtin_printf("SDHC/SDXC Card\n");    // block addressed card type
+        puts("SDHC/SDXC Card");    // block addressed card type
     else
-        __builtin_printf("SDSC Card\n");    // byte addressed card type
+        puts("SDSC Card");    // byte addressed card type
 #endif
 
 //-----------------------------------------
@@ -1233,7 +1244,7 @@ static int  sd_initialise( void )
     send_cmd_r2(10, rca, resp);    // CMD10  SEND_CID, R2 response
     memcpy(cidbytes, resp, 17);    // later used for rxlag recalibration
 #ifdef SD_DEBUG
-    __builtin_printf(" CID register backed up\n");
+    puts(" CID register backed up");
 #endif
 
     if( !send_cmd(7, rca, resp) )    // CMD7  SELECT_CARD - "standby" to "tran" state, R1b response
@@ -1245,7 +1256,7 @@ static int  sd_initialise( void )
     if( !send_acmd(6, 2, resp) )  // ACMD6  SET_BUS_WIDTH - Engage 4-bit parallel data, R1 response
         goto faillabel;
 #ifdef SD_DEBUG
-    __builtin_printf(" 4-bit data interface engaged\n");
+    puts(" 4-bit data interface engaged");
 #endif
 
 #if defined SD_DEBUG || defined FF_USE_TRIM
@@ -1277,7 +1288,7 @@ static int  sd_initialise( void )
         if( (buff[24]>>1) & 1 ) {
             ledpin |= TRIM_DISCARD_MASK;    // TRIM support enable, via block erase "discard"ing
 #ifdef SD_DEBUG
-            __builtin_printf(" TRIMming engaged\n");
+            puts(" TRIMming engaged");
 #endif
         }
 #endif
@@ -1305,12 +1316,12 @@ static int  sd_initialise( void )
 #endif
     if( a41arg && (resp[4] == 0b0_1011_010) ) {    // 50 Mb/s: TRAN_SPEED - SD spec, table 5-6
 #ifdef SD_DEBUG
-        __builtin_printf(" High-Speed access mode engaged\n");
+        puts(" High-Speed access mode engaged");
 #endif
     } else {    // 32h=25MHz, 5Ah=50MHz, 0Bh=100MHz, 2Bh=200MHz
         ledpin |= CLK_POLARITY_MASK;    // set inverted clock polarity to suit Standard Speed access mode
 #ifdef SD_DEBUG
-        __builtin_printf(" Default-Speed access mode\n");
+        puts(" Default-Speed access mode");
 #endif
     }
 
@@ -1348,16 +1359,15 @@ static int  sd_initialise( void )
             __builtin_printf("Card still busy\n");
     }
 */
-    __builtin_printf("SD Card Init Successful\n");
+    puts("SD Card Init Successful");
 #endif
     give_pins();    // pins DIRs lowered
-//_pinh(56);    // diag
 
     return status;
 
 faillabel:
 #ifdef SD_DEBUG
-    __builtin_printf("SD Init Failure!  :-(\n");
+    puts("SD Init Failure!  :-(");
 #endif
     _wypin(PIN_CLK, 500);
     _waitus(20);
@@ -1389,96 +1399,29 @@ faillabel:
 
 off_t  curpos;    // 64-bit, byte offset of current/next block number (system interface variable)
 uint64_t  f_pinmask;    // 64-bit, driver's I/O pin map, for both allocating and deallocating
-LBA_t  cmd12lba;    // lazy CMD12's jointing block number
+LBA_t  cmd12lba;    // lazy CMD12's jointing block number, Zero signifies CMD12 already issued
 
 
-
-static ssize_t  v_read( vfs_file_t *fil, void *buff, size_t count )
+static ssize_t  v_do_io( vfs_file_t *fil, void *buff, size_t count, bool is_write )
 {
     uint8_t  *resp = __builtin_alloca(8);    // response buffer, in hubRAM
     LBA_t  blocks = count >> BLOCK_SHIFT;
-    ssize_t  bytes_io;
-    LBA_t  cmdparam, lba = curpos >> BLOCK_SHIFT;
-    LBA_t  cmd12blk = cmd12lba;    // state tracking for where CMD12 to be next issued
-    uint32_t  timeout = _clockfreq() / 4;    // 250 ms
-    unsigned  PIN_LED = ledpin;    // Doubles up as SDSC byte addressing flag in bit0
-    int  rc;
-
-#ifdef SD_DEBUG_ACCESSES
-    if( blocks == 1 )
-        __builtin_printf(" cp%dRD%x ", rxblkset.p_clk, lba);
-    else
-        __builtin_printf(" cp%dRD%x+%x ", rxblkset.p_clk, lba, blocks);
-#endif
-    if( !blocks || (uint32_t)curpos & BLOCK_MASK ) {
-        // we have to do the I/O for the first sector
-        // for now throw up our hands and punt, we don't support arbitrary seeks
-        return -1;
-    }
-
-    // disjoint
-    if( (cmd12blk != lba) || !lba ) {    // detect a disjoint
-        if( cmd12blk )
-            send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
-
-        cmdparam = (PIN_LED & BYTE_ADDRESSING_MASK) ? lba << BLOCK_SHIFT : lba;
-        if( !wait_ready(timeout) )    // check busy-low on DAT0
-            goto errorlabel;
-
-//_pinl(56);    // diag
-        if( do_cmdresp(18, cmdparam, resp, 6, 2) )    // CMD18  READ_MULTIPLE_BLOCK, R1 response
-            goto errorlabel;
-
-    } else    // joint, prior CMD18 is still in operaion
-        take_clkpin();    // pins DIRs get lowered at end of each driver transaction
-
-    // joint
-    PIN_LED >>= 8;    // just the pin number
-    _pinl(PIN_LED);    // activity LED on
-    rc = rx_datablocks(buff, blocks, timeout, resp);
-    _pinf(PIN_LED);    // activity LED off
-
-    if( rc ) {    // any error
-        send_cmd(12, 0, resp);    // CMD12  STOP_TRANSMISSION
-        if( rc == 1 )    // CRC mismatch
-            calibrate_rxlag();    // attempt to improve situation
-    }
-
-errorlabel:
-    give_pins();    // pins DIRs lowered
-#ifdef SD_DEBUG_ACCESSES
-    __builtin_printf("%d ", _getus());
-#endif
-    if( rc ) {    // error
-        cmd12lba = 0;    // force a disjoint
-        return 0;
-
-    } else {
-        cmd12lba = lba + blocks;    // remember next incremental block number (joint)
-        bytes_io = (ssize_t)blocks << BLOCK_SHIFT;
-        curpos += bytes_io;    // byte offset of same block (system interfaced variable)
-        return bytes_io;
-    }
-}
-
-
-
-static ssize_t  v_write( vfs_file_t *fil, void *buff, size_t count )
-{
-    uint8_t  *resp = __builtin_alloca(8);    // response buffer, in hubRAM
-    LBA_t  blocks = count >> BLOCK_SHIFT;
-    LBA_t  cmdparam, lba = curpos >> BLOCK_SHIFT;
+    LBA_t  lba = curpos >> BLOCK_SHIFT;
     LBA_t  cmd12blk = cmd12lba;    // state tracking for where CMD12 to be next issued
     ssize_t  bytes_io = (ssize_t)blocks << BLOCK_SHIFT;
     uint32_t  timeout = _clockfreq() / 4;    // 250 ms
     unsigned  PIN_LED = ledpin;    // Doubles up as SDSC byte addressing flag in bit0
-    int  rc;
+    uint32_t  cmd, cmdparam;
 
 #ifdef SD_DEBUG_ACCESSES
-    if( blocks == 1 )
-        __builtin_printf(" cp%dWR%x ", rxblkset.p_clk, lba);
+    if( is_write )
+        __builtin_printf(" WR");
     else
-        __builtin_printf(" cp%dWR%x+%x ", rxblkset.p_clk, lba, blocks);
+        __builtin_printf(" RD");
+    if( blocks == 1 )
+        __builtin_printf("%x ", lba);
+    else
+        __builtin_printf("%x+%x ", lba, blocks);
 #endif
     if( !blocks || (uint32_t)curpos & BLOCK_MASK ) {
         // we have to do the I/O for the first sector
@@ -1489,53 +1432,66 @@ static ssize_t  v_write( vfs_file_t *fil, void *buff, size_t count )
     cmdparam = (PIN_LED & BYTE_ADDRESSING_MASK) ? lba << BLOCK_SHIFT : lba;
     PIN_LED >>= 8;    // just the pin number
 
-    if( blocks == 1 ) {    // some cards get pissy if using CMD25 to write one block
-        lba = 0;    // without CMD25 all singles are considered as disjoints
-        if( cmd12blk )
-            send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
-
-        if( wait_ready(timeout) ) {    // check busy-low on DAT0
-
-            if( !do_cmdresp(24, cmdparam, resp, 6, 2) ) {    // CMD24  WRITE_SINGLE_BLOCK, R1 response
-
-                _pinl(PIN_LED);    // activity LED on
-                rc = tx_datablock(buff, timeout);
-                if( rc == 0b10_010_1 )    // CRC matched
-                    blocks = 0;
-                _pinf(PIN_LED);    // activity LED off
-            }
+    if( is_write ) {
+        if( blocks == 1 ) {    // some cards get pissy if using CMD25 to write one block
+            lba = 1;    // cmd12lba = 0 (lba - blocks), without CMD25 all singles are considered as disjoints
+            cmd = 24;    // CMD24  WRITE_SINGLE_BLOCK
+        } else {
+            lba = -lba;    // to differentiate writes from reads
+            cmd = 25;    // CMD25  WRITE_MULTIPLE_BLOCK
+//_pinh(56);    // diag
         }
     } else {
-        // disjoint
-        lba = -lba;    // to differentiate writes from reads
-        if( (cmd12blk != lba) || !lba ) {    // detect a disjointed block number
-            if( cmd12blk )
-                send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+        cmd = 18;    // CMD18  READ_MULTIPLE_BLOCK
+//_pinh(56);    // diag
+    }
 
-            if( !wait_ready(timeout) )    // check busy-low on DAT0
-                goto errorlabel;
+    if( (lba != cmd12blk) || !cmd12blk ) {    // disjoint
+        if( cmd12blk ) {    // still needs a CMD12
+//_pinh(56);    // diag
+//            send_cmd(12, 0, resp);    // CMD12  STOP_TRANSMISSION
+            do_cmdresp(12, 0, resp, 6, 500);    // CMD12  STOP_TRANSMISSION
+//            __builtin_printf(" lba=%d c12=%d ",lba,cmd12blk);
+        }
+        if( !wait_ready(timeout) )    // check busy-low on DAT0
+            goto errorlabel;
+        if( do_cmdresp(cmd, cmdparam, resp, 6, 2) ) {    // R1 response
+            goto errorlabel;
+        }
+    } else {    // joint, prior CMD25 is still in operaion
+        take_clkpin();    // pins DIRs get lowered at end of each driver transaction
+    }
 
-            if( do_cmdresp(25, cmdparam, resp, 6, 2) )    // CMD25  WRITE_MULTIPLE_BLOCK, R1 response
-                goto errorlabel;
-
-        } else    // joint, prior CMD25 is still in operaion
-            take_clkpin();    // pins DIRs get lowered at end of each driver transaction
-
-        // joint
+    if( is_write ) {    // write path
         lba -= blocks;    // to update "cmd12lba", if no error
 //        timeout |= 1;    // diag control to force a sent CRC to fail during CMD25
 
         _pinl(PIN_LED);    // activity LED on
         do {
-            rc = tx_datablock(buff, timeout);
-            if( rc != 0b10_010_1 )
+            cmd = tx_datablock(buff, timeout);
+            if( cmd != 0b10_010_1 )
                 break;   // other than CRC matched
             buff += BLOCK_SIZE;
         } while( --blocks );
         _pinf(PIN_LED);    // activity LED off
 
-        if( blocks )    // error
-            send_cmd(12, 0, resp);    // CMD12  STOP_TRANSMISSION, also wait for the command response
+        if( blocks )    // any error
+//            send_cmd(12, 0, resp);    // CMD12  STOP_TRANSMISSION
+            do_cmdresp(12, 0, resp, 6, 500);    // CMD12  STOP_TRANSMISSION
+
+    } else {    // read path
+        lba += blocks;    // to update "cmd12lba", if no error
+
+        _pinl(PIN_LED);    // activity LED on
+        blocks = rx_datablocks(buff, blocks, timeout, resp);
+        _pinf(PIN_LED);    // activity LED off
+
+        if( blocks ) {    // any error
+//            send_cmd(12, 0, resp);    // CMD12  STOP_TRANSMISSION
+            do_cmdresp(12, 0, resp, 6, 500);    // CMD12  STOP_TRANSMISSION
+            if( blocks == 1 )    // CRC mismatch
+                calibrate_rxlag();    // attempt to improve situation
+        }
     }
 
 errorlabel:
@@ -1544,7 +1500,7 @@ errorlabel:
     __builtin_printf("%d ", _getus());
 #endif
     if( blocks ) {    // error
-        cmd12lba = 0;    // force a disjoint
+        cmd12lba = 0;    // disjointed, CMD12 has been issued
         return 0;
 
     } else {
@@ -1552,6 +1508,18 @@ errorlabel:
         curpos += bytes_io;    // byte offset of same block (system interfaced variable)
         return bytes_io;
     }
+}
+
+
+
+ssize_t v_read(vfs_file_t *fil, void *buf, size_t count)
+{
+    return v_do_io(fil, buf, count, false);
+}
+
+ssize_t v_write(vfs_file_t *fil, void *buf, size_t count)
+{
+    return v_do_io(fil, buf, count, true);
 }
 
 
@@ -1567,8 +1535,8 @@ static int  v_ioctl(vfs_file_t *fil, int ctrl, void *buff)
     __builtin_printf(" SYNC ");
 #endif
             if( cmd12lba  ) {
-                cmd12lba = 0;    // disjointed here
-                send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+                send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION, don't wait for response
+                cmd12lba = 0;    // disjointed, CMD12 has been issued
             }
             if( !wait_ready(_clockfreq()/4) )    // 250 ms, check busy status on DAT0
                 res = RES_ERROR;
@@ -1604,8 +1572,8 @@ static int  v_ioctl(vfs_file_t *fil, int ctrl, void *buff)
     __builtin_printf(" TRIM %x..%x ", ((LBA_t *)buff)[0], ((LBA_t *)buff)[1]);
 #endif
                 if( cmd12lba  ) {
-                    cmd12lba = 0;    // disjointed here
-                    send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION
+                    send_cmd(12, 0, NULL);    // CMD12  STOP_TRANSMISSION, don't wait for response
+                    cmd12lba = 0;    // disjointed, CMD12 has been issued
                 }
                 if( wait_ready(_clockfreq()/4) ) {    // 250 ms, check busy status on DAT0
                     send_cmd(32, ((LBA_t *)buff)[0], resp);    // CMD32  ERASE_WR_BLK_START
@@ -1710,18 +1678,42 @@ static int  v_close(vfs_file_t *fil)
 }
 
 
+/*
+static void  hexdump( void *ptr, size_t len )
+{
+    vfs_file_t *han = (vfs_file_t *)ptr;
+
+    __builtin_printf(" len=%d v_read=%p v_write=%p v_close=%p ",
+            len, han->read, han->write, han->close );
+
+    len = (len + 8) & 0xffff_fffc;
+    do {
+        __builtin_printf(" %02x %02x %02x %02x ", *ptr, *(ptr+1), *(ptr+2), *(ptr+3));
+        ptr += 4;
+        len -= 4;
+    } while( len );
+    puts("");
+}
+
+
+
+static vfs_file_t  plugin = {
+    NULL, O_RDWR, _IONBF, _VFS_STATE_INUSE | _VFS_STATE_WROK | _VFS_STATE_RDOK, 0, 0,
+    &v_read, &v_write, &v_close, &v_ioctl, &v_flush, &v_lseek, &v_putc, &v_getc
+};
+*/
 
 vfs_file_t *
 _sdsd_open(int pclk, int pcmd, int pdat0, int ppwr, int pled)
 {
-    cmd12lba = 0;    // clear the jointing block number
+    uint64_t  pmask;
+
 #ifdef SD_DEBUG
     puts("SD card driver (4-bit SD mode) "_SDSD_VERSION_);
-#endif
-#ifdef _DEBUG
     __builtin_printf(" sdsd_open: using pins: %d %d %d %d %d\n", pclk, pcmd, pdat0, ppwr, pled);
 #endif
-    uint64_t  pmask = (1ULL << pclk) | (1ULL << pcmd) | (7ULL << pdat0);
+    cmd12lba = 0;    // clear the jointing block number
+    pmask = (1ULL << pclk) | (1ULL << pcmd) | (7ULL << pdat0);
     if( ppwr >= 0 )    // optional SD slot power switch
         pmask |= 1ULL << ppwr;
     if( pled >= 0 )    // optional SD slot activity LED
@@ -1760,6 +1752,9 @@ _sdsd_open(int pclk, int pcmd, int pdat0, int ppwr, int pled)
             handle->lseek = &v_lseek;
             handle->putcf = &v_putc;
             handle->getcf = &v_getc;
+
+//            hexdump( &plugin, sizeof(vfs_file_t) );    // diag
+//            hexdump( handle, sizeof(vfs_file_t) );    // diag
             return handle;
         }
     }
