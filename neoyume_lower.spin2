@@ -3034,7 +3034,6 @@ ma_lineloop
 #endif
 .irqshield
 #elseifdef USE_HYPER
-              add     ma_mtmp1,ma_char_base
               shr     ma_mtmp1,#1 wc
               wrc     ma_mtmp2
               shl     ma_mtmp2,#10
