@@ -1,0 +1,39 @@
+
+=============================================================
+   Installing a new block device driver (New API solution)
+=============================================================
+
+The driver file, eg: sdsd.cc, can sit with user program files.  In example I've
+placed it in a subdirectory named "blkdrvr"
+
+Add and open with:
+{
+    struct __using("blkdrvr/sdsd.cc") *drv;
+    FILE *handle;
+
+    drv = _gc_alloc_managed(sizeof(*drv));
+
+    handle = drv._sdsd_open(CLK_PIN, CMD_PIN, DAT0_PIN, PWR_PIN, LED_PIN);
+    if( handle )
+        mount("/sd", _vfs_open_fat_handle(handle));
+    else
+        _gc_free(drv);
+}
+
+
+
+
+There is also a couple of ioctl() commands that can be issued while the driver handle is known:
+    CTRL_BLOCKREAD_CRC = 70,    // Disables/enables CRC processing of block read, default is enabled
+    CTRL_GET_CLKDIV = 71,    // Get the active clock-divider
+    CTRL_SET_CLKDIV = 72,    // Set the active clock-divider
+    CTRL_GET_CLKPOL = 73,    // (Not implemented)
+    CTRL_SET_CLKPOL = 74,    // (Not implemented)
+
+Example use:
+{
+    ...
+    int clkdiv = 3;
+    _ioctl(handle, 72, &clkdiv);    // set SD clock divider to 3.
+    ...
+}

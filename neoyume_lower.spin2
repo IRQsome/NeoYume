@@ -3009,18 +3009,23 @@ ma_lineloop
 #ifdef USE_PSRAM_NOBANKS
               nop
 #endif
+#else ' fast PSRAM
+              wrpin ma_tx_busmode,ma_psram_pinfield
 #endif
 #ifndef USE_PSRAM_NOBANKS
               altd  ma_mtmp3,#PSRAM_SELECT
 #endif
               drvh  #PSRAM_SELECT
               xinit ma_psram_addr_cmd,ma_mtmp1
-              wypin #(8+PSRAM_WAIT+MA_CHAR_CYCLES)*MA_CYMUL,#PSRAM_CLK
+              wypin #(8+PSRAM_WAIT-1+MA_CHAR_CYCLES)*MA_CYMUL,#PSRAM_CLK
               setq ma_nco_fast
-              xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
+              xcont #(PSRAM_WAIT)*MA_CLKDIV+PSRAM_DELAY,#0
               wrfast ma_bit31,ptrb
               waitxmt
               fltl ma_psram_pinfield
+#ifndef USE_PSRAM_SLOW
+              wrpin ma_rx_busmode,ma_psram_pinfield
+#endif
               setq ma_nco_slow
               xcont ma_psram_readspr_cmd,#0
               rdlong  ma_mtmp1,ptrb[2+4] wc ' Read address for next slot ( C = got sentinel )
@@ -3089,20 +3094,25 @@ ma_do_adpcm
 #ifdef USE_PSRAM_NOBANKS
               nop
 #endif
+#else ' fast PSRAM
+              wrpin ma_tx_busmode,ma_psram_pinfield
 #endif
 #ifndef USE_PSRAM_NOBANKS
               altd  ma_mtmp3,#PSRAM_SELECT
 #endif
               drvh  #PSRAM_SELECT
               xinit ma_psram_addr_cmd,ma_mtmp1
-              wypin #(8+PSRAM_WAIT+MA_PCM_CYCLES)*MA_CYMUL,#PSRAM_CLK
+              wypin #(8+PSRAM_WAIT-1+MA_PCM_CYCLES)*MA_CYMUL,#PSRAM_CLK
               setq ma_nco_fast
               xcont #PSRAM_WAIT*MA_CLKDIV+PSRAM_DELAY,#0
-              waitxmt
-              fltl ma_psram_pinfield
               mov ma_mtmp3,ma_adpcm_pollptr
               sub ma_mtmp3,#@adpcm_pollbox
               shl ma_mtmp3,#3 ' 4*8 -> 32 bytes per channel
+              waitxmt
+              fltl ma_psram_pinfield
+#ifndef USE_PSRAM_SLOW
+              wrpin ma_rx_busmode,ma_psram_pinfield
+#endif
               testb ma_mtmp1,#(MA_PCM_ASHIFT^28) wc ' odd blocks go in odd buffers (bit 0 of original poll value)
         if_c  add ma_mtmp3,#16
               add ma_mtmp3,ma_adpcm_bufferbase
@@ -3171,7 +3181,7 @@ ma_68krequest
 
 #ifdef USE_PSRAM_EITHER
 ma_psram_read68k
-              mov ma_itmp0,#(8+PSRAM_WAIT)*MA_CYMUL
+              mov ma_itmp0,#(8+PSRAM_WAIT-1)*MA_CYMUL
               shl ma_prog_length,#MA_PROGCYSHL + (encod MA_CYMUL)
               add ma_itmp0,ma_prog_length
 #ifdef USE_PSRAM8
@@ -3197,6 +3207,8 @@ ma_psram_read68k
 #ifdef USE_PSRAM_NOBANKS
               nop
 #endif
+#else ' fast PSRAM
+              wrpin ma_tx_busmode,ma_psram_pinfield
 #endif
 #ifndef USE_PSRAM_NOBANKS
               altd  ma_itmp3,#PSRAM_SELECT
@@ -3210,6 +3222,9 @@ ma_psram_read68k
               setword ma_psram_read68k_cmd,ma_prog_length,#0
               waitxmt
               fltl ma_psram_pinfield
+#ifndef USE_PSRAM_SLOW
+              wrpin ma_rx_busmode,ma_psram_pinfield
+#endif
               setq ma_nco_slow
               xcont ma_psram_read68k_cmd,#0
               waitxfi
@@ -3259,6 +3274,14 @@ ma_nco_fast   long $8000_0000
 ma_nco_slow   long $2AAA_AAAB
 #else
 ma_nco_slow   long $4000_0000
+#endif
+
+#ifdef USE_PSRAM_EITHER
+#ifndef USE_PSRAM_SLOW
+' for fast mode, we need command to have same sync state as clock for best results
+ma_tx_busmode long PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO
+ma_rx_busmode long PSRAM_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO
+#endif
 #endif
 
 #ifdef USE_PSRAM16

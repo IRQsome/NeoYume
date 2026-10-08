@@ -27,17 +27,17 @@ ALLOW_BIOS_CHANGE = true
 '#define USE_HYPER
 
 ' For PSRAM (either type)
-PSRAM_CLK = 56
-PSRAM_SELECT = 57
-PSRAM_BASE = 40
-PSRAM_BANKS = 1
+PSRAM_CLK = 30 addpins 1
+PSRAM_SELECT = 28
+PSRAM_BASE = 32
+PSRAM_BANKS = 2
 ' \/ Uncomment if PSRAM_BANKS = 1 for speedup
-#define USE_PSRAM_NOBANKS
+'#define USE_PSRAM_NOBANKS
 
-PSRAM_WAIT  = 6
-PSRAM_DELAY = 12
+PSRAM_WAIT  = 5
+PSRAM_DELAY = 14
 PSRAM_SYNC_CLOCK = false
-PSRAM_SYNC_DATA = true
+PSRAM_SYNC_DATA = false
 
 ' \/ Uncomment for lameness
 '#define USE_PSRAM_SLOW
@@ -67,19 +67,11 @@ SDCARD_DO = 58
 ' \/ Uncomment for fast ROM loading
 #define _SDHC_45MHZ
 
-' 4 bit SD mode (experimental)
-'#define USE_SD_4BIT
-SD4_DAT0 = 0
-SD4_CMD  = 4
-SD4_CLK  = 5
-SD4_PLED = 6
-SD4_PPWR = 7
-
 '{ ' NEW video driver config
 VIDEO_MODE = vconst.MODE_VGA
 VIDEO_SUBMODE = vconst.SUBMODE_2X
-ANALOG_BASEPIN = 24 ' For VGA/NTSC/etc
-VSYNC_PIN = 24+4
+ANALOG_BASEPIN = 8 ' For VGA/NTSC/etc
+VSYNC_PIN = 8+4
 DIGITAL_BASEPIN = -1 ' For HDMI/DVI - MUST be -1 if not present
 DIGITAL_REVERSED = false
 '}
@@ -91,13 +83,12 @@ VIDEO_SUBMODE = 0 ' Not used (yet)
 ANALOG_BASEPIN = -1 ' Not used
 VSYNC_PIN = (8<<0) + (9<<8) + (10<<16) + (11<<24) ' extra pins: DOTCLK<<0 + CS<<8 + CLK<<16 + SDA<<24
 DIGITAL_BASEPIN = 0 ' HSync, VSync and 6 data pins
-DIGITAL_REVERSED = false ' Not used
+DIGITAL_REVERSED = false
 '}
 
 
-AUDIO_LEFT  = 24+6
+AUDIO_LEFT  = 8+6
 AUDIO_RIGHT = AUDIO_LEFT + 1
-' Note that these must be set even if digital audio is used
 
 ' \/ Uncomment for mono audio (still sent to both pins (you can set them to the same pin))
 '#define AUDIO_MIX_MONO

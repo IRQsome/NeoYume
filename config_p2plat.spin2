@@ -2,7 +2,7 @@ OBJ vconst = "NeoVGA.spin2"
 CON
 
 '' This can be defined to skip game selection
-'#define DIRECT_BOOT game_mslug
+'#define DIRECT_BOOT game_sengoku2
 
 '' Allow $FC000 parameter passing. (See README for more info)
 USE_ARGV = true
@@ -27,20 +27,20 @@ ALLOW_BIOS_CHANGE = true
 '#define USE_HYPER
 
 ' For PSRAM (either type)
-PSRAM_CLK = 56
-PSRAM_SELECT = 57
-PSRAM_BASE = 40
-PSRAM_BANKS = 1
+PSRAM_CLK = 50 addpins 1
+PSRAM_SELECT = 48
+PSRAM_BASE = 32
+PSRAM_BANKS = 2
 ' \/ Uncomment if PSRAM_BANKS = 1 for speedup
-#define USE_PSRAM_NOBANKS
+'#define USE_PSRAM_NOBANKS
 
-PSRAM_WAIT  = 6
-PSRAM_DELAY = 12
+PSRAM_WAIT  = 5
+PSRAM_DELAY = 16
 PSRAM_SYNC_CLOCK = false
-PSRAM_SYNC_DATA = true
+PSRAM_SYNC_DATA = false
 
 ' \/ Uncomment for lameness
-'#define USE_PSRAM_SLOW
+#define USE_PSRAM_SLOW
 
 
 ' For HyperRAM
@@ -59,28 +59,29 @@ HYPER_SYNC_CLOCK = false
 HYPER_SYNC_DATA = false
 
 
-SDCARD_CLK = 61
-SDCARD_SELECT = 60
-SDCARD_DI = 59
-SDCARD_DO = 58
+SDCARD_CLK = 5
+SDCARD_SELECT = 3
+SDCARD_DI = 4
+SDCARD_DO = 0
 
 ' \/ Uncomment for fast ROM loading
 #define _SDHC_45MHZ
 
 ' 4 bit SD mode (experimental)
-'#define USE_SD_4BIT
+#define USE_SD_4BIT
 SD4_DAT0 = 0
 SD4_CMD  = 4
 SD4_CLK  = 5
 SD4_PLED = 6
 SD4_PPWR = 7
 
-'{ ' NEW video driver config
+'{ ' NEW NEW NEW
 VIDEO_MODE = vconst.MODE_VGA
-VIDEO_SUBMODE = vconst.SUBMODE_2X
-ANALOG_BASEPIN = 24 ' For VGA/NTSC/etc
-VSYNC_PIN = 24+4
-DIGITAL_BASEPIN = -1 ' For HDMI/DVI - MUST be -1 if not present
+VIDEO_SUBMODE = vconst.SUBMODE_3X
+
+ANALOG_BASEPIN = 16
+VSYNC_PIN = 16+4
+DIGITAL_BASEPIN = -1 ' MUST be -1 if not present
 DIGITAL_REVERSED = false
 '}
 
@@ -95,7 +96,7 @@ DIGITAL_REVERSED = false ' Not used
 '}
 
 
-AUDIO_LEFT  = 24+6
+AUDIO_LEFT  = 16+6
 AUDIO_RIGHT = AUDIO_LEFT + 1
 ' Note that these must be set even if digital audio is used
 
@@ -110,7 +111,7 @@ AUDIO_RIGHT = AUDIO_LEFT + 1
 
 
 '' USB Keyboard/gamepad pins.
-USB0_BASEPIN = 16             ' USB port0/port1 pin block
+USB0_BASEPIN = 24             ' USB port0/port1 pin block
 ENABLE_PIN   = 1              ' USB object enables port voltage protection
 DM_PIN       = 2              ' Add to BASEPIN
 

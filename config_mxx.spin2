@@ -1,0 +1,186 @@
+OBJ vconst = "NeoVGA.spin2"
+CON
+
+'' This can be defined to skip game selection
+'#define DIRECT_BOOT game_mslug
+
+'' Allow $FC000 parameter passing. (See README for more info)
+USE_ARGV = true
+
+'' Wether to use UniBIOS (uni-bios.bin).
+'' Version 4.0 is recommended.
+USE_UNIBIOS = false
+
+'' Wether to use japanese AES BIOS (neo-po.bin) or export AES BIOS (neo-epo.bin)
+'' This affects text language and regional censorship.
+'' (choose between red blood and being able to read the text, lol)
+'' This is ignored if USE_UNIBIOS is set.
+USE_JP_BIOS = false
+
+'' Wether to allow changing BIOS by pressing B in the game selection
+ALLOW_BIOS_CHANGE = true
+
+' Enable one of these to select the exmem type to use
+#define USE_PSRAM16
+'#define USE_PSRAM8
+'#define USE_PSRAM4
+'#define USE_HYPER
+
+' For PSRAM (either type)
+PSRAM_CLK = 31
+PSRAM_SELECT = 28
+PSRAM_BASE = 32
+PSRAM_BANKS = 3
+' \/ Uncomment if PSRAM_BANKS = 1 for speedup
+'#define USE_PSRAM_NOBANKS
+
+PSRAM_WAIT  = 5
+PSRAM_DELAY = 16
+PSRAM_SYNC_CLOCK = false
+PSRAM_SYNC_DATA = true
+
+' \/ Uncomment for lameness
+#define USE_PSRAM_SLOW
+
+
+' For HyperRAM
+HYPER_ACCESSORY = 0 ' Base pin for P2EVAL HyperRAM board
+HYPER_CLK    =  8+HYPER_ACCESSORY
+HYPER_RWDS   = 10+HYPER_ACCESSORY
+HYPER_SELECT = 12+HYPER_ACCESSORY
+HYPER_BASE   =  0+HYPER_ACCESSORY
+HYPER_RESET  = 15+HYPER_ACCESSORY
+HYPER_BANKS  = 1 ' Note: multibank currently not implemented
+
+HYPER_LATENCY = 6
+HYPER_WAIT  = HYPER_LATENCY*4 - 2
+HYPER_DELAY = 14
+HYPER_SYNC_CLOCK = false
+HYPER_SYNC_DATA = false
+
+
+
+' SD CARD NEW CONNECTION PP222
+SDCARD_CLK = 21         'CLK
+SDCARD_SELECT = 19      'DAT3
+SDCARD_DI = 20          'CMD
+SDCARD_DO = 16          'DAT0
+
+'SDCARD_D1 = 17         'DAT1
+'SDCARD_D2 = 18         'DAT2
+'SDCARD_D3 = 19         'DAT3 OR CS
+'SDCARD_PW = 22         'CD/OFF --> 0=CARD DETECT; 1 = POWER OFF
+'SDCARD_LD = 23         'LED SD --> 0=LED ON
+'------------- + --------------
+
+' \/ Uncomment for fast ROM loading
+#define _SDHC_45MHZ
+
+' 4 bit SD mode (experimental)
+'{
+#define USE_SD_4BIT
+SD4_DAT0 = 16
+SD4_CMD  = 20
+SD4_CLK  = 21
+SD4_PLED = 22
+SD4_PPWR = 23
+'}
+
+'{ ' NEW video driver config
+VIDEO_MODE = vconst.MODE_HDMI
+VIDEO_SUBMODE = vconst.SUBMODE_2X
+ANALOG_BASEPIN = 48 ' For VGA/NTSC/etc
+VSYNC_PIN = 48+4
+DIGITAL_BASEPIN = 0 ' For HDMI/DVI - MUST be -1 if not present
+DIGITAL_REVERSED = false
+'}
+
+{ ' For 6-bit ILI9342 LCD screen
+VIDEO_MODE = vconst.MODE_LCD6
+VIDEO_SUBMODE = 0 ' Not used (yet)
+
+ANALOG_BASEPIN = -1 ' Not used
+VSYNC_PIN = (8<<0) + (9<<8) + (10<<16) + (11<<24) ' extra pins: DOTCLK<<0 + CS<<8 + CLK<<16 + SDA<<24
+DIGITAL_BASEPIN = 0 ' HSync, VSync and 6 data pins
+DIGITAL_REVERSED = false ' Not used
+'}
+
+
+AUDIO_LEFT  = 48+6
+AUDIO_RIGHT = AUDIO_LEFT + 1
+' Note that these must be set even if digital audio is used
+
+' \/ Uncomment for mono audio (still sent to both pins (you can set them to the same pin))
+'#define AUDIO_MIX_MONO
+
+
+'' Uncomment ONLY ONE of the below
+#define INPUT_USE_USB
+'#define INPUT_USE_PINS
+'#define INPUT_USE_SNES
+
+
+'' USB Keyboard/gamepad pins.
+USB0_BASEPIN = 24             ' USB port0/port1 pin block
+ENABLE_PIN   = 1              ' USB object enables port voltage protection
+DM_PIN       = 2              ' Add to BASEPIN
+
+
+'' Discrete pin inputs
+' For active-low buttons: P_HIGH_15K | P_LOW_15K | P_INVERT_A
+' For active-high buttons: P_HIGH_15K | P_LOW_15K | P_INVERT_OUTPUT
+PINPUT_PINMODE = P_HIGH_15K | P_LOW_15K | P_INVERT_OUTPUT
+PINPUT_DRIVE = true
+
+' Set -1 if button not present
+PINPUT_P1_UP     = 12
+PINPUT_P1_DOWN   = 13
+PINPUT_P1_LEFT   = 14
+PINPUT_P1_RIGHT  = 15
+PINPUT_P1_A      = 6
+PINPUT_P1_B      = 7
+PINPUT_P1_C      = 5
+PINPUT_P1_D      = -1
+PINPUT_P1_START  = 4
+PINPUT_P1_SELECT = -1
+
+PINPUT_P2_UP     = -1
+PINPUT_P2_DOWN   = -1
+PINPUT_P2_LEFT   = -1
+PINPUT_P2_RIGHT  = -1
+PINPUT_P2_A      = -1
+PINPUT_P2_B      = -1
+PINPUT_P2_C      = -1
+PINPUT_P2_D      = -1
+PINPUT_P2_START  = -1
+PINPUT_P2_SELECT = -1
+
+SNES_CLK = 16
+SNES_LATCH = 17
+SNES_PLAYER1 = 18
+SNES_PLAYER2 = 19
+
+#define SNES_LAYOUT_MINI_POSITIONAL
+'#define SNES_LAYOUT_ARCADE_POSITIONAL
+'#define SNES_LAYOUT_LETTERS
+'#define SNES_LAYOUT_COLORS
+
+'' Ignore stuff below
+
+#ifdef USE_PSRAM4
+#define USE_PSRAM_EITHER
+PSRAM_WIDTH = 4
+#endif
+#ifdef USE_PSRAM8
+PSRAM_WIDTH = 8
+#define USE_PSRAM_EITHER
+#endif
+#ifdef USE_PSRAM16
+PSRAM_WIDTH = 16
+#define USE_PSRAM_EITHER
+#endif
+#ifdef USE_PSRAM_SLOW
+PSRAM_CLKDIV = 3
+#else
+PSRAM_CLKDIV = 2
+#endif
