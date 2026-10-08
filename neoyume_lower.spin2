@@ -3045,8 +3045,9 @@ ma_lineloop
               setbyte ma_mtmp1,#%101_00000,#3 ' read linear burst
               movbyts ma_mtmp1, #%%0123
               rep @.irqshield,#1
-              drvh #HYPER_SELECT
               drvl #HYPER_BASE addpins 7
+              wrpin ma_tx_busmode,#HYPER_BASE addpins 7
+              drvh #HYPER_SELECT
               drvl #HYPER_CLK ' Init clock pin with correct (?) alignment
               xinit ma_hyper_addr_cmd1,ma_mtmp1
               wypin #(6+HYPER_WAIT+MA_CHAR_CYCLES)*MA_CYMUL,#HYPER_CLK ' setup clock periods
@@ -3056,6 +3057,7 @@ ma_lineloop
               wrfast ma_bit31,ptrb
               waitxmt
               fltl #HYPER_BASE addpins 7
+              wrpin ma_rx_busmode,#HYPER_BASE addpins 7
               setq ma_nco_slow
               xcont ma_hyper_readspr_cmd,#0
               rdlong  ma_mtmp1,ptrb[2+4] wc ' Read address for next slot ( C = got sentinel )
@@ -3130,8 +3132,9 @@ ma_do_adpcm
               setbyte ma_mtmp1,#%101_00000,#3 ' read linear burst
               movbyts ma_mtmp1, #%%0123
               rep @.irqshield,#1
-              drvh #HYPER_SELECT
               drvl #HYPER_BASE addpins 7
+              wrpin ma_tx_busmode,#HYPER_BASE addpins 7
+              drvh #HYPER_SELECT
               drvl #HYPER_CLK ' Init clock pin with correct (?) alignment
               xinit ma_hyper_addr_cmd1,ma_mtmp1
               wypin #(6+HYPER_WAIT+MA_PCM_CYCLES)*MA_CYMUL,#HYPER_CLK ' setup clock periods
@@ -3140,6 +3143,7 @@ ma_do_adpcm
               xcont #HYPER_WAIT*MA_CLKDIV+HYPER_DELAY,#0
               waitxmt
               fltl #HYPER_BASE addpins 7
+              wrpin ma_rx_busmode,#HYPER_BASE addpins 7
               mov ma_mtmp3,ma_adpcm_pollptr
               sub ma_mtmp3,#@adpcm_pollbox
               shl ma_mtmp3,#3 ' 4*8 -> 32 bytes per channel
@@ -3246,8 +3250,9 @@ ma_psram_read68k
               shl ma_itmp3,#9
               setbyte ma_prog_addr,#%101_00000,#3 ' read linear burst
               movbyts ma_prog_addr, #%%0123
-              drvh #HYPER_SELECT
               drvl #HYPER_BASE addpins 7
+              wrpin ma_tx_busmode,#HYPER_BASE addpins 7
+              drvh #HYPER_SELECT
               drvl #HYPER_CLK ' Init clock pin with correct (?) alignment
               xinit ma_hyper_addr_cmd1,ma_prog_addr
               wypin ma_itmp0,#HYPER_CLK ' setup clock periods
@@ -3257,6 +3262,7 @@ ma_psram_read68k
               setword ma_hyper_read68k_cmd,ma_prog_length,#0
               waitxmt
               fltl #HYPER_BASE addpins 7
+              wrpin ma_rx_busmode,#HYPER_BASE addpins 7
               setq ma_nco_slow
               xcont ma_hyper_read68k_cmd,#0
               waitxfi
@@ -3282,6 +3288,11 @@ ma_nco_slow   long $4000_0000
 ma_tx_busmode long PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO
 ma_rx_busmode long PSRAM_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO
 #endif
+#endif
+
+#ifdef USE_HYPER
+ma_tx_busmode long HYPER_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO
+ma_rx_busmode long HYPER_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO
 #endif
 
 #ifdef USE_PSRAM16
