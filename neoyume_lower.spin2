@@ -2934,7 +2934,7 @@ ma_entry
               shr ma_char_base,#3
 
               fltl #HYPER_CLK
-              wrpin ##P_TRANSITION|P_OE|(PSRAM_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #HYPER_CLK
+              wrpin ##P_TRANSITION|P_OE|(HYPER_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #HYPER_CLK
               wxpin #2, #HYPER_CLK
 
               wrpin ##P_INVERT_OUTPUT,#HYPER_SELECT addpins (HYPER_BANKS-1)
