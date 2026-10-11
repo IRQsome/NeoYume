@@ -2930,8 +2930,13 @@ ma_entry
               drvl #PSRAM_SELECT addpins (PSRAM_BANKS-1)
 
               wrpin ##(PSRAM_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO),ma_psram_pinfield
+              setxfrq ma_nco_slow
+              waitx #200
 #elseifdef USE_HYPER
               shr ma_char_base,#3
+
+              modc HYPER_RESET < 0 ? _clr : _set wc
+        if_c  drvh #HYPER_RESET&511
 
               fltl #HYPER_CLK
               wrpin ##P_TRANSITION|P_OE|(HYPER_SYNC_CLOCK ? P_SYNC_IO : P_ASYNC_IO), #HYPER_CLK
@@ -2940,14 +2945,60 @@ ma_entry
               wrpin ##P_INVERT_OUTPUT,#HYPER_SELECT addpins (HYPER_BANKS-1)
               drvl #HYPER_SELECT addpins (HYPER_BANKS-1)
 
-              wrpin ##(HYPER_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO),#HYPER_BASE addpins 7
-
-              modc HYPER_RESET < 0 ? _clr : _set wc
-        if_c  drvh #HYPER_RESET&511
-#endif
-
+              
               setxfrq ma_nco_slow
               waitx #200
+
+              ' Set HyperRAM latency by writing configuration register 0
+              ' (upper already did this but RAM may have been reset since)
+              mov ma_mtmp1,##$00_01_00_60
+              mov ma_mtmp2,##$0F_8F_00_00 | ((HYPER_LATENCY-5)<<28)
+              call #.setreg
+              ' do it again for dual-die chip
+              mov ma_mtmp1,##$00_01_08_60
+              call #.setreg
+
+              jmp #.done
+              'wrpin ##(HYPER_SYNC_DATA ? P_SYNC_IO : P_ASYNC_IO),#HYPER_BASE addpins 7
+
+.setreg
+
+              drvl #HYPER_BASE addpins 7
+              wrpin ma_tx_busmode,#HYPER_BASE addpins 7
+              drvh #HYPER_SELECT addpins (HYPER_BANKS-1)
+              drvl #HYPER_CLK ' Init clock pin with correct (?) alignment
+              xinit ma_hyper_addr_cmd1,ma_mtmp1
+              wypin #(6+2)*MA_CYMUL,#HYPER_CLK ' setup clock periods
+              xcont ma_hyper_addr_cmd1,ma_mtmp2
+              waitxfi
+              drvl #HYPER_SELECT addpins (HYPER_BANKS-1)
+        _ret_ fltl #HYPER_CLK
+
+.done
+
+{
+              ' WTF WTF WTF
+              mov ma_mtmp1,##$00_00_00_E0
+              mov ma_mtmp2,##$00_01
+              wrfast #0,ma_adpcm_bufferbase
+              drvl #HYPER_BASE addpins 7
+              drvh #HYPER_SELECT addpins (HYPER_BANKS-1)
+              drvl #HYPER_CLK ' Init clock pin with correct (?) alignment
+              xinit ma_hyper_addr_cmd1,ma_mtmp1
+              wypin #(6+HYPER_WAIT+MA_PCM_CYCLES)*MA_CYMUL,#HYPER_CLK ' setup clock periods
+              xinit ma_hyper_addr_cmd2,ma_mtmp2
+              setq ma_nco_fast
+              xcont #HYPER_WAIT*MA_CLKDIV+HYPER_DELAY,#0
+              waitxmt
+              fltl #HYPER_BASE addpins 7
+              setq ma_nco_slow
+              xcont ma_hyper_readpcm_cmd,#0
+              waitxfi
+              drvl #HYPER_SELECT addpins (HYPER_BANKS-1)
+              fltl #HYPER_CLK
+              debug(uhex_word_array(ma_adpcm_bufferbase,#8))
+'}
+#endif
 
 
               ' wait some more
