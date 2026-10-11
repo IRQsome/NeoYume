@@ -929,12 +929,12 @@ repeat while exmem_mailbox[0]
 repeat i from 0 to HYPER_BANKS-1
   long[ctrlmb][2] := $01_00_00_00
   long[ctrlmb][1] := $6000 | ($8F0F<<16) | (((HYPER_LATENCY-5)&$f)<<20)
-  long[ctrlmb][0] := exmem.R_SETREG '+ (i<<24) '+ cogid()
+  long[ctrlmb][0] := exmem.R_SETREG + (i<<24) '+ cogid()
   repeat while long[ctrlmb][0]
   ' possible 2nd die
   long[ctrlmb][2] := $01_00_00_00
   long[ctrlmb][1] := $6008 | ($8F0F<<16) | (((HYPER_LATENCY-5)&$f)<<20)
-  long[ctrlmb][0] := exmem.R_SETREG '+ (i<<24) '+ cogid()
+  long[ctrlmb][0] := exmem.R_SETREG + (i<<24) '+ cogid()
   repeat while long[ctrlmb][0]
 #endif
 
